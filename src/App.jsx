@@ -2450,9 +2450,9 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
             nStrands:nH+nS, dp:r.dp,
           }, helpers)}
           editableDims={{
-            length: { value:Math.round(Math.min(span*12,240)*10)/10, unit:"in", onChange:(v)=>setSpan(Math.max(1, v/12)) },
-            h: { value:r.s.h, unit:"in", onChange:(v)=>setSlabHOverride(Math.max(4,Math.round(v))) },
-            b: { value:r.s.b, unit:"in", onChange:(v)=>setSlabBOverride(Math.max(12,Math.round(v))) },
+            length: { value:Math.round(Math.min(span*12,240)*10)/10, unit:"in", step:6, min:24, onChange:(v)=>setSpan(Math.max(1, v/12)) },
+            h: { value:r.s.h, unit:"in", step:1, min:4, onChange:(v)=>setSlabHOverride(Math.max(4,Math.round(v))) },
+            b: { value:r.s.b, unit:"in", step:2, min:12, onChange:(v)=>setSlabBOverride(Math.max(12,Math.round(v))) },
           }}
         />
       )}
@@ -2961,9 +2961,9 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
             nBot:bQ, dBot:r.bD, nTop:tQ, dTop:r.tD, dTie:r.xD, tieSpacing:12,
           }, helpers)}
           editableDims={{
-            b: { value:b, unit:"in", onChange:setB },
-            h: { value:h, unit:"in", onChange:setH },
-            height: { value:colHeight, unit:"in", onChange:(v)=>setColHeight(Math.max(12,v)) },
+            b: { value:b, unit:"in", step:1, min:8, onChange:setB },
+            h: { value:h, unit:"in", step:1, min:8, onChange:setH },
+            height: { value:colHeight, unit:"in", step:6, min:24, onChange:(v)=>setColHeight(Math.max(12,v)) },
           }}
         />
         </Graphic>
@@ -2984,9 +2984,9 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
             stress:{Pu, Mu, b, h},
           }, helpers)}
           editableDims={{
-            b: { value:b, unit:"in", onChange:setB },
-            h: { value:h, unit:"in", onChange:setH },
-            height: { value:colHeight, unit:"in", onChange:(v)=>setColHeight(Math.max(12,v)) },
+            b: { value:b, unit:"in", step:1, min:8, onChange:setB },
+            h: { value:h, unit:"in", step:1, min:8, onChange:setH },
+            height: { value:colHeight, unit:"in", step:6, min:24, onChange:(v)=>setColHeight(Math.max(12,v)) },
           }}
           caption="Drag to rotate · Scroll to zoom · Red = compression, Blue = tension, White = neutral axis"
         />

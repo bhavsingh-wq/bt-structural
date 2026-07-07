@@ -312,8 +312,57 @@ export function Viewer3D({ buildScene, height, initialDistance, deps = [], capti
           })}
         </div>
       </div>
-      <div style={{ textAlign: "center", marginTop: 6, fontSize: 11, color: "#6c757d" }}>
-        {caption || (editableDims ? "Drag to rotate · Scroll to zoom · Click a dimension to edit it" : "Drag to rotate · Shift+drag or right-drag to pan · Scroll to zoom")}
+
+      {/* ── Dimension input panel — always visible below the 3D view ── */}
+      {editableDims && Object.keys(editableDims).length > 0 && (
+        <div style={{
+          display: "flex", flexWrap: "wrap", gap: 8, padding: "10px 12px",
+          background: "#f8f9fa", border: "1px solid #dee2e6", borderTop: "none",
+          borderRadius: "0 0 6px 6px",
+        }}>
+          {dimPoints.filter(pt => editableDims[pt.key]).map(pt => {
+            const dim = editableDims[pt.key];
+            return (
+              <div key={pt.key} style={{ display: "flex", flexDirection: "column", minWidth: 80 }}>
+                <span style={{
+                  fontSize: 9, fontWeight: 700, marginBottom: 2,
+                  fontFamily: "'JetBrains Mono',monospace",
+                  color: pt.colorHex,
+                }}>
+                  {pt.label.split(" = ")[0]}
+                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                  <input
+                    type="number"
+                    value={dim.value}
+                    step={dim.step || 1}
+                    min={dim.min || 0}
+                    onChange={e => {
+                      const v = Number(e.target.value);
+                      if (!isNaN(v) && v > 0) dim.onChange(v);
+                    }}
+                    style={{
+                      width: 64, padding: "4px 6px", fontSize: 12,
+                      fontFamily: "'JetBrains Mono',monospace",
+                      border: `1.5px solid ${pt.colorHex}`,
+                      borderRadius: 4, background: "#fff8ef",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                  {dim.unit && (
+                    <span style={{ fontSize: 10, color: "#868e96", whiteSpace: "nowrap" }}>
+                      {dim.unit}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div style={{ textAlign: "center", marginTop: 4, fontSize: 11, color: "#6c757d" }}>
+        {caption || (editableDims ? "Drag to rotate · Scroll to zoom · Edit dimensions above or click labels in 3D" : "Drag to rotate · Shift+drag or right-drag to pan · Scroll to zoom")}
       </div>
     </div>
   );
