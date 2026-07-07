@@ -2635,7 +2635,8 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
 // COLUMN TAB
 // ═════════════════════════════════════════
 function ColTab({loadedCalc, onConsumedLoad, workspace}){
-  const [b,setB]=useState(12);`n  const [h,setH]=useState(20);
+  const [b,setB]=useState(12);
+  const [h,setH]=useState(20);
   const [colHeight,setColHeight]=useState(120); // column height in inches (default 10 ft)
   const [fc,setFc]=useState(4),[cov,setCov]=useState(1.5);
   const fy=60,Es=29000;
@@ -4059,4 +4060,5 @@ function PCIViewer3D(){ return <div style={{padding:12,textAlign:"center",color:
 function CPCIViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the slab</div>; }
 function ColViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the column</div>; }
 function CrushViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the section</div>; }
+
 
