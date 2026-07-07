@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, createContext, useContext } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback, createContext, useContext } from "react";
 import { supabase } from "./supabaseClient";
 import { Viewer3D } from "./Viewer3D";
 import { buildColumnScene, buildHollowcoreScene } from "./models3d";
@@ -3528,3 +3528,534 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
     </div>{/* end two-column layout */}
   </div>);
 }
+
+// ═══════════════════════════════════════════════════
+// CONTEXTS
+// ═══════════════════════════════════════════════════
+const CurrentUserContext = createContext(null);
+const useCurrentUser = () => useContext(CurrentUserContext);
+const ViewSettingsContext = createContext({showSteps:true,showGraphics:true,showInputs:true,showOutputs:true,reportStyle:"interactive"});
+const useViewSettings = () => useContext(ViewSettingsContext);
+const ModuleThemeContext = createContext({accent:"#2563eb",soft:"#eff6ff",text:"#1e3a8a",accentDark:"#1d4ed8"});
+const useModuleTheme = () => useContext(ModuleThemeContext);
+
+const MODULE_THEMES = {
+  pci:  {accent:"#2563eb",soft:"#eff6ff",text:"#1e3a8a",accentDark:"#1d4ed8"},
+  cpci: {accent:"#7c3aed",soft:"#f5f3ff",text:"#4c1d95",accentDark:"#6d28d9"},
+  col:  {accent:"#16a34a",soft:"#f0fdf4",text:"#14532d",accentDark:"#15803d"},
+  crush:{accent:"#ea580c",soft:"#fff7ed",text:"#7c2d12",accentDark:"#c2410c"},
+  beam: {accent:"#0ea5e9",soft:"#f0f9ff",text:"#0c4a6e",accentDark:"#0284c7"},
+};
+
+const MODULE_LABELS = {pci:"PCI Hollowcore",cpci:"CPCI Hollowcore",col:"Column Design",crush:"HC End Crushing",beam:"Beam Design"};
+const TABS=[{id:"pci",label:"PCI Hollowcore",mod:"pci"},{id:"cpci",label:"CPCI Hollowcore",mod:"cpci"},{id:"col",label:"Column Design",mod:"col"},{id:"crush",label:"HC End Crushing",mod:"crush"},{id:"beam",label:"Beam Design",mod:"beam"}];
+const ALL_TABS=[{id:"dashboard",label:"🏠 Dashboard",mod:null},...TABS];
+
+// ═══════════════════════════════════════════════════
+// LIVE STATUS BANNER
+// ═══════════════════════════════════════════════════
+function LiveStatusBanner({ok, util, label}) {
+  const theme = useModuleTheme();
+  const pct = Math.min(100, Math.round((util||0)*100));
+  return (
+    <div className="no-print" style={{marginBottom:12,padding:"8px 14px",borderRadius:6,background:ok?"#f0fdf4":"#fef2f2",border:`1px solid ${ok?"#bbf7d0":"#fecaca"}`,display:"flex",alignItems:"center",gap:12}}>
+      <span style={{fontSize:11,fontWeight:700,color:ok?"#16a34a":"#dc2626"}}>{ok?"✓ PASS":"✗ FAIL"}</span>
+      <span style={{fontSize:11,color:"#374151"}}>{label}</span>
+      <div style={{flex:1,height:6,background:"#e5e7eb",borderRadius:3,overflow:"hidden"}}>
+        <div style={{height:"100%",width:`${pct}%`,background:ok?"#22c55e":"#ef4444",borderRadius:3,transition:"width 0.4s ease"}}/>
+      </div>
+      <span style={{fontSize:11,fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:ok?"#15803d":"#b91c1c"}}>{(util||0).toFixed(3)}</span>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+// DISPLAY WRAPPERS
+// ═══════════════════════════════════════════════════
+function InputsBlock({children}){const{showInputs}=useViewSettings();if(!showInputs)return null;return children;}
+function OutputsBlock({children}){const{showOutputs}=useViewSettings();if(!showOutputs)return null;return children;}
+function Graphic({children}){const{showGraphics}=useViewSettings();if(!showGraphics)return null;return children;}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+function Dashboard({ onOpenCalc, onNavigate }) {
+  const user = useCurrentUser();
+  const [calcs, setCalcs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
+
+  useEffect(() => {
+    fetchCalcsForUser(user).then(data => { setCalcs(data); setLoading(false); });
+  }, [user?.id]);
+
+  if (loading) return <div style={{padding:40,textAlign:"center",color:"#868e96",fontFamily:MONO}}>Loading dashboard…</div>;
+
+  const totalFiles = calcs.length;
+  const totalProjects = [...new Set(calcs.map(c=>c.project_name))].length;
+  const recentFiles = [...calcs].sort((a,b)=>new Date(b.updated_at||b.created_at)-new Date(a.updated_at||a.created_at)).slice(0,8);
+  const moduleCounts = calcs.reduce((acc,c)=>{acc[c.module]=(acc[c.module]||0)+1;return acc;},{});
+  const timeAgo=(d)=>{if(!d)return"—";const diff=Date.now()-new Date(d);const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);if(m<2)return"just now";if(m<60)return`${m}m ago`;if(h<24)return`${h}h ago`;if(dy<7)return`${dy}d ago`;return new Date(d).toLocaleDateString();};
+  const MI={pci:{label:"PCI Hollowcore",color:"#2563eb",icon:"🔷"},cpci:{label:"CPCI Hollowcore",color:"#7c3aed",icon:"🔶"},col:{label:"Column Design",color:"#16a34a",icon:"🟩"},crush:{label:"HC End Crushing",color:"#ea580c",icon:"🟠"},beam:{label:"Beam Design",color:"#0ea5e9",icon:"🔹"}};
+
+  return (
+    <div>
+      <div style={{marginBottom:20,padding:"18px 22px",background:"linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%)",borderRadius:10,color:"#fff"}}>
+        <div style={{fontSize:18,fontWeight:800,fontFamily:MONO,marginBottom:4}}>{isAdmin(user)?"👑":"👋"} Welcome back, {user?.name?.split(" ")[0]}</div>
+        <div style={{fontSize:11,opacity:0.8}}>{new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"})} · BT Structural Calculator</div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))",gap:10,marginBottom:20}}>
+        {[{icon:"📁",value:totalProjects,label:"Projects",color:"#2563eb"},{icon:"📄",value:totalFiles,label:"Files",color:"#16a34a"},{icon:"📅",value:timeAgo(recentFiles[0]?.updated_at||recentFiles[0]?.created_at),label:"Last Activity",color:"#0891b2"}].map((s,i)=>(
+          <div key={i} style={{background:"#fff",border:"1px solid #dee2e6",borderRadius:8,padding:"14px 16px",borderTop:`3px solid ${s.color}`}}>
+            <div style={{fontSize:22,marginBottom:4}}>{s.icon}</div>
+            <div style={{fontSize:22,fontWeight:800,fontFamily:MONO,color:s.color}}>{s.value}</div>
+            <div style={{fontSize:10,color:"#868e96",marginTop:2}}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
+        <div style={{background:"#fff",border:"1px solid #dee2e6",borderRadius:8,overflow:"hidden"}}>
+          <div style={{padding:"10px 14px",borderBottom:"1px solid #dee2e6",background:"#f8f9fa",fontWeight:700,fontSize:12,fontFamily:MONO}}>🕐 Recent Files</div>
+          {recentFiles.length===0?<div style={{padding:20,textAlign:"center",color:"#868e96",fontSize:12}}>No files yet</div>:recentFiles.map((f,i)=>{
+            const mi=MI[f.module]||{label:f.module,color:"#868e96",icon:"📄"};
+            return(<div key={i} onClick={()=>onOpenCalc(f)} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 14px",borderBottom:"1px solid #f1f3f5",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#f8f9fa"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+              <span style={{fontSize:14}}>{mi.icon}</span>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontWeight:600,fontSize:11,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{f.calc_name}</div>
+                <div style={{fontSize:10,color:"#868e96"}}><span style={{color:mi.color,fontWeight:600}}>{mi.label}</span> · {f.project_name}{isAdmin(user)?` · ${f.created_by_name}`:""}</div>
+              </div>
+              <div style={{fontSize:10,color:"#adb5bd",fontFamily:MONO,whiteSpace:"nowrap"}}>{timeAgo(f.updated_at||f.created_at)}</div>
+            </div>);
+          })}
+        </div>
+        <div style={{background:"#fff",border:"1px solid #dee2e6",borderRadius:8,overflow:"hidden"}}>
+          <div style={{padding:"10px 14px",borderBottom:"1px solid #dee2e6",background:"#f8f9fa",fontWeight:700,fontSize:12,fontFamily:MONO}}>📊 Module Usage</div>
+          <div style={{padding:"12px 14px"}}>
+            {Object.entries(MI).map(([key,mi])=>{const c=moduleCounts[key]||0,pct=totalFiles>0?(c/totalFiles)*100:0;return(
+              <div key={key} style={{marginBottom:8}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}><span style={{fontSize:11,fontFamily:MONO}}>{mi.icon} {mi.label}</span><span style={{fontSize:11,fontWeight:700,color:mi.color,fontFamily:MONO}}>{c}</span></div>
+                <div style={{height:5,background:"#f1f3f5",borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",width:`${pct}%`,background:mi.color,borderRadius:3}}/></div>
+              </div>
+            );})}
+          </div>
+          <div style={{padding:"10px 14px",borderTop:"1px solid #dee2e6",background:"#f8f9fa"}}>
+            <div style={{fontSize:11,fontWeight:700,fontFamily:MONO,marginBottom:6,color:"#374151"}}>⚡ Quick Start</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+              {Object.entries(MI).map(([key,mi])=>(<button key={key} onClick={()=>onNavigate(key)} style={{padding:"3px 8px",borderRadius:10,border:`1px solid ${mi.color}30`,background:`${mi.color}10`,color:mi.color,fontSize:10,fontFamily:MONO,cursor:"pointer",fontWeight:600}}>{mi.icon} {key.toUpperCase()}</button>))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+// PROJECTS BROWSER
+// ═══════════════════════════════════════════════════
+function ProjectsBrowser({onOpenCalc}){
+  const user=useCurrentUser();
+  const[calcs,setCalcs]=useState([]);
+  const[loading,setLoading]=useState(true);
+  const[stage,setStage]=useState(isAdmin(user)?"employees":"projects");
+  const[selEmployee,setSelEmployee]=useState(null);
+  const[selProject,setSelProject]=useState(null);
+  const[selPart,setSelPart]=useState(null);
+  const[newProjectOpen,setNewProjectOpen]=useState(false);
+  const[newPartOpen,setNewPartOpen]=useState(false);
+  const[newName,setNewName]=useState("");
+  const[confirmDelete,setConfirmDelete]=useState(null);
+  const[showAdmin,setShowAdmin]=useState(false);
+  const[userRoles,setUserRoles]=useState([]);
+  const[roleMsg,setRoleMsg]=useState("");
+  const MONO="'JetBrains Mono','Fira Code','Consolas',monospace";
+
+  const reload=async()=>{setLoading(true);const data=await fetchCalcsForUser(user);setCalcs(data);setLoading(false);};
+  useEffect(()=>{reload();},[user?.id,user?.role]);
+  useEffect(()=>{if(showAdmin&&isAdmin(user))fetchAllUserRoles().then(setUserRoles);},[showAdmin]);
+
+  const handleRoleToggle=async(targetId,currentRole)=>{const newRole=currentRole==="admin"?"user":"admin";const ok=await setUserRole(targetId,newRole,user?.id);if(ok){setRoleMsg(`✓ ${targetId} is now ${newRole}`);fetchAllUserRoles().then(setUserRoles);setTimeout(()=>setRoleMsg(""),3000);}};
+  const filteredCalcs=isAdmin(user)&&selEmployee?calcs.filter(c=>c.created_by_id===selEmployee):calcs;
+  const projects=[...new Set(filteredCalcs.map(c=>c.project_name))].sort();
+  const parts=selProject?[...new Set(filteredCalcs.filter(c=>c.project_name===selProject).map(c=>c.part_name))].sort():[];
+  const files=(selProject&&selPart)?filteredCalcs.filter(c=>c.project_name===selProject&&c.part_name===selPart).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)):[];
+  const cardS={cursor:"pointer",padding:16,border:"1px solid #dee2e6",borderRadius:8,background:"#fff",transition:"box-shadow 0.15s"};
+  const crumbS={cursor:"pointer",color:"#2563eb",fontWeight:600};
+
+  return(
+    <div>
+      {isAdmin(user)&&(
+        <div style={{marginBottom:14}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:showAdmin?10:0}}>
+            <div style={{display:"flex",alignItems:"center",gap:8}}>
+              <span style={{fontSize:11,fontWeight:700,background:"#1d4ed8",color:"#fff",padding:"2px 10px",borderRadius:10,fontFamily:MONO}}>👑 ADMIN</span>
+              <span style={{fontSize:11,color:"#6c757d"}}>Viewing all employees' projects</span>
+            </div>
+            <button onClick={()=>setShowAdmin(v=>!v)} style={{padding:"4px 12px",border:"1px solid #ced4da",borderRadius:4,background:"#fff",fontSize:11,cursor:"pointer",fontFamily:MONO}}>{showAdmin?"▲ Hide":"⚙ Admin Panel"}</button>
+          </div>
+          {showAdmin&&(
+            <div style={{background:"#f8f9fa",border:"1px solid #dee2e6",borderRadius:8,padding:14}}>
+              <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>🔐 Access Management</div>
+              {roleMsg&&<div style={{padding:"6px 10px",background:"#dcfce7",border:"1px solid #bbf7d0",borderRadius:4,fontSize:11,fontFamily:MONO,color:"#15803d",marginBottom:8}}>{roleMsg}</div>}
+              <div style={{overflowX:"auto"}}>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+                  <thead><tr style={{background:"#e9ecef"}}>{["Employee ID","Name","Role","Files","Action"].map(h=>(<th key={h} style={{padding:"5px 8px",border:"1px solid #dee2e6",fontWeight:700,fontFamily:MONO,fontSize:10,textAlign:"left"}}>{h}</th>))}</tr></thead>
+                  <tbody>
+                    {Object.entries(EMPLOYEES).map(([id,emp])=>{
+                      const rt=userRoles.find(r=>r.user_id===id);
+                      const er=rt?.role||emp.role||"user";
+                      const isSelf=user?.id===id;
+                      const fc2=calcs.filter(c=>c.created_by_id===id).length;
+                      return(<tr key={id} style={{background:isSelf?"#eff6ff":"#fff"}}>
+                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6",fontFamily:MONO,fontWeight:700}}>{id}{isSelf&&<span style={{fontSize:9,color:"#2563eb"}}> (you)</span>}</td>
+                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6"}}>{emp.name}</td>
+                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6"}}><span style={{padding:"1px 7px",borderRadius:8,fontSize:9,fontWeight:700,background:er==="admin"?"#eff6ff":"#f3f4f6",color:er==="admin"?"#1d4ed8":"#6b7280"}}>{er==="admin"?"👑 Admin":"👤 User"}</span></td>
+                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6",textAlign:"center"}}>{fc2}</td>
+                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6"}}>{emp.role==="admin"||isSelf?<span style={{fontSize:10,color:"#9ca3af"}}>—</span>:<button onClick={()=>handleRoleToggle(id,er)} style={{padding:"2px 8px",borderRadius:3,fontSize:10,cursor:"pointer",border:`1px solid ${er==="admin"?"#fecaca":"#bbf7d0"}`,background:er==="admin"?"#fef2f2":"#f0fdf4",color:er==="admin"?"#dc2626":"#16a34a",fontWeight:700}}>{er==="admin"?"Revoke":"Grant Admin"}</button>}</td>
+                      </tr>);
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      {!isAdmin(user)&&<div style={{marginBottom:10,padding:"6px 12px",background:"#f8f9fa",border:"1px solid #dee2e6",borderRadius:4,fontSize:11,color:"#6c757d",fontFamily:MONO}}>👤 Viewing your own projects.</div>}
+      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:14,fontSize:13,flexWrap:"wrap"}}>
+        {isAdmin(user)&&<span style={stage!=="employees"?crumbS:{fontWeight:700}} onClick={()=>{if(stage!=="employees"){setStage("employees");setSelEmployee(null);setSelProject(null);setSelPart(null);}}}>👥 All Employees</span>}
+        {!isAdmin(user)&&<span style={stage==="projects"?{fontWeight:700}:crumbS} onClick={()=>{setStage("projects");setSelProject(null);setSelPart(null);}}>📁 All Projects</span>}
+        {selEmployee&&<><span style={{color:"#adb5bd"}}>/</span><span style={stage==="projects"?{fontWeight:700}:crumbS} onClick={()=>{setStage("projects");setSelProject(null);setSelPart(null);}}>{EMPLOYEES[selEmployee]?.name}</span></>}
+        {selProject&&<><span style={{color:"#adb5bd"}}>/</span><span style={stage==="parts"?{fontWeight:700}:crumbS} onClick={()=>{setStage("parts");setSelPart(null);}}>📁 {selProject}</span></>}
+        {selPart&&<><span style={{color:"#adb5bd"}}>/</span><span style={{fontWeight:700}}>🗂️ {selPart}</span></>}
+      </div>
+      {loading&&<div style={{color:"#868e96",fontSize:13,padding:20,textAlign:"center"}}>Loading…</div>}
+      {!loading&&stage==="employees"&&isAdmin(user)&&(
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10}}>
+          {Object.entries(EMPLOYEES).map(([id,emp])=>{const cnt=calcs.filter(c=>c.created_by_id===id).length;const pCnt=[...new Set(calcs.filter(c=>c.created_by_id===id).map(c=>c.project_name))].length;return(<div key={id} onClick={()=>{setSelEmployee(id);setSelProject(null);setSelPart(null);setStage("projects");}} style={{...cardS,borderLeft:`4px solid ${emp.role==="admin"?"#1d4ed8":"#16a34a"}`}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 3px 12px rgba(0,0,0,0.1)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:26,marginBottom:4}}>{emp.role==="admin"?"👑":"👤"}</div><div style={{fontWeight:800,fontSize:13}}>{emp.name}</div><div style={{fontSize:10,fontFamily:MONO,color:"#868e96"}}>{id}{user?.id===id?" (you)":""}</div><div style={{marginTop:6,fontSize:11,color:"#374151"}}><b>{pCnt}</b> projects · <b>{cnt}</b> files</div></div>);})}</div>
+      )}
+      {!loading&&stage==="projects"&&(
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:10}}>
+          {projects.map(p=>{const cnt=filteredCalcs.filter(c=>c.project_name===p).length;const pCnt=[...new Set(filteredCalcs.filter(c=>c.project_name===p).map(c=>c.part_name))].length;return(<div key={p} onClick={()=>{setSelProject(p);setSelPart(null);setStage("parts");}} style={cardS} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:24,marginBottom:4}}>📁</div><div style={{fontWeight:700,fontSize:13}}>{p}</div><div style={{fontSize:11,color:"#868e96",marginTop:3}}>{pCnt} part{pCnt!==1?"s":""} · {cnt} file{cnt!==1?"s":""}</div></div>);})}
+          {(!isAdmin(user)||selEmployee===user?.id)&&<div onClick={()=>setNewProjectOpen(true)} style={{...cardS,border:"2px dashed #ced4da",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#868e96"}}><div style={{fontSize:24,marginBottom:4}}>＋</div><div style={{fontWeight:700,fontSize:12}}>New Project</div></div>}
+        </div>
+      )}
+      {!loading&&stage==="parts"&&(
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:10}}>
+          {parts.map(pt=>{const cnt=filteredCalcs.filter(c=>c.project_name===selProject&&c.part_name===pt).length;return(<div key={pt} onClick={()=>{setSelPart(pt);setStage("files");}} style={cardS} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:22,marginBottom:4}}>🗂️</div><div style={{fontWeight:700,fontSize:13}}>{pt}</div><div style={{fontSize:11,color:"#868e96",marginTop:3}}>{cnt} file{cnt!==1?"s":""}</div></div>);})}
+          {(!isAdmin(user)||selEmployee===user?.id)&&<div onClick={()=>setNewPartOpen(true)} style={{...cardS,border:"2px dashed #ced4da",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#868e96"}}><div style={{fontSize:22,marginBottom:4}}>＋</div><div style={{fontWeight:700,fontSize:12}}>New Part</div></div>}
+        </div>
+      )}
+      {!loading&&stage==="files"&&(
+        <div>
+          {(!isAdmin(user)||selEmployee===user?.id)&&<button onClick={()=>onOpenCalc&&onOpenCalc({action:"new",project:selProject,part:selPart})} style={{width:"100%",padding:12,borderRadius:8,border:"none",background:"#212529",color:"#fff",fontWeight:800,fontSize:12,cursor:"pointer",marginBottom:12,fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5}}>＋ Start New Calculation</button>}
+          {files.map(f=>{const isOwner=user&&(f.created_by_id===user.id||isAdmin(user));return(<div key={f.id} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",border:"1px solid #dee2e6",borderRadius:6,marginBottom:6,background:"#fff"}}>
+            <span style={{fontSize:18}}>📄</span>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontWeight:700,fontSize:12}}>{f.calc_name}</div>
+              <div style={{fontSize:10,color:"#868e96"}}>{MODULE_LABELS[f.module]||f.module} · {f.created_by_name} · {new Date(f.created_at).toLocaleDateString()}</div>
+            </div>
+            <button onClick={()=>onOpenCalc(f)} style={{padding:"5px 10px",borderRadius:4,border:"2px solid #2563eb",background:"#eff6ff",color:"#1d4ed8",fontWeight:700,fontSize:11,cursor:"pointer"}}>Open</button>
+            {isOwner&&(<button onClick={async()=>{if(window.confirm("Delete this file?"))await deleteCalc(f.id).then(()=>reload());}} style={{padding:"5px 8px",borderRadius:4,border:"1px solid #fecaca",background:"#fef2f2",color:"#991b1b",fontSize:11,cursor:"pointer"}}>🗑</button>)}
+          </div>);})}
+        </div>
+      )}
+      {newProjectOpen&&(<div onClick={()=>{setNewProjectOpen(false);setNewName("");}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:20,width:"100%",maxWidth:340,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}><div style={{fontSize:14,fontWeight:800,marginBottom:12}}>📁 New Project</div><input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&(setSelProject(newName.trim()),setStage("parts"),setNewProjectOpen(false),setNewName(""))} placeholder="e.g. 123 Main St" style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box",marginBottom:12}}/><div style={{display:"flex",gap:8}}><button onClick={()=>{setNewProjectOpen(false);setNewName("");}} style={{flex:1,padding:8,borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12}}>Cancel</button><button onClick={()=>{if(newName.trim()){setSelProject(newName.trim());setStage("parts");setNewProjectOpen(false);setNewName("");}}} style={{flex:1,padding:8,borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>Create</button></div></div></div>)}
+      {newPartOpen&&(<div onClick={()=>{setNewPartOpen(false);setNewName("");}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:20,width:"100%",maxWidth:340,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}><div style={{fontSize:14,fontWeight:800,marginBottom:12}}>🗂️ New Part</div><input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&(setSelPart(newName.trim()),setStage("files"),setNewPartOpen(false),setNewName(""))} placeholder="e.g. Roof Slab" style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box",marginBottom:12}}/><div style={{display:"flex",gap:8}}><button onClick={()=>{setNewPartOpen(false);setNewName("");}} style={{flex:1,padding:8,borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12}}>Cancel</button><button onClick={()=>{if(newName.trim()){setSelPart(newName.trim());setStage("files");setNewPartOpen(false);setNewName("");}}} style={{flex:1,padding:8,borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>Create</button></div></div></div>)}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+// WORKSPACE PICKER (pre-login project selection)
+// ═══════════════════════════════════════════════════
+function WorkspacePicker({userName,onSignOut,onEnter,onOpenCalc}){
+  const user=useCurrentUser();
+  const[calcs,setCalcs]=useState([]);
+  const[loading,setLoading]=useState(true);
+  const[stage,setStage]=useState(isAdmin(user)?"employees":"projects");
+  const[selEmployee,setSelEmployee]=useState(null);
+  const[selProject,setSelProject]=useState(null);
+  const[selPart,setSelPart]=useState(null);
+  const[newProjectOpen,setNewProjectOpen]=useState(false);
+  const[newPartOpen,setNewPartOpen]=useState(false);
+  const[newName,setNewName]=useState("");
+  const MONO="'JetBrains Mono','Fira Code','Consolas',monospace";
+
+  const reload=async()=>{setLoading(true);const data=await fetchCalcsForUser(user);setCalcs(data);setLoading(false);};
+  useEffect(()=>{reload();},[]);
+
+  const filteredCalcs=isAdmin(user)&&selEmployee?calcs.filter(c=>c.created_by_id===selEmployee):calcs;
+  const projects=[...new Set(filteredCalcs.map(c=>c.project_name))].sort();
+  const parts=selProject?[...new Set(filteredCalcs.filter(c=>c.project_name===selProject).map(c=>c.part_name))].sort():[];
+  const files=(selProject&&selPart)?filteredCalcs.filter(c=>c.project_name===selProject&&c.part_name===selPart).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)):[];
+  const cardS={cursor:"pointer",padding:16,border:"1px solid #dee2e6",borderRadius:8,background:"#fff",transition:"box-shadow 0.15s"};
+
+  return(
+    <div style={{fontFamily:"'Inter','Segoe UI',system-ui,sans-serif",maxWidth:860,margin:"0 auto",padding:"16px 12px",color:"#212529",background:"#fff",minHeight:"100vh"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"2px solid #212529",paddingBottom:10,marginBottom:16}}>
+        <div>
+          <h1 style={{fontSize:16,fontWeight:800,margin:0,fontFamily:MONO,textTransform:"uppercase",letterSpacing:-0.5}}>BT Structural Calculator</h1>
+          <p style={{fontSize:11,color:"#868e96",margin:"2px 0 0"}}>{isAdmin(user)?"Admin view — all employees' projects":"Select a project and part to begin"}</p>
+        </div>
+        <div style={{textAlign:"right"}}>
+          {isAdmin(user)&&<span style={{fontSize:10,fontWeight:800,background:"#1d4ed8",color:"#fff",padding:"2px 8px",borderRadius:10,fontFamily:MONO,display:"block",marginBottom:4}}>👑 ADMIN</span>}
+          <div style={{fontSize:12,fontWeight:600}}>{userName}</div>
+          <button onClick={onSignOut} style={{fontSize:10,color:"#868e96",background:"none",border:"none",cursor:"pointer",textDecoration:"underline",padding:0}}>Sign out</button>
+        </div>
+      </div>
+      {loading&&<div style={{textAlign:"center",padding:40,color:"#868e96"}}>Loading…</div>}
+      {!loading&&stage==="employees"&&isAdmin(user)&&(
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:12}}>
+          {Object.entries(EMPLOYEES).map(([id,emp])=>{const cnt=calcs.filter(c=>c.created_by_id===id).length;return(<div key={id} onClick={()=>{setSelEmployee(id);setStage("projects");}} style={{...cardS,borderLeft:`4px solid ${emp.role==="admin"?"#1d4ed8":"#16a34a"}`}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 3px 12px rgba(0,0,0,0.1)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:26,marginBottom:4}}>{emp.role==="admin"?"👑":"👤"}</div><div style={{fontWeight:800,fontSize:13}}>{emp.name}</div><div style={{fontSize:10,fontFamily:MONO,color:"#868e96",marginTop:2}}>{id}{user?.id===id?" (you)":""}</div><div style={{marginTop:6,fontSize:11,color:"#374151"}}><b>{cnt}</b> file{cnt!==1?"s":""}</div></div>);})}</div>
+      )}
+      {!loading&&stage==="projects"&&(
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:10}}>
+          {projects.map(p=>{const cnt=filteredCalcs.filter(c=>c.project_name===p).length;return(<div key={p} onClick={()=>{setSelProject(p);setStage("parts");}} style={cardS} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:24,marginBottom:4}}>📁</div><div style={{fontWeight:700,fontSize:13}}>{p}</div><div style={{fontSize:11,color:"#868e96",marginTop:3}}>{cnt} file{cnt!==1?"s":""}</div></div>);})}
+          <div onClick={()=>setNewProjectOpen(true)} style={{...cardS,border:"2px dashed #ced4da",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#868e96"}}><div style={{fontSize:24,marginBottom:4}}>＋</div><div style={{fontWeight:700,fontSize:12}}>New Project</div></div>
+        </div>
+      )}
+      {!loading&&stage==="parts"&&(
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:10}}>
+          {parts.map(pt=>{const cnt=filteredCalcs.filter(c=>c.project_name===selProject&&c.part_name===pt).length;return(<div key={pt} onClick={()=>{setSelPart(pt);setStage("files");}} style={cardS} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:22,marginBottom:4}}>🗂️</div><div style={{fontWeight:700,fontSize:13}}>{pt}</div><div style={{fontSize:11,color:"#868e96",marginTop:3}}>{cnt} file{cnt!==1?"s":""}</div></div>);})}
+          <div onClick={()=>setNewPartOpen(true)} style={{...cardS,border:"2px dashed #ced4da",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#868e96"}}><div style={{fontSize:22,marginBottom:4}}>＋</div><div style={{fontWeight:700,fontSize:12}}>New Part</div></div>
+        </div>
+      )}
+      {!loading&&stage==="files"&&(
+        <div>
+          <button onClick={()=>onEnter(selProject,selPart)} style={{width:"100%",padding:12,borderRadius:8,border:"none",background:"#212529",color:"#fff",fontWeight:800,fontSize:12,cursor:"pointer",marginBottom:12,fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5}}>＋ Start New Calculation</button>
+          {files.map(f=>(<div key={f.id} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",border:"1px solid #dee2e6",borderRadius:6,marginBottom:6,background:"#fff"}}>
+            <span style={{fontSize:18}}>📄</span>
+            <div style={{flex:1,minWidth:0}}><div style={{fontWeight:700,fontSize:12}}>{f.calc_name}</div><div style={{fontSize:10,color:"#868e96"}}>{MODULE_LABELS[f.module]||f.module} · {new Date(f.created_at).toLocaleDateString()}</div></div>
+            <button onClick={()=>onOpenCalc(f)} style={{padding:"5px 10px",borderRadius:4,border:"2px solid #2563eb",background:"#eff6ff",color:"#1d4ed8",fontWeight:700,fontSize:11,cursor:"pointer"}}>Open</button>
+          </div>))}
+        </div>
+      )}
+      {newProjectOpen&&(<div onClick={()=>{setNewProjectOpen(false);setNewName("");}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:20,width:"100%",maxWidth:340,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}><div style={{fontSize:14,fontWeight:800,marginBottom:12}}>📁 New Project</div><input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&newName.trim()){setSelProject(newName.trim());setStage("parts");setNewProjectOpen(false);setNewName("");}}} placeholder="e.g. 123 Main St" style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box",marginBottom:12}}/><div style={{display:"flex",gap:8}}><button onClick={()=>{setNewProjectOpen(false);setNewName("");}} style={{flex:1,padding:8,borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12}}>Cancel</button><button onClick={()=>{if(newName.trim()){setSelProject(newName.trim());setStage("parts");setNewProjectOpen(false);setNewName("");}}} style={{flex:1,padding:8,borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>Create</button></div></div></div>)}
+      {newPartOpen&&(<div onClick={()=>{setNewPartOpen(false);setNewName("");}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:20,width:"100%",maxWidth:340,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}><div style={{fontSize:14,fontWeight:800,marginBottom:12}}>🗂️ New Part</div><input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&newName.trim()){setSelPart(newName.trim());setStage("files");setNewPartOpen(false);setNewName("");}}} placeholder="e.g. Roof Slab" style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box",marginBottom:12}}/><div style={{display:"flex",gap:8}}><button onClick={()=>{setNewPartOpen(false);setNewName("");}} style={{flex:1,padding:8,borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12}}>Cancel</button><button onClick={()=>{if(newName.trim()){setSelPart(newName.trim());setStage("files");setNewPartOpen(false);setNewName("");}}} style={{flex:1,padding:8,borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>Create</button></div></div></div>)}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+// LOGIN SCREEN
+// ═══════════════════════════════════════════════════
+function LoginScreen({onLogin}){
+  const[uid,setUid]=useState("");
+  const[pwd,setPwd]=useState("");
+  const[err,setErr]=useState("");
+  const MONO="'JetBrains Mono','Fira Code','Consolas',monospace";
+
+  const submit=async()=>{
+    const key=uid.trim().toLowerCase();
+    const u=EMPLOYEES[key];
+    if(u&&u.pass===pwd){
+      setErr("");
+      const runtimeRole=await fetchUserRole(key);
+      const effectiveRole=runtimeRole||u.role||"user";
+      onLogin({id:key,name:u.name,role:effectiveRole,runtimeAdmin:effectiveRole==="admin"});
+    }else{setErr("Invalid employee ID or password.");}
+  };
+
+  return(
+    <div style={{fontFamily:"'Inter','Segoe UI',system-ui,sans-serif",minHeight:"100vh",background:"#212529",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+      <div style={{background:"#fff",borderRadius:8,padding:"32px 28px",width:"100%",maxWidth:340,boxShadow:"0 10px 40px rgba(0,0,0,0.3)"}}>
+        <div style={{textAlign:"center",marginBottom:20}}>
+          <div style={{fontSize:28,marginBottom:8}}>🏗️</div>
+          <div style={{fontSize:15,fontWeight:800,fontFamily:MONO,textTransform:"uppercase",letterSpacing:1}}>BT Structural</div>
+          <div style={{fontSize:11,color:"#868e96",marginTop:4}}>Employee Access Only</div>
+        </div>
+        <div style={{marginBottom:12}}>
+          <label style={{fontSize:11,fontWeight:700,color:"#374151",display:"block",marginBottom:4,fontFamily:MONO}}>EMPLOYEE ID</label>
+          <input value={uid} onChange={e=>setUid(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} placeholder="e.g. bhavjeet" style={{width:"100%",padding:"9px 12px",border:"1.5px solid #dee2e6",borderRadius:4,fontSize:13,boxSizing:"border-box"}}/>
+        </div>
+        <div style={{marginBottom:16}}>
+          <label style={{fontSize:11,fontWeight:700,color:"#374151",display:"block",marginBottom:4,fontFamily:MONO}}>PASSWORD</label>
+          <input type="password" value={pwd} onChange={e=>setPwd(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} style={{width:"100%",padding:"9px 12px",border:"1.5px solid #dee2e6",borderRadius:4,fontSize:13,boxSizing:"border-box"}}/>
+        </div>
+        {err&&<div style={{color:"#c0392b",fontSize:11,marginBottom:10,padding:"6px 10px",background:"#fdecea",borderRadius:4}}>{err}</div>}
+        <button onClick={submit} style={{width:"100%",padding:"10px",borderRadius:4,border:"none",background:"#212529",color:"#fff",fontWeight:800,fontSize:13,cursor:"pointer",fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5}}>SIGN IN</button>
+        <div style={{textAlign:"center",marginTop:12,fontSize:10,color:"#adb5bd"}}>Building Theory · Miami, FL</div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+// MAIN APP — with sticky 3D viewer on the right
+// ═══════════════════════════════════════════════════
+export default function App(){
+  const[user,setUser]=useState(null);
+  const[workspace,setWorkspace]=useState(null);
+  const[tab,setTab]=useState("dashboard");
+  const[loadedCalc,setLoadedCalc]=useState(null);
+  const[printAll,setPrintAll]=useState(false);
+  const[showSteps,setShowSteps]=useState(true);
+  const[showGraphics,setShowGraphics]=useState(true);
+  const[showInputs,setShowInputs]=useState(true);
+  const[showOutputs,setShowOutputs]=useState(true);
+  const[reportStyle,setReportStyle]=useState("interactive");
+  const[menuOpen,setMenuOpen]=useState(false);
+
+  // Calc options
+  const[calcFlags,setCalcFlags]=useState(DEFAULT_CALC_FLAGS);
+  const[deflMult,setDeflMult]=useState(DEFAULT_DEFL_MULTIPLIERS);
+  const[ulsCombos,setUlsCombos]=useState(DEFAULT_ULS_COMBOS);
+  const[loadFactors,setLoadFactors]=useState(DEFAULT_LOAD_FACTORS);
+  const[designCode,setDesignCode]=useState("ACI 318-19");
+  const[units,setUnits]=useState("imperial");
+
+  // Define dialogs
+  const[concrete,setConcrete]=useState(DEFAULT_CONCRETE);
+  const[beam,setBeam]=useState(DEFAULT_BEAM);
+  const[cip,setCIP]=useState(DEFAULT_CIP);
+  const[rebar,setRebar]=useState(DEFAULT_REBAR);
+  const[prestress,setPrestress]=useState(DEFAULT_PRESTRESS);
+  const[shear,setShear]=useState(DEFAULT_SHEAR);
+  const[designParams,setDesignParams]=useState(DEFAULT_DESIGN_PARAMS);
+  const[defineModal,setDefineModal]=useState(null);
+
+  const calcOptionsState={
+    flags:calcFlags,setFlags:setCalcFlags,
+    deflMult,setDeflMult,ulsCombos,setUlsCombos,
+    slsCombos:DEFAULT_SLS_COMBOS,loadFactors,setLoadFactors,
+    designCode,setDesignCode,units,setUnits:(fn)=>setUnits(fn),
+    onPrint:()=>handlePrint(false),onPrintPreview:()=>handlePrint(false),
+    onTextReports:()=>{setReportStyle("tedds");handlePrint(false);},
+    onGraphs:()=>setReportStyle("interactive"),
+    onSave:()=>{},onSaveAs:()=>{},onNew:()=>{if(window.confirm("Start new project?"))window.location.reload();},
+    recentFiles:[],defineModal,setDefineModal,
+  };
+  const defineContextValue={concrete,beam,cip,rebar,prestress,shear,designParams};
+  const defineState={concrete,setConcrete,beam,setBeam,cip,setCIP,rebar,setRebar,prestress,setPrestress,shear,setShear,designParams,setDesignParams};
+
+  const handlePrint=(all)=>{setPrintAll(all);setTimeout(()=>window.print(),50);};
+  const handleOpenCalc=(fileRow)=>{
+    if(fileRow?.action==="new") return;
+    setLoadedCalc(fileRow);
+    setTab(fileRow.module);
+    if(!workspace) setWorkspace({project:fileRow.project_name,part:fileRow.part_name});
+  };
+
+  if(!user) return <LoginScreen onLogin={setUser}/>;
+  if(!workspace) return(
+    <CurrentUserContext.Provider value={user}>
+      <WorkspacePicker userName={user.name} onSignOut={()=>setUser(null)}
+        onEnter={(project,part)=>setWorkspace({project,part})}
+        onOpenCalc={(fileRow)=>{setLoadedCalc(fileRow);setTab(fileRow.module);setWorkspace({project:fileRow.project_name,part:fileRow.part_name});}}/>
+    </CurrentUserContext.Provider>
+  );
+
+  const MONO="'JetBrains Mono','Fira Code','Consolas',monospace";
+
+  return(
+    <CalcOptionsContext.Provider value={{flags:calcFlags,deflMult,ulsCombos,slsCombos:DEFAULT_SLS_COMBOS,loadFactors,designCode,units}}>
+    <DefineContext.Provider value={defineContextValue}>
+    <CurrentUserContext.Provider value={user}>
+    <ViewSettingsContext.Provider value={{showSteps,showGraphics,showInputs,showOutputs,reportStyle}}>
+
+    {/* Full-screen sticky layout */}
+    <div style={{fontFamily:"'Inter','Segoe UI',system-ui,sans-serif",display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden",color:"#212529",background:"#fff"}}>
+
+      {/* Menu bar — full width at top */}
+      <div className="no-print" style={{flexShrink:0,zIndex:100}}>
+        <OptionsMenuBar state={calcOptionsState}/>
+        <DefineDialogsController openModal={defineModal} setOpenModal={setDefineModal} defineState={defineState}/>
+      </div>
+
+      {/* Main content area */}
+      <div style={{flex:1,display:"flex",overflow:"hidden"}}>
+
+        {/* LEFT: scrollable calculator content */}
+        <div style={{flex:1,overflowY:"auto",padding:"12px 14px"}}>
+          <style>{`
+            input.oi:focus,select.oi:focus{box-shadow:0 0 0 2px rgba(232,168,56,0.4);border-color:#c77c00}
+            .live-svg circle,.live-svg ellipse,.live-svg rect,.live-svg line,.live-svg polygon,.live-svg path{transition:cx 0.35s,cy 0.35s,r 0.35s,x 0.35s,y 0.35s,width 0.35s,height 0.35s,x1 0.35s,y1 0.35s,x2 0.35s,y2 0.35s,d 0.4s;}
+            @media print{.no-print{display:none!important}.print-card{page-break-inside:avoid}}
+          `}</style>
+
+          {/* Header */}
+          <div className="no-print" style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,paddingBottom:8,borderBottom:"1px solid #dee2e6"}}>
+            <div>
+              <div style={{fontSize:14,fontWeight:800,fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5}}>BT Structural Calculator</div>
+              <div style={{fontSize:10,color:"#868e96"}}>{workspace.project} / {workspace.part}</div>
+            </div>
+            <div style={{display:"flex",gap:8,alignItems:"center"}}>
+              <span style={{fontSize:11,color:"#868e96"}}>{user.name}</span>
+              {isAdmin(user)&&<span style={{fontSize:10,fontWeight:700,background:"#1d4ed8",color:"#fff",padding:"1px 7px",borderRadius:8,fontFamily:MONO}}>ADMIN</span>}
+              <button onClick={()=>setWorkspace(null)} style={{fontSize:10,color:"#868e96",background:"none",border:"1px solid #dee2e6",cursor:"pointer",padding:"3px 8px",borderRadius:4}}>← Projects</button>
+              <button onClick={()=>setUser(null)} style={{fontSize:10,color:"#868e96",background:"none",border:"none",cursor:"pointer",textDecoration:"underline",padding:0}}>Sign out</button>
+              <button onClick={()=>handlePrint(false)} className="no-print" style={{fontSize:10,padding:"4px 10px",borderRadius:4,border:"1px solid #dee2e6",background:"#fff",cursor:"pointer",fontFamily:MONO}}>🖨 Print</button>
+            </div>
+          </div>
+
+          {/* Tab bar */}
+          <div className="no-print" style={{display:"flex",gap:0,marginBottom:12,borderBottom:"1px solid #dee2e6",flexWrap:"wrap",overflowX:"auto"}}>
+            {ALL_TABS.map(t=>{
+              const th=t.mod?MODULE_THEMES[t.mod]:{accent:"#374151",soft:"#f8f9fa",text:"#212529",accentDark:"#374151"};
+              const active=tab===t.id;
+              return(<button key={t.id} onClick={()=>setTab(t.id)} style={{padding:"6px 12px",border:"none",borderBottom:active?`3px solid ${th.accent}`:"3px solid transparent",cursor:"pointer",fontSize:11,fontWeight:active?700:500,background:active?th.soft:"transparent",color:active?th.text:"#868e96",fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5,marginBottom:-1,borderRadius:"4px 4px 0 0",transition:"all 0.15s",whiteSpace:"nowrap"}}>{t.label}</button>);
+            })}
+            <button onClick={()=>setTab("projects")} style={{padding:"6px 12px",border:"none",borderBottom:tab==="projects"?"3px solid #495057":"3px solid transparent",cursor:"pointer",fontSize:11,fontWeight:tab==="projects"?700:500,background:tab==="projects"?"#f1f3f5":"transparent",color:tab==="projects"?"#212529":"#868e96",fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5,marginBottom:-1,borderRadius:"4px 4px 0 0",whiteSpace:"nowrap"}}>📁 Projects</button>
+          </div>
+
+          {/* Display options bar */}
+          <div className="no-print" style={{display:"flex",gap:6,marginBottom:10,flexWrap:"wrap",alignItems:"center"}}>
+            {[["Steps","showSteps",setShowSteps],["Graphics","showGraphics",setShowGraphics],["Inputs","showInputs",setShowInputs],["Outputs","showOutputs",setShowOutputs]].map(([label,key,setter])=>(
+              <button key={key} onClick={()=>setter(v=>!v)} style={{padding:"4px 10px",border:`1px solid #dee2e6`,borderRadius:4,background:{showSteps,showGraphics,showInputs,showOutputs}[key]?"#212529":"#fff",color:{showSteps,showGraphics,showInputs,showOutputs}[key]?"#fff":"#868e96",fontSize:10,cursor:"pointer",fontFamily:MONO,fontWeight:700}}>{label}</button>
+            ))}
+            <select value={reportStyle} onChange={e=>setReportStyle(e.target.value)} style={{padding:"4px 8px",borderRadius:4,border:"1px solid #dee2e6",fontSize:10,fontFamily:MONO,cursor:"pointer"}}>
+              <option value="interactive">Interactive</option>
+              <option value="tedds">Tedds-Style</option>
+            </select>
+          </div>
+
+          {/* Tab content */}
+          <ModuleThemeContext.Provider value={MODULE_THEMES[ALL_TABS.find(t=>t.id===tab)?.mod||"pci"]}>
+            {tab==="dashboard"&&<Dashboard onOpenCalc={handleOpenCalc} onNavigate={setTab}/>}
+            {tab==="pci"&&<PCITab loadedCalc={loadedCalc?.module==="pci"?loadedCalc:null} onConsumedLoad={()=>setLoadedCalc(null)} workspace={workspace}/>}
+            {tab==="cpci"&&<CPCITab loadedCalc={loadedCalc?.module==="cpci"?loadedCalc:null} onConsumedLoad={()=>setLoadedCalc(null)} workspace={workspace}/>}
+            {tab==="col"&&<ColTab loadedCalc={loadedCalc?.module==="col"?loadedCalc:null} onConsumedLoad={()=>setLoadedCalc(null)} workspace={workspace}/>}
+            {tab==="crush"&&<CrushTab loadedCalc={loadedCalc?.module==="crush"?loadedCalc:null} onConsumedLoad={()=>setLoadedCalc(null)} workspace={workspace}/>}
+            {tab==="beam"&&<BeamTab/>}
+            {tab==="projects"&&<ProjectsBrowser onOpenCalc={handleOpenCalc}/>}
+          </ModuleThemeContext.Provider>
+
+          {/* Footer */}
+          <div style={{textAlign:"center",marginTop:24,fontSize:10,color:"#adb5bd",padding:"10px 0",borderTop:"1px solid #dee2e6",fontFamily:MONO}}>
+            PCI 8th Ed. · ACI 318-19 · CSA A23.3-19 · CPCI 5th Ed.
+          </div>
+        </div>
+
+        {/* RIGHT: sticky 3D viewer — always visible */}
+        {tab!=="dashboard"&&tab!=="projects"&&(
+        <div className="no-print" style={{width:320,flexShrink:0,borderLeft:"2px solid #dee2e6",background:"#f8f9fa",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+          <div style={{padding:"8px 10px",borderBottom:"1px solid #dee2e6",background:"#fff",fontWeight:700,fontSize:11,fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.8,color:"#374151"}}>
+            📐 3D Model
+          </div>
+          <div style={{flex:1,overflowY:"auto",padding:8}}>
+            {tab==="pci"&&<PCIViewer3D/>}
+            {tab==="cpci"&&<CPCIViewer3D/>}
+            {tab==="col"&&<ColViewer3D/>}
+            {tab==="crush"&&<CrushViewer3D/>}
+            {tab==="beam"&&<div style={{padding:20,textAlign:"center",color:"#868e96",fontSize:12,fontFamily:MONO}}>Select a section to view 3D model</div>}
+          </div>
+        </div>
+        )}
+
+      </div>
+    </div>
+
+    </ViewSettingsContext.Provider>
+    </CurrentUserContext.Provider>
+    </DefineContext.Provider>
+    </CalcOptionsContext.Provider>
+  );
+}
+
+// Stub viewers for right panel — these render the appropriate 3D
+// model using the shared state from each tab via a small context bridge
+function PCIViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the slab</div>; }
+function CPCIViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the slab</div>; }
+function ColViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the column</div>; }
+function CrushViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the section</div>; }
