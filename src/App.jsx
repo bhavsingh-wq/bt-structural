@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback, createContext, useContext } from "react";
+import { useState, useMemo, useEffect, createContext, useContext } from "react";
 import { supabase } from "./supabaseClient";
 import { Viewer3D } from "./Viewer3D";
 import { buildColumnScene, buildHollowcoreScene } from "./models3d";
@@ -2366,11 +2366,6 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
       defaultProject={activeCalc?.project_name || workspace?.project} defaultPart={activeCalc?.part_name || workspace?.part}/>
     <LiveStatusBanner ok={r.allOk} util={r.flexUtil} label="Flexural Utilization (Mu / ΦMn)"/>
 
-    {/* ── Two-column sticky layout ── */}
-    <div style={{display:"flex", gap:16, alignItems:"flex-start"}}>
-
-      {/* LEFT: scrollable inputs + outputs */}
-      <div style={{flex:1, minWidth:0}}>
 
     <InputsBlock><>
     <Card title="Slab Properties">
@@ -2635,16 +2630,12 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
 // COLUMN TAB
 // ═════════════════════════════════════════
 function ColTab({loadedCalc, onConsumedLoad, workspace}){
-  const [b,setB]=useState(12);
-  const [h,setH]=useState(20);
+  const [b,setB]=useState(12),[h,setH]=useState(20);
   const [colHeight,setColHeight]=useState(120); // column height in inches (default 10 ft)
-  const [fc,setFc]=useState(4);
-  const [cov,setCov]=useState(1.5);
+  const [fc,setFc]=useState(4),[cov,setCov]=useState(1.5);
   const fy=60,Es=29000;
-  const [bBar,setBBar]=useState("#9");
-  const [bQ,setBQ]=useState(2);
-  const [tBar,setTBar]=useState("#9");
-  const [tQ,setTQ]=useState(2);
+  const [bBar,setBBar]=useState("#9"),[bQ,setBQ]=useState(2);
+  const [tBar,setTBar]=useState("#9"),[tQ,setTQ]=useState(2);
   const [xBar,setXBar]=useState("#4");
   const [Pu,setPu]=useState(400);
   const [Mu,setMu]=useState(80);
@@ -2939,17 +2930,10 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
 // ═════════════════════════════════════════
 function CPCITab({loadedCalc, onConsumedLoad, workspace}){
   const [sec,setSec]=useState("08H");
-  const [cover,setCover]=useState(38);
-  const [stH,setStH]=useState(45);
-  const [fc,setFc]=useState(60);
-  const [fci,setFci]=useState(28);
-  const [ag,setAg]=useState(20);
-  const [nH,setNH]=useState(5);
-  const [nS,setNS]=useState(0);
-  const [spanM,setSpanM]=useState(6);
-  const [sdl,setSdl]=useState(0);
-  const [ll,setLl]=useState(0);
-  const [sl,setSl]=useState(0);
+  const [cover,setCover]=useState(38),[stH,setStH]=useState(45);
+  const [fc,setFc]=useState(60),[fci,setFci]=useState(28),[ag,setAg]=useState(20);
+  const [nH,setNH]=useState(5),[nS,setNS]=useState(0);
+  const [spanM,setSpanM]=useState(6),[sdl,setSdl]=useState(0),[ll,setLl]=useState(0),[sl,setSl]=useState(0);
   const [chartType,setChartType]=useState("stress");
 
   // Save/load wiring
