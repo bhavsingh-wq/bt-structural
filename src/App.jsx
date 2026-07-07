@@ -17,7 +17,7 @@ import { DefineDialogsController, DefineContext,
          DEFAULT_CONCRETE, DEFAULT_BEAM, DEFAULT_CIP, DEFAULT_REBAR,
          DEFAULT_PRESTRESS, DEFAULT_SHEAR, DEFAULT_DESIGN_PARAMS } from "./DefineDialogs";
 
-// ── Shared project storage: data access helpers ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ Shared project storage: data access helpers Ã¢â€â‚¬Ã¢â€â‚¬
 async function fetchAllCalcs(){
   const { data, error } = await supabase
     .from("saved_calcs")
@@ -57,7 +57,7 @@ async function deleteCalc(id){
   return { ok:true };
 }
 
-// ── View settings context: controls whether formulas, graphics, inputs, outputs show ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ View settings context: controls whether formulas, graphics, inputs, outputs show Ã¢â€â‚¬Ã¢â€â‚¬
 const ViewSettingsContext = createContext({
   showSteps: true,
   showGraphics: true,
@@ -67,7 +67,7 @@ const ViewSettingsContext = createContext({
 });
 const useViewSettings = () => useContext(ViewSettingsContext);
 
-// ── Per-module color identity: PCI=blue, CPCI=purple, Column=green, Crush=orange ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ Per-module color identity: PCI=blue, CPCI=purple, Column=green, Crush=orange Ã¢â€â‚¬Ã¢â€â‚¬
 const MODULE_THEMES = {
   pci:   { name:"pci",   accent:"#2563eb", accentDark:"#1d4ed8", soft:"#eff6ff", softBorder:"#bfdbfe", text:"#1e3a8a" },
   cpci:  { name:"cpci",  accent:"#7c3aed", accentDark:"#6d28d9", soft:"#f5f3ff", softBorder:"#ddd6fe", text:"#4c1d95" },
@@ -78,9 +78,9 @@ const MODULE_THEMES = {
 const ModuleThemeContext = createContext(MODULE_THEMES.pci);
 const useModuleTheme = () => useContext(ModuleThemeContext);
 
-// ── Employee credentials + roles ──────────────────────────────
-// role: "admin"  → sees all projects, can manage access
-//       "user"   → sees only their own projects
+// Ã¢â€â‚¬Ã¢â€â‚¬ Employee credentials + roles Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// role: "admin"  Ã¢â€ â€™ sees all projects, can manage access
+//       "user"   Ã¢â€ â€™ sees only their own projects
 const EMPLOYEES = {
   "admin":     { pass: "admin123",   name: "Administrator",      role: "admin" },
   "bhavjeet":  { pass: "bt2026",     name: "Bhavjeet Singh Hora",role: "admin" },
@@ -90,13 +90,13 @@ const EMPLOYEES = {
   "ana.almarales": { pass: "bt2026", name: "Ana Almarales",       role: "user"  },
 };
 
-// ── Role helpers ──────────────────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Role helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 // Check if a user object has admin access.
 // Checks both the hardcoded EMPLOYEES role AND the runtime Supabase
 // user_roles table (so admins can grant/revoke access at runtime).
 const isAdmin = (user) => user?.role === "admin" || user?.runtimeAdmin === true;
 
-// ── Runtime role overrides (persisted in Supabase user_roles table) ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ Runtime role overrides (persisted in Supabase user_roles table) Ã¢â€â‚¬Ã¢â€â‚¬
 // Run this SQL once in Supabase SQL Editor to create the table:
 //   CREATE TABLE IF NOT EXISTS user_roles (
 //     user_id TEXT PRIMARY KEY,
@@ -129,7 +129,7 @@ async function fetchAllUserRoles() {
   } catch { return []; }
 }
 
-// ── Role-aware data fetching ──────────────────────────────────
+// Ã¢â€â‚¬Ã¢â€â‚¬ Role-aware data fetching Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 // Admins get all calcs; regular users get only their own.
 async function fetchCalcsForUser(user) {
   if (!user) return [];
@@ -153,7 +153,7 @@ async function fetchCalcsForUser(user) {
   }
 }
 
-// ── Data ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ Data Ã¢â€â‚¬Ã¢â€â‚¬
 const PCI_SLABS = {
   "HC8 (NEW)":{h:8,A:216.5,Ix:1673,yb:4.5104,b:48,SW:56,bw:14.9,tf:1.38,cores:4,coreD:5.5},
   "HC8-1":{h:8,A:201.56,Ix:1614.79,yb:4.1992,b:48,SW:52,bw:11.4,tf:1.11,cores:4,coreD:5.5},
@@ -182,9 +182,9 @@ const REBAR={
   "#9":{d:1.128,A:1},"#10":{d:1.27,A:1.27},"#11":{d:1.41,A:1.56},
   "#14":{d:1.693,A:2.25},"#18":{d:2.257,A:4},
 };
-const fmt=(v,d=3)=>v==null||isNaN(v)?"—":Number(v).toFixed(d);
+const fmt=(v,d=3)=>v==null||isNaN(v)?"Ã¢â‚¬â€":Number(v).toFixed(d);
 
-// ── SVG GRAPHICS ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ SVG GRAPHICS Ã¢â€â‚¬Ã¢â€â‚¬
 function HollowcoreXSection({h,b,cores,coreD,nStrands,dp,yb,e,scale}){
   const sc=scale||7;
   const W=b*sc,H=h*sc,pad=46;
@@ -300,11 +300,11 @@ function ColumnXSection({b,h,nBot,nTop,cover,dTie,dBot,dTop}){
       {/* Legend */}
       <g transform={`translate(${ox}, ${oy+H+64})`}>
         <circle cx={6} cy={0} r={7} fill="#c0392b" stroke="#7f1d1d" strokeWidth={1.5}/>
-        <text x={20} y={5} fontSize={13} fill="#495057" fontWeight={600} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">Bottom: {nBot} × {botLabel}</text>
+        <text x={20} y={5} fontSize={13} fill="#495057" fontWeight={600} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">Bottom: {nBot} Ãƒâ€” {botLabel}</text>
       </g>
       <g transform={`translate(${ox}, ${oy+H+86})`}>
         <circle cx={6} cy={0} r={7} fill="#2980b9" stroke="#1a4971" strokeWidth={1.5}/>
-        <text x={20} y={5} fontSize={13} fill="#495057" fontWeight={600} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">Top: {nTop} × {topLabel}</text>
+        <text x={20} y={5} fontSize={13} fill="#495057" fontWeight={600} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">Top: {nTop} Ãƒâ€” {topLabel}</text>
       </g>
     </svg>
   );
@@ -334,9 +334,9 @@ function BearingDiagram({h,w,bw,b}){
   );
 }
 
-// ═══════════════════════════════════════════════════════
-// SCIENTIFIC CHARTS — reusable SVG primitives + specific charts
-// ═══════════════════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// SCIENTIFIC CHARTS Ã¢â‚¬â€ reusable SVG primitives + specific charts
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 const CHART_FONT = "'JetBrains Mono','Fira Code','Consolas',monospace";
 
 // Generic horizontal bar chart: bars=[{label,value,color}], all on one shared scale
@@ -458,31 +458,31 @@ function BeamDiagrams({span, w, Mmax, Vmax}){
   );
 }
 
-// Chart type picker — small pill-button row, used by every tab's chart section
-// ═══════════════════════════════════════════════════════════════
-// STATION RESULTS TABLE — Phase 3
+// Chart type picker Ã¢â‚¬â€ small pill-button row, used by every tab's chart section
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// STATION RESULTS TABLE Ã¢â‚¬â€ Phase 3
 // Mirrors ConCise Beam's station-by-station output table.
-// Shows M(x), V(x), top/bottom fiber stress, ΦMn(x), Vn(x),
+// Shows M(x), V(x), top/bottom fiber stress, ÃŽÂ¦Mn(x), Vn(x),
 // and deflection at each analysis station along the span,
 // with PASS/FAIL status per row per check.
-// ═══════════════════════════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 const STATION_MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
 
-// ═══════════════════════════════════════════════════════════════
-// CONSTRUCTION STAGES VIEW — Phase 5
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// CONSTRUCTION STAGES VIEW Ã¢â‚¬â€ Phase 5
 // Renders the 5-stage lifecycle analysis in a ConCise-style layout:
 // - Timeline bar showing stage progression with days
 // - Per-stage: loading description, stresses (top/bot at ends+midspan),
 //   camber/deflection, and PASS/FAIL checks
-// ═══════════════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════
-// VIBRATION PANEL — Phase 6 + Phase 8
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// VIBRATION PANEL Ã¢â‚¬â€ Phase 6 + Phase 8
 // Walking excitation, rhythmic load, and filled-core shear
-// ═══════════════════════════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity,
   slabWidth, setSlabWidth, fillCores, setFillCores, fillLen, setFillLen, stations }) {
   const MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
-  const fmt = (v, d=2) => (v==null||isNaN(v)) ? "—" : Number(v).toFixed(d);
+  const fmt = (v, d=2) => (v==null||isNaN(v)) ? "Ã¢â‚¬â€" : Number(v).toFixed(d);
   const iS = { padding:"4px 8px", border:"1.5px solid #e8a838", borderRadius:3, fontSize:11,
     fontFamily:MONO, background:"#fff8ef", boxSizing:"border-box" };
 
@@ -495,7 +495,7 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
       background:ok?"#f0fdf4":"#fef2f2", border:`1px solid ${ok?"#bbf7d0":"#fecaca"}` }}>
       <span style={{ color:ok?"#14532d":"#7f1d1d", fontWeight:600 }}>{label}</span>
       <span style={{ color:ok?"#166534":"#991b1b" }}>
-        {left} {unit} {ok?"≤":">"} {right} {unit}
+        {left} {unit} {ok?"Ã¢â€°Â¤":">"} {right} {unit}
         <span style={{ marginLeft:8, fontWeight:800, fontSize:10,
           background:ok?"#22c55e":"#ef4444", color:"#fff", padding:"1px 6px", borderRadius:3 }}>
           {ok?"PASS":"FAIL"}
@@ -524,7 +524,7 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
         <div>
           <div style={{ fontSize:9, color:"#6c757d", marginBottom:2, fontFamily:MONO }}>Rhythmic Activity (optional)</div>
           <select value={activity} onChange={e=>setActivity(e.target.value)} style={{ ...iS, width:180 }}>
-            <option value="">— Walking only —</option>
+            <option value="">Ã¢â‚¬â€ Walking only Ã¢â‚¬â€</option>
             {ActTypes.map(a=><option key={a} value={a}>{a}</option>)}
           </select>
         </div>
@@ -550,11 +550,11 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
       </div>
 
       {phase6 && (<>
-        {/* ── WALKING VIBRATION ── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ WALKING VIBRATION Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <div style={{ marginBottom:16 }}>
           <div style={{ fontSize:12, fontWeight:800, fontFamily:MONO, color:"#2563eb", marginBottom:8,
             borderBottom:"2px solid #2563eb", paddingBottom:4 }}>
-            WALKING VIBRATION ANALYSIS — {occupancy}
+            WALKING VIBRATION ANALYSIS Ã¢â‚¬â€ {occupancy}
           </div>
           <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:10 }}>
             <Stat label="Natural Frequency fn" value={fmt(phase6.fn,2)} unit="Hz"/>
@@ -562,7 +562,7 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
             <Stat label="Peak Accel ap/g" value={fmt(phase6.walking?.ap_pct,3)} unit="%g"/>
             <Stat label="Limit ap/g" value={fmt(phase6.walking?.a_limit_pct,1)} unit="%g"/>
             <Stat label="Effective Weight W" value={fmt(phase6.walking?.W_eff,1)} unit="kips"/>
-            <Stat label="Damping β" value={fmt((phase6.walking?.beta||0)*100,0)} unit="%"/>
+            <Stat label="Damping ÃŽÂ²" value={fmt((phase6.walking?.beta||0)*100,0)} unit="%"/>
           </div>
           <Check label="Natural frequency check" ok={phase6.walking?.freqOk}
             left={fmt(phase6.fn,2)} right={fmt(phase6.walking?.f_min,1)} unit="Hz"/>
@@ -574,7 +574,7 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
             <table style={{ borderCollapse:"collapse", width:"100%", fontSize:11 }}>
               <thead>
                 <tr style={{ background:"#eff6ff" }}>
-                  {["Harmonic","Freq Range (Hz)","DLF α","Resonant?","ap/g (%)"].map(h=>(
+                  {["Harmonic","Freq Range (Hz)","DLF ÃŽÂ±","Resonant?","ap/g (%)"].map(h=>(
                     <th key={h} style={{ padding:"4px 8px", border:"1px solid #dee2e6", fontWeight:700, fontFamily:MONO }}>{h}</th>
                   ))}
                 </tr>
@@ -583,10 +583,10 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
                 {(phase6.walking?.harmonicResults||[]).map((h,i)=>(
                   <tr key={i} style={{ background:h.resonant?"#fef3c7":"#fff" }}>
                     <td style={{ padding:"4px 8px", border:"1px solid #dee2e6", fontFamily:MONO, textAlign:"center" }}>{h.i}</td>
-                    <td style={{ padding:"4px 8px", border:"1px solid #dee2e6", fontFamily:MONO }}>{h.fi_range[0]}–{h.fi_range[1]}</td>
+                    <td style={{ padding:"4px 8px", border:"1px solid #dee2e6", fontFamily:MONO }}>{h.fi_range[0]}Ã¢â‚¬â€œ{h.fi_range[1]}</td>
                     <td style={{ padding:"4px 8px", border:"1px solid #dee2e6", fontFamily:MONO }}>{h.alpha}</td>
                     <td style={{ padding:"4px 8px", border:"1px solid #dee2e6", textAlign:"center", fontWeight:700,
-                      color:h.resonant?"#b45309":"#6c757d" }}>{h.resonant?"⚠ YES":"No"}</td>
+                      color:h.resonant?"#b45309":"#6c757d" }}>{h.resonant?"Ã¢Å¡Â  YES":"No"}</td>
                     <td style={{ padding:"4px 8px", border:"1px solid #dee2e6", fontFamily:MONO, textAlign:"right",
                       fontWeight:700 }}>{fmt(h.ap_g_pct,4)}</td>
                   </tr>
@@ -596,12 +596,12 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
           </div>
         </div>
 
-        {/* ── RHYTHMIC VIBRATION ── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ RHYTHMIC VIBRATION Ã¢â€â‚¬Ã¢â€â‚¬ */}
         {phase6.rhythmic && (
           <div style={{ marginBottom:16 }}>
             <div style={{ fontSize:12, fontWeight:800, fontFamily:MONO, color:"#7c3aed", marginBottom:8,
               borderBottom:"2px solid #7c3aed", paddingBottom:4 }}>
-              RHYTHMIC VIBRATION — {activity}
+              RHYTHMIC VIBRATION Ã¢â‚¬â€ {activity}
             </div>
             <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:10 }}>
               <Stat label="Activity Frequency" value={fmt(phase6.rhythmic.act?.f_act,2)} unit="Hz"/>
@@ -617,7 +617,7 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
           </div>
         )}
 
-        {/* ── FILLED CORE SHEAR ── */}
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ FILLED CORE SHEAR Ã¢â€â‚¬Ã¢â€â‚¬ */}
         {fillCores && phase6.shearAtD && (
           <div style={{ marginBottom:16 }}>
             <div style={{ fontSize:12, fontWeight:800, fontFamily:MONO, color:"#ea580c", marginBottom:8,
@@ -634,7 +634,7 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
               <Stat label="fpc" value={fmt(phase6.shearAtD.fpc,4)} unit="ksi"/>
               <Stat label="Vcw (filled)" value={fmt(phase6.shearAtD.Vcw,2)} unit="kips"/>
               <Stat label="Vc (grout fill)" value={fmt(phase6.shearAtD.VcFill,2)} unit="kips"/>
-              <Stat label="ΦVc total" value={fmt(phase6.shearAtD.phiVc,2)} unit="kips"/>
+              <Stat label="ÃŽÂ¦Vc total" value={fmt(phase6.shearAtD.phiVc,2)} unit="kips"/>
             </div>
 
             {/* Shear envelope table (every 4th station) */}
@@ -643,7 +643,7 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
                 <table style={{ borderCollapse:"collapse", fontSize:10, fontFamily:MONO }}>
                   <thead>
                     <tr style={{ background:"#fff7ed" }}>
-                      {["x (ft)","Zone","bw_eff (in)","Vcw (kip)","VcFill (kip)","ΦVc (kip)"].map(h=>(
+                      {["x (ft)","Zone","bw_eff (in)","Vcw (kip)","VcFill (kip)","ÃŽÂ¦Vc (kip)"].map(h=>(
                         <th key={h} style={{ padding:"3px 8px", border:"1px solid #dee2e6", fontWeight:700 }}>{h}</th>
                       ))}
                     </tr>
@@ -673,21 +673,21 @@ function VibrationPanel({ phase6, occupancy, setOccupancy, activity, setActivity
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-// LATERAL STABILITY PANEL — Phase 7
-// PCI §8.3 Mast Method: FS against cracking + rollover during lift
-// ═══════════════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════
-// MOVING LOAD PANEL — Phase 9
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// LATERAL STABILITY PANEL Ã¢â‚¬â€ Phase 7
+// PCI Ã‚Â§8.3 Mast Method: FS against cracking + rollover during lift
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// MOVING LOAD PANEL Ã¢â‚¬â€ Phase 9
 // Vehicle selection, axle editor, M/V envelope diagram, results
-// ═══════════════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════
-// TRANSFORMED SECTION PANEL — Phase 10a
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// TRANSFORMED SECTION PANEL Ã¢â‚¬â€ Phase 10a
 // Shows gross vs net vs transformed section properties side by side
-// ═══════════════════════════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 function TransformedSectionPanel({ data, g1Flag }) {
   const MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
-  const f = (v,d=3) => (v==null||isNaN(v)) ? "—" : Number(v).toFixed(d);
+  const f = (v,d=3) => (v==null||isNaN(v)) ? "Ã¢â‚¬â€" : Number(v).toFixed(d);
   const { gross, net, transformed } = data;
 
   const Row = ({ label, g, n, t, unit="" }) => (
@@ -699,7 +699,7 @@ function TransformedSectionPanel({ data, g1Flag }) {
         background:"#eff6ff", fontWeight:700 }}>{f(t)} {unit}</td>
       <td style={{ padding:"5px 10px", border:"1px solid #dee2e6", textAlign:"right", fontFamily:MONO, fontSize:10,
         color: Math.abs(t-g)/Math.max(Math.abs(g),0.001)*100 > 1 ? "#dc2626" : "#868e96" }}>
-        {g!==0 ? `${((t-g)/Math.abs(g)*100).toFixed(2)}%` : "—"}
+        {g!==0 ? `${((t-g)/Math.abs(g)*100).toFixed(2)}%` : "Ã¢â‚¬â€"}
       </td>
     </tr>
   );
@@ -709,12 +709,12 @@ function TransformedSectionPanel({ data, g1Flag }) {
       <div style={{ marginBottom:10, padding:"8px 12px", background: g1Flag?"#f0fdf4":"#fff7ed",
         border:`1px solid ${g1Flag?"#bbf7d0":"#fed7aa"}`, borderRadius:6, fontSize:11 }}>
         <b>G1 Flag:</b> {g1Flag
-          ? "✅ ON — Transformed section used in stress calculations (matches ConCise default)"
-          : "⚠️ OFF — Gross section used. Enable G1 in Options → Calculation Options → General"}
+          ? "Ã¢Å“â€¦ ON Ã¢â‚¬â€ Transformed section used in stress calculations (matches ConCise default)"
+          : "Ã¢Å¡Â Ã¯Â¸Â OFF Ã¢â‚¬â€ Gross section used. Enable G1 in Options Ã¢â€ â€™ Calculation Options Ã¢â€ â€™ General"}
       </div>
 
       <div style={{ marginBottom:8, fontSize:12, color:"#495057", lineHeight:1.6 }}>
-        <b>np = Eps/Ec = </b>{f(gross.np,2)} (prestress modular ratio) &nbsp;·&nbsp;
+        <b>np = Eps/Ec = </b>{f(gross.np,2)} (prestress modular ratio) &nbsp;Ã‚Â·&nbsp;
         <b>ns = Es/Ec = </b>{f(gross.ns,2)} (mild steel modular ratio)
       </div>
 
@@ -726,16 +726,16 @@ function TransformedSectionPanel({ data, g1Flag }) {
               <th style={{ padding:"6px 10px", border:"1px solid #dee2e6", textAlign:"right", fontFamily:MONO }}>Gross</th>
               <th style={{ padding:"6px 10px", border:"1px solid #dee2e6", textAlign:"right", fontFamily:MONO }}>Net</th>
               <th style={{ padding:"6px 10px", border:"1px solid #dee2e6", textAlign:"right", fontFamily:MONO, background:"#eff6ff" }}>Transformed</th>
-              <th style={{ padding:"6px 10px", border:"1px solid #dee2e6", textAlign:"right", fontFamily:MONO, fontSize:10 }}>Δ (T vs G)</th>
+              <th style={{ padding:"6px 10px", border:"1px solid #dee2e6", textAlign:"right", fontFamily:MONO, fontSize:10 }}>ÃŽâ€ (T vs G)</th>
             </tr>
           </thead>
           <tbody>
-            <Row label="A (in²)"   g={gross.A}  n={net.A}  t={transformed.A}/>
-            <Row label="Ix (in⁴)"  g={gross.Ix} n={net.Ix} t={transformed.Ix}/>
+            <Row label="A (inÃ‚Â²)"   g={gross.A}  n={net.A}  t={transformed.A}/>
+            <Row label="Ix (inÃ¢ÂÂ´)"  g={gross.Ix} n={net.Ix} t={transformed.Ix}/>
             <Row label="yb (in)"   g={gross.yb} n={net.yb} t={transformed.yb}/>
             <Row label="yt (in)"   g={gross.yt} n={net.yt} t={transformed.yt}/>
-            <Row label="Sb (in³)"  g={gross.Sb} n={net.Sb} t={transformed.Sb}/>
-            <Row label="St (in³)"  g={gross.St} n={net.St} t={transformed.St}/>
+            <Row label="Sb (inÃ‚Â³)"  g={gross.Sb} n={net.Sb} t={transformed.Sb}/>
+            <Row label="St (inÃ‚Â³)"  g={gross.St} n={net.St} t={transformed.St}/>
             <Row label="e_ps (in)" g={gross.e}  n={net.e}  t={transformed.e}/>
           </tbody>
         </table>
@@ -743,27 +743,27 @@ function TransformedSectionPanel({ data, g1Flag }) {
 
       <div style={{ marginTop:10, padding:"8px 12px", background:"#f8f9fa", border:"1px solid #dee2e6", borderRadius:4, fontSize:11 }}>
         <b>Steel contributions to transformed section:</b>&nbsp;
-        (np−1)×Aps = <b>{f(transformed.deltaNp,2)} × {f(transformed.A_steel_ps/transformed.deltaNp,4)} = {f(transformed.A_steel_ps,4)} in²</b>
+        (npÃ¢Ë†â€™1)Ãƒâ€”Aps = <b>{f(transformed.deltaNp,2)} Ãƒâ€” {f(transformed.A_steel_ps/transformed.deltaNp,4)} = {f(transformed.A_steel_ps,4)} inÃ‚Â²</b>
         {transformed.A_steel_s > 0 && <>
-          &nbsp;·&nbsp; (ns−1)×As = <b>{f(transformed.A_steel_s,4)} in²</b>
+          &nbsp;Ã‚Â·&nbsp; (nsÃ¢Ë†â€™1)Ãƒâ€”As = <b>{f(transformed.A_steel_s,4)} inÃ‚Â²</b>
         </>}
       </div>
 
       <div style={{ marginTop:8, fontSize:10, color:"#6c757d", fontFamily:MONO }}>
-        Ref: PCI Design Handbook 8th Ed. §4.2.1 · ACI 318-19 R24.5.2 · ConCise Calculation Option G1
+        Ref: PCI Design Handbook 8th Ed. Ã‚Â§4.2.1 Ã‚Â· ACI 318-19 R24.5.2 Ã‚Â· ConCise Calculation Option G1
       </div>
     </div>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-// TORSION PANEL — Phase 10b
-// Full ACI 318-19 §22.7 torsion design: Tcr, threshold, stirrups, Al
-// ═══════════════════════════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+// TORSION PANEL Ã¢â‚¬â€ Phase 10b
+// Full ACI 318-19 Ã‚Â§22.7 torsion design: Tcr, threshold, stirrups, Al
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 function TorsionPanel({ phase10b, Tu_kft, setTu_kft, torsionAt, setTorsionAt,
     torsionLegs, setTorsionLegs, torsionSpacing, setTorsionSpacing }) {
   const MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
-  const f = (v,d=3) => (v==null||isNaN(v)||!isFinite(v)) ? "—" : Number(v).toFixed(d);
+  const f = (v,d=3) => (v==null||isNaN(v)||!isFinite(v)) ? "Ã¢â‚¬â€" : Number(v).toFixed(d);
   const iS = { padding:"4px 8px", border:"1.5px solid #e8a838", borderRadius:3,
     fontSize:11, fontFamily:MONO, background:"#fff8ef" };
 
@@ -776,7 +776,7 @@ function TorsionPanel({ phase10b, Tu_kft, setTu_kft, torsionAt, setTorsionAt,
         {note&&<div style={{ fontSize:9, color:"#868e96", marginTop:2 }}>{note}</div>}
       </div>
       <span style={{ color:ok?"#166534":"#991b1b" }}>
-        {f(val,3)} {unit} {ok?"≤":">"} {f(limit,3)} {unit}
+        {f(val,3)} {unit} {ok?"Ã¢â€°Â¤":">"} {f(limit,3)} {unit}
         <span style={{ marginLeft:8, fontWeight:800, fontSize:10,
           background:ok?"#22c55e":"#ef4444", color:"#fff", padding:"1px 6px", borderRadius:3 }}>
           {ok?"PASS":"FAIL"}
@@ -799,7 +799,7 @@ function TorsionPanel({ phase10b, Tu_kft, setTu_kft, torsionAt, setTorsionAt,
       <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginBottom:12, padding:"10px 12px",
         background:"#f8f9fa", border:"1px solid #dee2e6", borderRadius:6 }}>
         <div>
-          <div style={{ fontSize:9, color:"#6c757d", marginBottom:2, fontFamily:MONO }}>Factored Torsion Tᵤ</div>
+          <div style={{ fontSize:9, color:"#6c757d", marginBottom:2, fontFamily:MONO }}>Factored Torsion TÃ¡ÂµÂ¤</div>
           <div style={{ display:"flex", alignItems:"center", gap:4 }}>
             <input type="number" value={Tu_kft} step={0.5} min={0}
               onChange={e=>setTu_kft(Number(e.target.value))} style={{ ...iS, width:80 }}/>
@@ -811,7 +811,7 @@ function TorsionPanel({ phase10b, Tu_kft, setTu_kft, torsionAt, setTorsionAt,
           <div style={{ display:"flex", alignItems:"center", gap:4 }}>
             <input type="number" value={torsionAt} step={0.01} min={0}
               onChange={e=>setTorsionAt(Number(e.target.value))} style={{ ...iS, width:70 }}/>
-            <span style={{ fontSize:10, color:"#868e96" }}>in²</span>
+            <span style={{ fontSize:10, color:"#868e96" }}>inÃ‚Â²</span>
           </div>
         </div>
         <div>
@@ -838,18 +838,18 @@ function TorsionPanel({ phase10b, Tu_kft, setTu_kft, torsionAt, setTorsionAt,
           background:phase10b.neglect?"#f0fdf4":"#fff7ed",
           border:`1px solid ${phase10b.neglect?"#bbf7d0":"#fed7aa"}`,
           borderRadius:6, fontSize:12 }}>
-          <b>{phase10b.neglect ? "✅ Torsion Neglected" : "⚠️ Torsion Design Required"}</b>
+          <b>{phase10b.neglect ? "Ã¢Å“â€¦ Torsion Neglected" : "Ã¢Å¡Â Ã¯Â¸Â Torsion Design Required"}</b>
           <div style={{ fontSize:11, marginTop:4, color:"#495057" }}>{phase10b.neglectReason}</div>
         </div>
 
         {/* Key values */}
         <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:12 }}>
-          <Stat label="Tᵤ (factored)" value={f(phase10b.Tu_kft,2)} unit="k-ft"/>
-          <Stat label="Tth (threshold ΦTcr/4)" value={f(phase10b.Tth_kft,3)} unit="k-ft"/>
+          <Stat label="TÃ¡ÂµÂ¤ (factored)" value={f(phase10b.Tu_kft,2)} unit="k-ft"/>
+          <Stat label="Tth (threshold ÃŽÂ¦Tcr/4)" value={f(phase10b.Tth_kft,3)} unit="k-ft"/>
           <Stat label="Tcr (cracking torque)" value={f(phase10b.Tcr_kft,3)} unit="k-ft"/>
-          <Stat label="Aoh" value={f(phase10b.Aoh,1)} unit="in²"/>
+          <Stat label="Aoh" value={f(phase10b.Aoh,1)} unit="inÃ‚Â²"/>
           <Stat label="poh" value={f(phase10b.poh,1)} unit="in"/>
-          <Stat label="Ao (eff.)" value={f(phase10b.Ao,1)} unit="in²"/>
+          <Stat label="Ao (eff.)" value={f(phase10b.Ao,1)} unit="inÃ‚Â²"/>
         </div>
 
         {/* PASS/FAIL checks */}
@@ -865,25 +865,25 @@ function TorsionPanel({ phase10b, Tu_kft, setTu_kft, torsionAt, setTorsionAt,
             REQUIRED TORSION REINFORCEMENT
           </div>
           <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:8 }}>
-            <Stat label="At/s required" value={f(phase10b.AtS_req,5)} unit="in²/in"/>
-            <Stat label="At/s minimum" value={f(phase10b.AtS_min,5)} unit="in²/in"/>
-            <Stat label="At/s design" value={f(phase10b.AtS_design,5)} unit="in²/in" highlight/>
-            <Stat label="Al required" value={f(phase10b.Al_req,4)} unit="in²" highlight/>
-            <Stat label="Al minimum" value={f(phase10b.Al_min,4)} unit="in²"/>
+            <Stat label="At/s required" value={f(phase10b.AtS_req,5)} unit="inÃ‚Â²/in"/>
+            <Stat label="At/s minimum" value={f(phase10b.AtS_min,5)} unit="inÃ‚Â²/in"/>
+            <Stat label="At/s design" value={f(phase10b.AtS_design,5)} unit="inÃ‚Â²/in" highlight/>
+            <Stat label="Al required" value={f(phase10b.Al_req,4)} unit="inÃ‚Â²" highlight/>
+            <Stat label="Al minimum" value={f(phase10b.Al_min,4)} unit="inÃ‚Â²"/>
           </div>
           <div style={{ padding:"8px 12px", background:"#f5f3ff", border:"1px solid #ddd6fe",
             borderRadius:6, fontSize:11, fontFamily:MONO }}>
-            <b>Design stirrups:</b> At/leg = {f(phase10b.AtS_design * torsionSpacing / torsionLegs,4)} in² per leg
+            <b>Design stirrups:</b> At/leg = {f(phase10b.AtS_design * torsionSpacing / torsionLegs,4)} inÃ‚Â² per leg
             at s = {torsionSpacing}" with {torsionLegs} legs
-            (At/s provided = {f(torsionAt * torsionLegs / torsionSpacing,5)} in²/in)
+            (At/s provided = {f(torsionAt * torsionLegs / torsionSpacing,5)} inÃ‚Â²/in)
             <br/>
-            <b>Longitudinal steel:</b> Distribute Al = {f(phase10b.Al_design,4)} in² around perimeter of stirrups
+            <b>Longitudinal steel:</b> Distribute Al = {f(phase10b.Al_design,4)} inÃ‚Â² around perimeter of stirrups
           </div>
         </>)}
 
         <div style={{ marginTop:10, fontSize:10, color:"#6c757d", fontFamily:MONO }}>
-          Ref: ACI 318-19 §22.7 · Space truss analogy · θ = 45° · φ = 0.75
-          · ConCise Define → Torsion Parameters
+          Ref: ACI 318-19 Ã‚Â§22.7 Ã‚Â· Space truss analogy Ã‚Â· ÃŽÂ¸ = 45Ã‚Â° Ã‚Â· Ãâ€  = 0.75
+          Ã‚Â· ConCise Define Ã¢â€ â€™ Torsion Parameters
         </div>
       </>)}
     </div>
@@ -893,7 +893,7 @@ function TorsionPanel({ phase10b, Tu_kft, setTu_kft, torsionAt, setTorsionAt,
 function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setGammaLL,
     customAxles, setCustomAxles, span, staticMmax, staticVmax }) {
   const MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
-  const f = (v,d=2) => (v==null||isNaN(v)) ? "—" : Number(v).toFixed(d);
+  const f = (v,d=2) => (v==null||isNaN(v)) ? "Ã¢â‚¬â€" : Number(v).toFixed(d);
   const iS = { padding:"4px 8px", border:"1.5px solid #e8a838", borderRadius:3,
     fontSize:11, fontFamily:MONO, background:"#fff8ef", boxSizing:"border-box" };
 
@@ -946,7 +946,7 @@ function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setG
           </div>
         </div>
         <div>
-          <div style={{ fontSize:9, color:"#6c757d", marginBottom:2, fontFamily:MONO }}>Live Load Factor γ_LL</div>
+          <div style={{ fontSize:9, color:"#6c757d", marginBottom:2, fontFamily:MONO }}>Live Load Factor ÃŽÂ³_LL</div>
           <div style={{ display:"flex", alignItems:"center", gap:4 }}>
             <input type="number" value={gammaLL} step={0.05} min={0} max={3}
               onChange={e=>setGammaLL(Number(e.target.value))} style={{ ...iS, width:70 }}/>
@@ -957,12 +957,12 @@ function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setG
       {/* Vehicle description */}
       <div style={{ fontSize:11, color:"#495057", marginBottom:10, padding:"6px 10px",
         background:"#f0f9ff", border:"1px solid #bae6fd", borderRadius:4 }}>
-        <b>{vehicle}</b> — {veh.description} &nbsp;·&nbsp; Code: <b>{veh.code}</b>
-        &nbsp;·&nbsp; IM = <b>{f(imVal,2)}</b>
-        {veh.lanekplf&&<>&nbsp;·&nbsp; Lane load: <b>{veh.lanekplf} kip/ft</b></>}
+        <b>{vehicle}</b> Ã¢â‚¬â€ {veh.description} &nbsp;Ã‚Â·&nbsp; Code: <b>{veh.code}</b>
+        &nbsp;Ã‚Â·&nbsp; IM = <b>{f(imVal,2)}</b>
+        {veh.lanekplf&&<>&nbsp;Ã‚Â·&nbsp; Lane load: <b>{veh.lanekplf} kip/ft</b></>}
       </div>
 
-      {/* Axle table — editable for Custom */}
+      {/* Axle table Ã¢â‚¬â€ editable for Custom */}
       <div style={{ marginBottom:10 }}>
         <div style={{ fontSize:11, fontWeight:700, fontFamily:MONO, marginBottom:6, color:"#374151" }}>
           AXLE CONFIGURATION
@@ -1000,7 +1000,7 @@ function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setG
                   <td style={{ padding:"4px 8px", border:"1px solid #dee2e6", textAlign:"center" }}>
                     <button onClick={()=>setCustomAxles(customAxles.filter((_,j)=>j!==i))}
                       style={{ padding:"2px 8px", border:"1px solid #fecaca", background:"#fef2f2",
-                        color:"#991b1b", borderRadius:3, cursor:"pointer", fontSize:10 }}>✕</button>
+                        color:"#991b1b", borderRadius:3, cursor:"pointer", fontSize:10 }}>Ã¢Å“â€¢</button>
                   </td>
                 )}
               </tr>
@@ -1023,12 +1023,12 @@ function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setG
         <svg viewBox={`0 0 ${svgW} ${svgH}`} style={{ width:"100%", maxWidth:svgW }}>
           <rect width={svgW} height={svgH} fill="#fff"/>
 
-          {/* ── Beam ── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ Beam Ã¢â€â‚¬Ã¢â€â‚¬ */}
           <rect x={padX} y={beamY} width={beamW} height={beamH} fill="#d1d5db" stroke="#374151" strokeWidth={1.5} rx={2}/>
           <polygon points={`${padX},${beamY+beamH} ${padX-8},${beamY+beamH+12} ${padX+8},${beamY+beamH+12}`} fill="#374151"/>
           <polygon points={`${padX+beamW},${beamY+beamH} ${padX+beamW-8},${beamY+beamH+12} ${padX+beamW+8},${beamY+beamH+12}`} fill="#374151"/>
 
-          {/* ── Axle loads at critical position ── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ Axle loads at critical position Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {axles.map((ax,i)=>{
             const aPos = critFront + ax.offset;
             if(aPos<0||aPos>span) return null;
@@ -1045,7 +1045,7 @@ function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setG
           {/* Span dimension */}
           <text x={padX+beamW/2} y={svgH-4} textAnchor="middle" fontSize={9} fill="#374151" fontFamily={MONO}>L = {span} ft</text>
 
-          {/* ── M envelope ── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ M envelope Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {env.length>0&&(<>
             <text x={padX} y={mY0-6} fontSize={9} fontWeight={700} fill="#2563eb" fontFamily={MONO}>M_max envelope (kip-ft)</text>
             <line x1={padX} y1={mY0+diagH/2} x2={padX+beamW} y2={mY0+diagH/2} stroke="#e5e7eb" strokeWidth={0.8}/>
@@ -1055,7 +1055,7 @@ function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setG
             <text x={padX-4} y={mY0+4} textAnchor="end" fontSize={8} fill="#2563eb" fontFamily={MONO}>{f(Mmax,1)}</text>
           </>)}
 
-          {/* ── V envelope ── */}
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ V envelope Ã¢â€â‚¬Ã¢â€â‚¬ */}
           {env.length>0&&(<>
             <text x={padX} y={vY0-6} fontSize={9} fontWeight={700} fill="#16a34a" fontFamily={MONO}>V_max envelope (kips)</text>
             <line x1={padX} y1={vY0+diagH/2} x2={padX+beamW} y2={vY0+diagH/2} stroke="#e5e7eb" strokeWidth={0.8}/>
@@ -1094,8 +1094,8 @@ function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setG
 
       {/* Code reference */}
       <div style={{ fontSize:10, color:"#6c757d", padding:"6px 10px", background:"#f8f9fa", borderRadius:4, fontFamily:MONO }}>
-        Method: Müller-Breslau influence lines — simply-supported beam · {veh.code}
-        &nbsp;·&nbsp; Combined: {f(gammaLL,2)}×M_LL + M_DL
+        Method: MÃƒÂ¼ller-Breslau influence lines Ã¢â‚¬â€ simply-supported beam Ã‚Â· {veh.code}
+        &nbsp;Ã‚Â·&nbsp; Combined: {f(gammaLL,2)}Ãƒâ€”M_LL + M_DL
       </div>
     </div>
   );
@@ -1103,7 +1103,7 @@ function MovingLoadPanel({ phase9, vehicle, setVehicle, IM, setIM, gammaLL, setG
 
 function LateralStabilityPanel({ phase7, liftPt, setLiftPt, yLift, setYLift, sweepIn, setSweepIn, span, sectionLabel }) {
   const MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
-  const f = (v,d=3) => (v==null||isNaN(v)||!isFinite(v)) ? "—" : Number(v).toFixed(d);
+  const f = (v,d=3) => (v==null||isNaN(v)||!isFinite(v)) ? "Ã¢â‚¬â€" : Number(v).toFixed(d);
   const iS = { padding:"4px 8px", border:"1.5px solid #e8a838", borderRadius:3,
     fontSize:11, fontFamily:MONO, background:"#fff8ef", boxSizing:"border-box" };
 
@@ -1113,7 +1113,7 @@ function LateralStabilityPanel({ phase7, liftPt, setLiftPt, yLift, setYLift, swe
       background:ok?"#f0fdf4":"#fef2f2", border:`1px solid ${ok?"#bbf7d0":"#fecaca"}` }}>
       <span style={{ color:ok?"#14532d":"#7f1d1d", fontWeight:600 }}>{label}</span>
       <span style={{ color:ok?"#166534":"#991b1b" }}>
-        {f(val,3)} {unit} {higherBetter?(ok?"≥":"<"):(ok?"≤":">")} {f(limit,3)} {unit}
+        {f(val,3)} {unit} {higherBetter?(ok?"Ã¢â€°Â¥":"<"):(ok?"Ã¢â€°Â¤":">")} {f(limit,3)} {unit}
         <span style={{ marginLeft:8, fontWeight:800, fontSize:10,
           background:ok?"#22c55e":"#ef4444", color:"#fff", padding:"1px 6px", borderRadius:3 }}>
           {ok?"PASS":"FAIL"}
@@ -1147,7 +1147,7 @@ function LateralStabilityPanel({ phase7, liftPt, setLiftPt, yLift, setYLift, swe
           <div style={{ display:"flex", alignItems:"center", gap:4 }}>
             <input type="number" value={liftPt} step={0.01} min={0.05} max={0.40}
               onChange={e=>setLiftPt(Number(e.target.value))} style={{ ...iS, width:70 }}/>
-            <span style={{ fontSize:10, color:"#868e96" }}>× L = {f(liftPt*span,1)} ft</span>
+            <span style={{ fontSize:10, color:"#868e96" }}>Ãƒâ€” L = {f(liftPt*span,1)} ft</span>
           </div>
         </div>
         <div>
@@ -1194,19 +1194,19 @@ function LateralStabilityPanel({ phase7, liftPt, setLiftPt, yLift, setYLift, swe
       {result && (<>
         {/* Key parameters */}
         <div style={{ fontSize:11, color:"#495057", marginBottom:10, lineHeight:1.6 }}>
-          <b>Section:</b> {sectionLabel} &nbsp;·&nbsp;
-          <b>Span:</b> {span} ft ({f(span*12,0)} in) &nbsp;·&nbsp;
-          <b>Lift points at:</b> {f(result.a/12,1)} ft from each end &nbsp;·&nbsp;
+          <b>Section:</b> {sectionLabel} &nbsp;Ã‚Â·&nbsp;
+          <b>Span:</b> {span} ft ({f(span*12,0)} in) &nbsp;Ã‚Â·&nbsp;
+          <b>Lift points at:</b> {f(result.a/12,1)} ft from each end &nbsp;Ã‚Â·&nbsp;
           <b>Initial sweep z<sub>i</sub>:</b> {f(result.z_i,3)}"
         </div>
 
         <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:12 }}>
-          <Stat label="EIy (lateral)" value={f(result.EIy/1e6,1)} unit="×10⁶ k·in²"/>
+          <Stat label="EIy (lateral)" value={f(result.EIy/1e6,1)} unit="Ãƒâ€”10Ã¢ÂÂ¶ kÃ‚Â·inÃ‚Â²"/>
           <Stat label="Beam Weight W" value={f(result.W,2)} unit="kips"/>
           <Stat label="CG above roll axis yr" value={f(result.yr,2)} unit="in"/>
           <Stat label="Lateral stiffness Ky" value={f(result.Ky,4)} unit="k/in"/>
-          <Stat label="Roll stiffness Kθ" value={f(result.Ktheta,2)} unit="k·in/rad"/>
-          <Stat label="Equilibrium tilt θ_eq" value={f(result.theta_eq*180/Math.PI,3)} unit="°" highlight={result.theta_eq>0.1}/>
+          <Stat label="Roll stiffness KÃŽÂ¸" value={f(result.Ktheta,2)} unit="kÃ‚Â·in/rad"/>
+          <Stat label="Equilibrium tilt ÃŽÂ¸_eq" value={f(result.theta_eq*180/Math.PI,3)} unit="Ã‚Â°" highlight={result.theta_eq>0.1}/>
           <Stat label="M_lat (lateral)" value={f(result.M_lat/12,2)} unit="kip-ft"/>
           <Stat label="Mcr_lat (cracking)" value={f(result.Mcr_lat/12,2)} unit="kip-ft"/>
           <Stat label="FS cracking" value={f(result.FS_crack,2)} unit="" highlight={!result.fsOk_crack}/>
@@ -1220,7 +1220,7 @@ function LateralStabilityPanel({ phase7, liftPt, setLiftPt, yLift, setYLift, swe
           ))}
         </div>
 
-        {/* Stability diagram — SVG roll diagram */}
+        {/* Stability diagram Ã¢â‚¬â€ SVG roll diagram */}
         <div style={{ padding:12, background:"#f8f9fa", border:"1px solid #dee2e6", borderRadius:6, marginBottom:10 }}>
           <div style={{ fontSize:10, fontWeight:700, fontFamily:MONO, color:"#374151", marginBottom:8 }}>
             TILT STABILITY DIAGRAM
@@ -1243,7 +1243,7 @@ function LateralStabilityPanel({ phase7, liftPt, setLiftPt, yLift, setYLift, swe
                 <line x1={lx} y1={ly} x2={lx} y2={10} stroke="#2563eb" strokeWidth={2} strokeDasharray="4,3"/>
                 <circle cx={lx} cy={10} r={5} fill="#2563eb"/>
                 {/* Tilt angle arc */}
-                <text x={lx+10} y={20} fontSize={10} fill="#2563eb" fontFamily={MONO}>θ={f(theta*180/Math.PI,2)}°</text>
+                <text x={lx+10} y={20} fontSize={10} fill="#2563eb" fontFamily={MONO}>ÃŽÂ¸={f(theta*180/Math.PI,2)}Ã‚Â°</text>
                 {/* Weight vector */}
                 <line x1={cx} y1={cy} x2={cx} y2={cy+40} stroke="#dc2626" strokeWidth={2} markerEnd="url(#marrow)"/>
                 <text x={cx+5} y={cy+35} fontSize={9} fill="#dc2626" fontFamily={MONO}>W</text>
@@ -1265,7 +1265,7 @@ function LateralStabilityPanel({ phase7, liftPt, setLiftPt, yLift, setYLift, swe
 
         {/* Code reference */}
         <div style={{ fontSize:10, color:"#6c757d", padding:"6px 10px", background:"#f8f9fa", borderRadius:4, fontFamily:MONO }}>
-          Method: Mast (1989) / PCI Design Handbook 8th Ed. §8.3 &nbsp;·&nbsp;
+          Method: Mast (1989) / PCI Design Handbook 8th Ed. Ã‚Â§8.3 &nbsp;Ã‚Â·&nbsp;
           Required FS: {result.FS_crack_req} (cracking), {result.FS_failure_req} (failure)
         </div>
       </>)}
@@ -1279,9 +1279,9 @@ function ConstructionStagesView({ stages }) {
   if (!st) return null;
 
   const STAGE_COLORS = {1:"#7c3aed",2:"#2563eb",3:"#0891b2",4:"#ea580c",5:"#16a34a"};
-  const f4 = v => isNaN(v) || v == null ? "—" : v.toFixed(4);
-  const f2 = v => isNaN(v) || v == null ? "—" : v.toFixed(2);
-  const f3 = v => isNaN(v) || v == null ? "—" : v.toFixed(3);
+  const f4 = v => isNaN(v) || v == null ? "Ã¢â‚¬â€" : v.toFixed(4);
+  const f2 = v => isNaN(v) || v == null ? "Ã¢â‚¬â€" : v.toFixed(2);
+  const f3 = v => isNaN(v) || v == null ? "Ã¢â‚¬â€" : v.toFixed(3);
   const MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
 
   const allPass = stages.every(s => s.checks.every(c => c.ok));
@@ -1320,7 +1320,7 @@ function ConstructionStagesView({ stages }) {
       {/* Stage detail */}
       <div style={{ background:"#f8f9fa", border:`1px solid ${STAGE_COLORS[st.id]}30`, borderLeft:`4px solid ${STAGE_COLORS[st.id]}`, borderRadius:4, padding:12, marginBottom:10 }}>
         <div style={{ fontSize:12, fontWeight:700, color:STAGE_COLORS[st.id], marginBottom:4, fontFamily:MONO }}>
-          STAGE {st.id}: {st.name.toUpperCase()}  ·  Day {st.day}
+          STAGE {st.id}: {st.name.toUpperCase()}  Ã‚Â·  Day {st.day}
         </div>
         <div style={{ fontSize:11, color:"#495057", marginBottom:8 }}>{st.description}</div>
 
@@ -1328,9 +1328,9 @@ function ConstructionStagesView({ stages }) {
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))", gap:6, marginBottom:10 }}>
           {[
             { label:"Pe at stage", value:`${f2(st.Pe)} kips` },
-            { label:"Moment @ midspan", value:st.M_mid!=null?`${f2(st.M_mid/12)} kip-ft`:"—" },
+            { label:"Moment @ midspan", value:st.M_mid!=null?`${f2(st.M_mid/12)} kip-ft`:"Ã¢â‚¬â€" },
             st.M_overhang!=null&&{ label:"M @ overhang/ends", value:`${f2(st.M_overhang/12)} kip-ft` },
-            st.dynFactor&&{ label:"Dynamic factor", value:`×${st.dynFactor}` },
+            st.dynFactor&&{ label:"Dynamic factor", value:`Ãƒâ€”${st.dynFactor}` },
             st.wCIP!=null&&st.wCIP>0&&{ label:"CIP pour load", value:`${f3(st.wCIP*1000)} plf/in` },
           ].filter(Boolean).map((item,i)=>(
             <div key={i} style={{ background:"#fff", border:"1px solid #dee2e6", borderRadius:3, padding:"6px 8px" }}>
@@ -1373,8 +1373,8 @@ function ConstructionStagesView({ stages }) {
             st.defl_cip!=null&&["CIP Deflection", st.defl_cip, "in"],
             st.defl_sdl!=null&&["SDL Deflection", st.defl_sdl, "in"],
             st.defl_ll!=null&&["LL Deflection",  st.defl_ll,  "in"],
-            ["Net Deflection", st.netDefl!=null?st.netDefl:st.netDefl_sus, "in (↑ = camber)"],
-            st.liveRatio&&["L/δ_LL", `L/${Math.round(st.liveRatio)}`, ""],
+            ["Net Deflection", st.netDefl!=null?st.netDefl:st.netDefl_sus, "in (Ã¢â€ â€˜ = camber)"],
+            st.liveRatio&&["L/ÃŽÂ´_LL", `L/${Math.round(st.liveRatio)}`, ""],
           ].filter(Boolean).map(([label,val,unit],i)=>(
             <div key={i} style={{ background:"#fff", border:"1px solid #dee2e6", borderRadius:3, padding:"5px 10px", minWidth:110 }}>
               <div style={{ fontSize:9, color:"#6c757d", fontFamily:MONO }}>{label}</div>
@@ -1406,8 +1406,8 @@ function ConstructionStagesView({ stages }) {
         {/* Final stage extra */}
         {st.id===5 && st.phiMn && (
           <div style={{ marginTop:8, padding:"6px 10px", background:"#fff", border:"1px solid #dee2e6", borderRadius:4, fontSize:11, fontFamily:MONO }}>
-            ΦMₙ = <b>{f2(st.phiMn)}</b> kip-ft &nbsp;·&nbsp;
-            Mᵤ = <b>{f2(st.Mu_ft)}</b> kip-ft &nbsp;·&nbsp;
+            ÃŽÂ¦MÃ¢â€šâ„¢ = <b>{f2(st.phiMn)}</b> kip-ft &nbsp;Ã‚Â·&nbsp;
+            MÃ¡ÂµÂ¤ = <b>{f2(st.Mu_ft)}</b> kip-ft &nbsp;Ã‚Â·&nbsp;
             Utilization = <b>{f2(st.Mu_ft/st.phiMn)}</b>
           </div>
         )}
@@ -1492,9 +1492,9 @@ function StationTable({ stations, span }) {
             <tr>
               <th style={thL}>x (ft)</th>
               {activeView === "moment" && (<>
-                <th style={th}>Mᵤ (kip-ft)</th>
-                <th style={th}>Vᵤ (kips)</th>
-                <th style={th}>Mₛᵥc (kip-ft)</th>
+                <th style={th}>MÃ¡ÂµÂ¤ (kip-ft)</th>
+                <th style={th}>VÃ¡ÂµÂ¤ (kips)</th>
+                <th style={th}>MÃ¢â€šâ€ºÃ¡ÂµÂ¥c (kip-ft)</th>
               </>)}
               {activeView === "stress" && (<>
                 <th style={th}>f_top (ksi)</th>
@@ -1504,24 +1504,24 @@ function StationTable({ stations, span }) {
                 <th style={th}>Status</th>
               </>)}
               {activeView === "flex" && (<>
-                <th style={th}>Mᵤ (kip-ft)</th>
-                <th style={th}>ΦMₙ (kip-ft)</th>
-                <th style={th}>Mᶜʳ (kip-ft)</th>
-                <th style={th}>Mᵤ/ΦMₙ</th>
+                <th style={th}>MÃ¡ÂµÂ¤ (kip-ft)</th>
+                <th style={th}>ÃŽÂ¦MÃ¢â€šâ„¢ (kip-ft)</th>
+                <th style={th}>MÃ¡Â¶Å“ÃŠÂ³ (kip-ft)</th>
+                <th style={th}>MÃ¡ÂµÂ¤/ÃŽÂ¦MÃ¢â€šâ„¢</th>
                 <th style={th}>Status</th>
               </>)}
               {activeView === "shear" && (<>
-                <th style={th}>|Vᵤ| (kips)</th>
-                <th style={th}>ΦVₙ (kips)</th>
-                <th style={th}>Vᵤ/ΦVₙ</th>
+                <th style={th}>|VÃ¡ÂµÂ¤| (kips)</th>
+                <th style={th}>ÃŽÂ¦VÃ¢â€šâ„¢ (kips)</th>
+                <th style={th}>VÃ¡ÂµÂ¤/ÃŽÂ¦VÃ¢â€šâ„¢</th>
                 <th style={th}>Status</th>
               </>)}
               {activeView === "deflect" && (<>
-                <th style={th}>δ @ Release (in)</th>
-                <th style={th}>δ @ Erection (in)</th>
-                <th style={th}>δ Final Sus. (in)</th>
-                <th style={th}>δ Final Total (in)</th>
-                <th style={th}>L/δ</th>
+                <th style={th}>ÃŽÂ´ @ Release (in)</th>
+                <th style={th}>ÃŽÂ´ @ Erection (in)</th>
+                <th style={th}>ÃŽÂ´ Final Sus. (in)</th>
+                <th style={th}>ÃŽÂ´ Final Total (in)</th>
+                <th style={th}>L/ÃŽÂ´</th>
               </>)}
             </tr>
           </thead>
@@ -1537,7 +1537,7 @@ function StationTable({ stations, span }) {
                 {activeView === "stress" && (<>
                   <td style={td(st.compTop_ok, true)}>{fmt(st.ftop, 4)}</td>
                   <td style={td(st.tensBot_ok, true)}>{fmt(st.fbot, 4)}</td>
-                  <td style={td(null, true)}>−0.424</td>
+                  <td style={td(null, true)}>Ã¢Ë†â€™0.424</td>
                   <td style={td(null, true)}>2.25</td>
                   <td style={{ ...td(st.stressOk, false), textAlign: "center" }}>{pass(st.stressOk)}</td>
                 </>)}
@@ -1559,7 +1559,7 @@ function StationTable({ stations, span }) {
                   <td style={td(null, true)}>{fmt(st.netE, 3)}</td>
                   <td style={td(null, true)}>{fmt(st.netFinalSus, 3)}</td>
                   <td style={td(null, true)}>{fmt(st.netF, 3)}</td>
-                  <td style={td(null, true)}>{st.Lratio > 9000 ? "—" : `L/${st.Lratio}`}</td>
+                  <td style={td(null, true)}>{st.Lratio > 9000 ? "Ã¢â‚¬â€" : `L/${st.Lratio}`}</td>
                 </>)}
               </tr>
             ))}
@@ -1569,10 +1569,10 @@ function StationTable({ stations, span }) {
 
       {/* Summary row */}
       <div style={{ marginTop: 8, padding: "6px 10px", background: "#f8f9fa", border: "1px solid #dee2e6", borderRadius: 4, fontSize: 10, fontFamily: STATION_MONO, color: "#495057" }}>
-        <b>Span {span} ft</b> · {stations.length} analysis stations ·
-        Mᵤ,max = <b>{fmt(Math.max(...stations.map(s=>s.Mu)), 2)} kip-ft</b> ·
-        |Vᵤ|,max = <b>{fmt(Math.max(...stations.map(s=>Math.abs(s.Vu))), 2)} kips</b> ·
-        δ_net,max = <b>{fmt(Math.max(...stations.map(s=>Math.abs(s.netF))), 3)} in</b>
+        <b>Span {span} ft</b> Ã‚Â· {stations.length} analysis stations Ã‚Â·
+        MÃ¡ÂµÂ¤,max = <b>{fmt(Math.max(...stations.map(s=>s.Mu)), 2)} kip-ft</b> Ã‚Â·
+        |VÃ¡ÂµÂ¤|,max = <b>{fmt(Math.max(...stations.map(s=>Math.abs(s.Vu))), 2)} kips</b> Ã‚Â·
+        ÃŽÂ´_net,max = <b>{fmt(Math.max(...stations.map(s=>Math.abs(s.netF))), 3)} in</b>
       </div>
     </div>
   );
@@ -1598,10 +1598,10 @@ function ChartPicker({options, value, onChange}){
 // e.g. <Sym base="E" sub="c"/> -> Ec with c rendered as a real subscript.
 // Used wherever a multi-letter subscript (no Unicode glyph available) is needed.
 const Sym=({base,sub,prime})=>(
-  <span style={{fontStyle:"italic"}}>{base}{prime&&"′"}{sub&&<sub style={{fontStyle:"italic",fontSize:"0.78em"}}>{sub}</sub>}</span>
+  <span style={{fontStyle:"italic"}}>{base}{prime&&"Ã¢â‚¬Â²"}{sub&&<sub style={{fontStyle:"italic",fontSize:"0.78em"}}>{sub}</sub>}</span>
 );
 
-// ── UI Components ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ UI Components Ã¢â€â‚¬Ã¢â€â‚¬
 const Badge=({ok,label})=>(
   <span style={{display:"inline-flex",alignItems:"center",gap:3,padding:"2px 10px",borderRadius:3,
     fontSize:11,fontWeight:700,fontFamily:"'JetBrains Mono','Fira Code','Consolas',monospace",
@@ -1656,7 +1656,7 @@ const Check=({label,actual,limit,unit,ok,tag})=>(
   </div>
 );
 
-// Formula with code ref on the right — hidden when "step-by-step" view is off
+// Formula with code ref on the right Ã¢â‚¬â€ hidden when "step-by-step" view is off
 const Eq=({tex,code})=>{
   const {showSteps}=useViewSettings();
   if(!showSteps) return null;
@@ -1674,12 +1674,12 @@ const Graphic=({children})=>{
   return children;
 };
 
-// ═══════════════════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 // TEDDS-STYLE REPORT COMPONENTS (print-only formal calc sheet)
 // Matches Tekla Tedds layout: calc ID, code basis, numbered design
 // section with italic note, bold plain-English section headings,
 // label/symbol-value two-column rows, and a shaded results table.
-// ═══════════════════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 const TEDDS_FONT = "Calibri,Arial,'Segoe UI',sans-serif";
 
 const TeddsDoc=({children})=>(
@@ -1794,7 +1794,7 @@ const LiveStatusBanner=({ok,util,label})=>{
       transition:"border-color 0.4s ease, background 0.4s ease",
     }}>
       <div style={{fontSize:13,fontWeight:800,fontFamily:"'JetBrains Mono','Fira Code','Consolas',monospace",color:ok?"#1e7e34":"#a52a1f",whiteSpace:"nowrap"}}>
-        {ok?"✓ DESIGN OK":"✗ CHECK FAILS"}
+        {ok?"Ã¢Å“â€œ DESIGN OK":"Ã¢Å“â€” CHECK FAILS"}
       </div>
       <div style={{flex:1}}>
         <div style={{fontSize:10,color:"#6c757d",marginBottom:3,fontFamily:"'JetBrains Mono','Fira Code','Consolas',monospace"}}>
@@ -1812,11 +1812,11 @@ const LiveStatusBanner=({ok,util,label})=>{
   );
 };
 
-// ── Current logged-in user, available to every tab for save attribution ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ Current logged-in user, available to every tab for save attribution Ã¢â€â‚¬Ã¢â€â‚¬
 const CurrentUserContext = createContext(null);
 const useCurrentUser = () => useContext(CurrentUserContext);
 
-// ── Modal for saving a calc into Project > Part > Calc Name ──
+// Ã¢â€â‚¬Ã¢â€â‚¬ Modal for saving a calc into Project > Part > Calc Name Ã¢â€â‚¬Ã¢â€â‚¬
 function SaveCalcModal({open, onClose, onSave, existingProjects, defaultProject, defaultPart}){
   const [projectName,setProjectName]=useState(defaultProject||"");
   const [partName,setPartName]=useState(defaultPart||"");
@@ -1847,13 +1847,13 @@ function SaveCalcModal({open, onClose, onSave, existingProjects, defaultProject,
     const ok = await onSave({projectName:projectName.trim(), partName:partName.trim(), calcName:calcName.trim()});
     setSaving(false);
     if(ok) onClose();
-    else setErr("Save failed — check your connection and try again.");
+    else setErr("Save failed Ã¢â‚¬â€ check your connection and try again.");
   };
 
   return(
     <div className="no-print" onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
       <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:22,width:"100%",maxWidth:400,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}>
-        <div style={{fontSize:14,fontWeight:800,marginBottom:14,fontFamily:"'JetBrains Mono','Fira Code','Consolas',monospace",textTransform:"uppercase"}}>💾 Save Calculation</div>
+        <div style={{fontSize:14,fontWeight:800,marginBottom:14,fontFamily:"'JetBrains Mono','Fira Code','Consolas',monospace",textTransform:"uppercase"}}>Ã°Å¸â€™Â¾ Save Calculation</div>
 
         <div style={{marginBottom:10}}>
           <label style={{fontSize:11,fontWeight:600,color:"#495057",display:"block",marginBottom:3}}>Project Folder</label>
@@ -1871,7 +1871,7 @@ function SaveCalcModal({open, onClose, onSave, existingProjects, defaultProject,
 
         <div style={{marginBottom:14}}>
           <label style={{fontSize:11,fontWeight:600,color:"#495057",display:"block",marginBottom:3}}>Calculation Name</label>
-          <input value={calcName} onChange={e=>setCalcName(e.target.value)} placeholder="e.g. HC10 Slab — Rev 2"
+          <input value={calcName} onChange={e=>setCalcName(e.target.value)} placeholder="e.g. HC10 Slab Ã¢â‚¬â€ Rev 2"
             style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box"}}/>
         </div>
 
@@ -1880,7 +1880,7 @@ function SaveCalcModal({open, onClose, onSave, existingProjects, defaultProject,
         <div style={{display:"flex",gap:8}}>
           <button onClick={onClose} style={{flex:1,padding:"9px",borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12,fontWeight:600}}>Cancel</button>
           <button onClick={submit} disabled={saving} style={{flex:1,padding:"9px",borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>
-            {saving?"Saving…":"Save"}
+            {saving?"SavingÃ¢â‚¬Â¦":"Save"}
           </button>
         </div>
       </div>
@@ -1888,9 +1888,9 @@ function SaveCalcModal({open, onClose, onSave, existingProjects, defaultProject,
   );
 }
 
-// ═════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 // PCI TAB
-// ═════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 function PCITab({loadedCalc, onConsumedLoad, workspace}){
   const [sec,setSec]=useState("PCI 8IN");
   // When the user edits h or b directly in the 3D view, we store overrides.
@@ -1914,25 +1914,25 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
   const [RH,setRH]=useState(70);
   const [chartType,setChartType]=useState("stress");
 
-  // ── Phase 4: Composite topping inputs ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 4: Composite topping inputs Ã¢â€â‚¬Ã¢â€â‚¬
   const [useComposite,setUseComposite]=useState(false);
   const [tc,setTc]=useState(2);          // topping thickness, in
-  const [fcTop,setFcTop]=useState(3);    // topping f′c, ksi
+  const [fcTop,setFcTop]=useState(3);    // topping fÃ¢â‚¬Â²c, ksi
   const [topSurface,setTopSurface]=useState("roughened"); // interface condition
 
-  // ── Phase 6+8: Vibration + filled core shear ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 6+8: Vibration + filled core shear Ã¢â€â‚¬Ã¢â€â‚¬
   const [occupancy,setOccupancy]=useState("Office / Residential");
   const [activity,setActivity]=useState("");          // empty = walking only
   const [slabWidth,setSlabWidth]=useState(8);         // ft, tributary for vibration
   const [fillCores,setFillCores]=useState(true);      // fill end cores
   const [fillLen,setFillLen]=useState(12);             // in, fill length from each end
 
-  // ── Phase 7: Lateral stability state ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 7: Lateral stability state Ã¢â€â‚¬Ã¢â€â‚¬
   const [liftPt,setLiftPt]=useState(0.10);            // fraction of span from end
   const [yLift,setYLift]=useState(0);                 // in above top of beam
   const [sweepIn,setSweepIn]=useState(null);           // override sweep (in), null = auto
 
-  // ── Phase 9: Moving loads state ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 9: Moving loads state Ã¢â€â‚¬Ã¢â€â‚¬
   const [mlVehicle,setMlVehicle]=useState("AASHTO HL-93 Truck");
   const [mlIM,setMlIM]=useState(null);                 // null = use vehicle default
   const [mlGammaLL,setMlGammaLL]=useState(1.75);       // AASHTO live load factor
@@ -1940,7 +1940,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     {P:20,offset:0},{P:20,offset:6}
   ]);
 
-  // ── Phase 10b: Torsion state ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 10b: Torsion state Ã¢â€â‚¬Ã¢â€â‚¬
   const [Tu_kft,setTu_kft]=useState(0);
   const [torsionAt,setTorsionAt]=useState(0.11);
   const [torsionLegs,setTorsionLegs]=useState(2);
@@ -1995,7 +1995,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     if(res.ok){
       setActiveCalc(res.row);
       fetchCalcsForUser(user).then(setAllCalcs);
-      setSaveMsg("Saved ✓");
+      setSaveMsg("Saved Ã¢Å“â€œ");
       setTimeout(()=>setSaveMsg(""),2500);
       return true;
     }
@@ -2006,7 +2006,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     if(!activeCalc) return;
     const res = await updateCalc(activeCalc.id, {inputs: currentInputs, reportText: null});
     if(res.ok){
-      setSaveMsg("Updated ✓");
+      setSaveMsg("Updated Ã¢Å“â€œ");
       setTimeout(()=>setSaveMsg(""),2500);
       fetchCalcsForUser(user).then(setAllCalcs);
     }
@@ -2096,13 +2096,13 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     const flexOk=phiMn1>Mu;
     const allOk=tensEndOk&&tensMidOk&&compEndOk&&compMidOk&&classU&&flexOk;
 
-    // ── Phase 3: station-by-station analysis (21 stations along span) ──
+    // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 3: station-by-station analysis (21 stations along span) Ã¢â€â‚¬Ã¢â€â‚¬
     const stationProps = {s,Aps,fpu,fpi,dp,e,Pe,As,fy,b1,
       Ec,Eci,Po,Mcr,bw:s.bw};
     const stationInputs = {fc,fci,span,sdl,ll,cover,nH,nS};
     const stations = runStationAnalysis(stationProps, stationInputs, 21);
 
-    // ── Phase 4: composite section, interface shear, crack width ──
+    // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 4: composite section, interface shear, crack width Ã¢â€â‚¬Ã¢â€â‚¬
     const M_DL_pre  = Mg;                         // kip-in, precast DL
     const M_SDL_kin = lpc*lpc/8*sdl/1000*s.b;     // kip-in, SDL on composite
     const M_LL_kin  = lpc*lpc/8*ll/1000*s.b;      // kip-in, LL on composite
@@ -2117,7 +2117,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
       surface: topSurface,
     });
 
-    // ── Phase 5: construction stages lifecycle ──
+    // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 5: construction stages lifecycle Ã¢â€â‚¬Ã¢â€â‚¬
     const wSDL_kin = sdl/1000 * s.b/12 / 12;    // kip/in
     const wLL_kin  = ll/1000  * s.b/12 / 12;
     const wCIP_kin = useComposite ? (tc/12) * (150/1000) * s.b/12 / 12 : 0;
@@ -2149,7 +2149,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
       stations, phase4, constructionStages};
   },[sec,cover,fc,fci,nH,nS,fpiR,nRe,reSz,span,lpc,sdl,ll,cT,RH,useComposite,tc,fcTop,topSurface,slabHOverride,slabBOverride,designParams]);
 
-  // ── Phase 10a: Transformed section properties ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 10a: Transformed section properties Ã¢â€â‚¬Ã¢â€â‚¬
   const {flags:calcFlags} = useCalcOptions();
   const phase10a = useMemo(()=>{
     if(!r) return null;
@@ -2161,7 +2161,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     );
   },[r?.s?.A,r?.s?.Ix,r?.s?.yb,r?.s?.h,r?.Aps,r?.dp,r?.Ec]);
 
-  // ── Phase 10b: Torsion design ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 10b: Torsion design Ã¢â€â‚¬Ã¢â€â‚¬
   const phase10b = useMemo(()=>{
     if(!r||Tu_kft===0) return null;
     return runTorsionDesign({
@@ -2174,7 +2174,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     });
   },[r?.Pe,r?.Aps,r?.dp,r?.Ay,fc,Tu_kft,torsionAt,torsionLegs,torsionSpacing]);
 
-  // ── Phase 6+8: vibration + filled-core shear (separate memo, lighter) ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 6+8: vibration + filled-core shear (separate memo, lighter) Ã¢â€â‚¬Ã¢â€â‚¬
   const phase6 = useMemo(()=>{
     if(!r) return null;
     const wSDL_kin = sdl/1000 * r.s.b/12 / 12;
@@ -2189,7 +2189,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     });
   },[r,fc,sdl,ll,span,occupancy,activity,slabWidth,fillCores,fillLen]);
 
-  // ── Phase 7: Lateral stability (separate memo) ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 7: Lateral stability (separate memo) Ã¢â€â‚¬Ã¢â€â‚¬
   const phase7 = useMemo(()=>{
     if(!r) return null;
     const Iy = computeIy(r.s);
@@ -2202,7 +2202,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     );
   },[r,fc,fci,span,liftPt,yLift,sweepIn]);
 
-  // ── Phase 9: Moving loads (separate memo) ──
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Phase 9: Moving loads (separate memo) Ã¢â€â‚¬Ã¢â€â‚¬
   const phase9 = useMemo(()=>{
     if(!span) return null;
     return runMovingLoad(mlVehicle, mlCustomAxles, span, mlIM||null, mlGammaLL);
@@ -2212,7 +2212,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
   if(reportStyle==="tedds"){
     return(
       <TeddsDoc>
-        <TeddsTitle calcId={`PCI Non-Composite Hollowcore Slab Design — ${sec}`} codeBasis="In accordance with ACI 318-19 and the PCI Design Handbook, 8th Edition" version="Calc version 1.0"/>
+        <TeddsTitle calcId={`PCI Non-Composite Hollowcore Slab Design Ã¢â‚¬â€ ${sec}`} codeBasis="In accordance with ACI 318-19 and the PCI Design Handbook, 8th Edition" version="Calc version 1.0"/>
         <TeddsSection number={1} note="Flexure, shear, transfer stress, and service stress design for simple-span hollowcore slab"/>
 
         <TeddsHeading>Member details</TeddsHeading>
@@ -2221,22 +2221,22 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
 
         <TeddsHeading>Section properties</TeddsHeading>
         <TeddsLine label="Slab depth" sym="h" val={r.s.h} unit="in" label2="Slab width" sym2="b" val2={r.s.b} unit2="in"/>
-        <TeddsLine label="Cross sectional area" sym="A" val={fmt(r.s.A,2)} unit="in²" label2="Web width" sym2="bw" val2={r.s.bw} unit2="in"/>
-        <TeddsLine label="Second moment of area" sym="Ix" val={fmt(r.s.Ix,1)} unit="in⁴" label2="Centroid from bottom" sym2="yb" val2={fmt(r.s.yb,3)} unit2="in"/>
-        <TeddsLine label="Section modulus (bottom)" sym="Sb" val={fmt(r.Sb,2)} unit="in³" label2="Section modulus (top)" sym2="St" val2={fmt(r.St,2)} unit2="in³"/>
+        <TeddsLine label="Cross sectional area" sym="A" val={fmt(r.s.A,2)} unit="inÃ‚Â²" label2="Web width" sym2="bw" val2={r.s.bw} unit2="in"/>
+        <TeddsLine label="Second moment of area" sym="Ix" val={fmt(r.s.Ix,1)} unit="inÃ¢ÂÂ´" label2="Centroid from bottom" sym2="yb" val2={fmt(r.s.yb,3)} unit2="in"/>
+        <TeddsLine label="Section modulus (bottom)" sym="Sb" val={fmt(r.Sb,2)} unit="inÃ‚Â³" label2="Section modulus (top)" sym2="St" val2={fmt(r.St,2)} unit2="inÃ‚Â³"/>
         <TeddsLine label="Self weight" sym="SW" val={r.s.SW} unit="psf"/>
 
         <Graphic><HollowcoreXSection h={r.s.h} b={r.s.b} cores={r.s.cores} coreD={r.s.coreD} nStrands={nH+nS} dp={r.dp} yb={r.s.yb} e={r.e} scale={7}/></Graphic>
 
         <TeddsHeading>Material properties</TeddsHeading>
-        <TeddsLine label="Concrete strength at 28 days" sym="f′c" val={fc} unit="ksi" label2="Concrete strength at release" sym2="f′ci" val2={fci} unit2="ksi"/>
-        <TeddsCalc sym="Ec" formula={`57√(${fc}×1000)`} result={fmt(r.Ec,0)} unit="ksi"/>
-        <TeddsCalc sym="Eci" formula={`57√(${fci}×1000)`} result={fmt(r.Eci,0)} unit="ksi"/>
-        <TeddsCalc sym="β1" formula={`0.85 − 0.05(${fc}−4)`} result={fmt(r.b1,3)}/>
+        <TeddsLine label="Concrete strength at 28 days" sym="fÃ¢â‚¬Â²c" val={fc} unit="ksi" label2="Concrete strength at release" sym2="fÃ¢â‚¬Â²ci" val2={fci} unit2="ksi"/>
+        <TeddsCalc sym="Ec" formula={`57Ã¢Ë†Å¡(${fc}Ãƒâ€”1000)`} result={fmt(r.Ec,0)} unit="ksi"/>
+        <TeddsCalc sym="Eci" formula={`57Ã¢Ë†Å¡(${fci}Ãƒâ€”1000)`} result={fmt(r.Eci,0)} unit="ksi"/>
+        <TeddsCalc sym="ÃŽÂ²1" formula={`0.85 Ã¢Ë†â€™ 0.05(${fc}Ã¢Ë†â€™4)`} result={fmt(r.b1,3)}/>
 
         <TeddsHeading>Prestressing steel</TeddsHeading>
         <TeddsLine label="Number of 1/2 in strands" sym="n0.5" val={nH} label2="Number of 5/8 in strands" sym2="n0.6" val2={nS}/>
-        <TeddsCalc sym="Aps" formula={`${nH}×0.153 + ${nS}×0.217`} result={fmt(r.Aps,4)} unit="in²"/>
+        <TeddsCalc sym="Aps" formula={`${nH}Ãƒâ€”0.153 + ${nS}Ãƒâ€”0.217`} result={fmt(r.Aps,4)} unit="inÃ‚Â²"/>
         <TeddsLine label="Strand depth" sym="dp" val={fmt(r.dp,2)} unit="in" label2="Strand eccentricity" sym2="e" val2={fmt(r.e,3)} unit2="in"/>
         <TeddsLine label="Initial prestress" sym="fpi" val={fmt(r.fpi,1)} unit="ksi"/>
 
@@ -2245,25 +2245,25 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
         <TeddsLine label="Live load" sym="LL" val={ll} unit="psf" label2="Total dead load" sym2="DL" val2={fmt(r.DL,1)} unit2="psf"/>
 
         <TeddsHeading>Transfer stress analysis</TeddsHeading>
-        <TeddsCalc sym="Po" formula={`${fmt(r.fpi,1)} × ${fmt(r.Aps,3)} × 0.95`} result={fmt(r.Po,2)} unit="kip"/>
+        <TeddsCalc sym="Po" formula={`${fmt(r.fpi,1)} Ãƒâ€” ${fmt(r.Aps,3)} Ãƒâ€” 0.95`} result={fmt(r.Po,2)} unit="kip"/>
         <TeddsLine label="Top fiber stress (prestress)" sym="ftop" val={fmt(r.tTop,4)} unit="ksi" label2="Bottom fiber stress (prestress)" sym2="fbot" val2={fmt(r.tBot,4)} unit2="ksi"/>
         <TeddsLine label="Net top stress at midspan" sym="ftop,m" val={fmt(r.nMtop,4)} unit="ksi" label2="Net bottom stress at midspan" sym2="fbot,m" val2={fmt(r.nMbot,4)} unit2="ksi"/>
 
         <TeddsHeading>Loss of prestress</TeddsHeading>
         <TeddsLine label="Elastic shortening" sym="ES" val={fmt(r.ES,3)} unit="ksi" label2="Creep of concrete" sym2="CR" val2={fmt(r.CR,3)} unit2="ksi"/>
         <TeddsLine label="Shrinkage" sym="SH" val={fmt(r.SHv,3)} unit="ksi" label2="Relaxation of steel" sym2="RE" val2={fmt(r.RE,3)} unit2="ksi"/>
-        <TeddsCalc sym="Total loss" formula="(ES+CR+SH+RE)/fpi × 100" result={fmt(r.totalLoss,2)} unit="%"/>
+        <TeddsCalc sym="Total loss" formula="(ES+CR+SH+RE)/fpi Ãƒâ€” 100" result={fmt(r.totalLoss,2)} unit="%"/>
 
         <TeddsHeading>Design flexural strength</TeddsHeading>
         <TeddsLine label="Stress in strand at nominal strength" sym="fps" val={fmt(r.fps1,2)} unit="ksi" label2="Depth of equivalent stress block" sym2="a" val2={fmt(r.a1,3)} unit2="in"/>
-        <TeddsCalc sym="ΦMn" formula={`0.9 × ${fmt(r.Aps,3)} × ${fmt(r.fps1,1)} × (${fmt(r.dp,2)} − ${fmt(r.a1,3)}/2) / 12`} result={fmt(r.phiMn1,2)} unit="kip-ft"/>
-        <TeddsCalc sym="Mu" formula="wu × (b/12) × l² / 8" result={fmt(r.Mu,2)} unit="kip-ft"/>
+        <TeddsCalc sym="ÃŽÂ¦Mn" formula={`0.9 Ãƒâ€” ${fmt(r.Aps,3)} Ãƒâ€” ${fmt(r.fps1,1)} Ãƒâ€” (${fmt(r.dp,2)} Ã¢Ë†â€™ ${fmt(r.a1,3)}/2) / 12`} result={fmt(r.phiMn1,2)} unit="kip-ft"/>
+        <TeddsCalc sym="Mu" formula="wu Ãƒâ€” (b/12) Ãƒâ€” lÃ‚Â² / 8" result={fmt(r.Mu,2)} unit="kip-ft"/>
 
         <TeddsHeading>Shear strength</TeddsHeading>
         <TeddsLine label="Factored shear force" sym="Vu" val={fmt(r.Vu2,3)} unit="kips" label2="Concrete shear strength" sym2="Vc" val2={fmt(r.VcS,3)} unit2="kips"/>
 
         <TeddsHeading>Camber and deflection</TeddsHeading>
-        <TeddsLine label="Final camber" sym="Δfinal" val={fmt(r.cF,4)} unit="in" label2="Net camber (less SDL)" sym2="Δnet" val2={fmt(r.netC,4)} unit2="in"/>
+        <TeddsLine label="Final camber" sym="ÃŽâ€final" val={fmt(r.cF,4)} unit="in" label2="Net camber (less SDL)" sym2="ÃŽâ€net" val2={fmt(r.netC,4)} unit2="in"/>
 
         <TeddsHeading>Results summary</TeddsHeading>
         <TeddsTable
@@ -2289,7 +2289,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
         <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,fontFamily:"Calibri,Arial,sans-serif",marginBottom:12}}>
           <thead>
             <tr style={{background:"#f0f0f0"}}>
-              {["x (ft)","Mᵤ (k-ft)","Vᵤ (kips)","f_top (ksi)","f_bot (ksi)","ΦMₙ (k-ft)","ΦVₙ (kips)","δ Final (in)","L/δ","Status"].map((h,i)=>(
+              {["x (ft)","MÃ¡ÂµÂ¤ (k-ft)","VÃ¡ÂµÂ¤ (kips)","f_top (ksi)","f_bot (ksi)","ÃŽÂ¦MÃ¢â€šâ„¢ (k-ft)","ÃŽÂ¦VÃ¢â€šâ„¢ (kips)","ÃŽÂ´ Final (in)","L/ÃŽÂ´","Status"].map((h,i)=>(
                 <th key={i} style={{borderTop:"1px solid #000",borderBottom:"1px solid #000",padding:"3px 5px",textAlign:i===0?"left":"right",fontWeight:700}}>{h}</th>
               ))}
             </tr>
@@ -2305,7 +2305,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
                 <td style={{padding:"2px 5px",borderBottom:"1px solid #e0e0e0",textAlign:"right"}}>{fmt(st.phiMn,2)}</td>
                 <td style={{padding:"2px 5px",borderBottom:"1px solid #e0e0e0",textAlign:"right"}}>{fmt(st.Vn,2)}</td>
                 <td style={{padding:"2px 5px",borderBottom:"1px solid #e0e0e0",textAlign:"right"}}>{fmt(st.netF,3)}</td>
-                <td style={{padding:"2px 5px",borderBottom:"1px solid #e0e0e0",textAlign:"right"}}>{st.Lratio>9000?"—":`L/${st.Lratio}`}</td>
+                <td style={{padding:"2px 5px",borderBottom:"1px solid #e0e0e0",textAlign:"right"}}>{st.Lratio>9000?"Ã¢â‚¬â€":`L/${st.Lratio}`}</td>
                 <td style={{padding:"2px 5px",borderBottom:"1px solid #e0e0e0",textAlign:"center",fontWeight:800,color:st.allOk?"#070":"#a00"}}>{st.allOk?"PASS":"FAIL"}</td>
               </tr>
             ))}
@@ -2318,7 +2318,7 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
         <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,fontFamily:"Calibri,Arial,sans-serif",marginBottom:12}}>
           <thead>
             <tr style={{background:"#f0f0f0"}}>
-              {["Stg","Name","Day","Pe (k)","f_top e","f_bot e","f_top m","f_bot m","δ cam","δ net","✓"].map((h,i)=>(
+              {["Stg","Name","Day","Pe (k)","f_top e","f_bot e","f_top m","f_bot m","ÃŽÂ´ cam","ÃŽÂ´ net","Ã¢Å“â€œ"].map((h,i)=>(
                 <th key={i} style={{border:"1px solid #000",padding:"3px 4px",textAlign:i<2?"left":"right",fontWeight:700,fontSize:9}}>{h}</th>
               ))}
             </tr>
@@ -2352,19 +2352,19 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
   return(<div>
     <div className="no-print" style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:12,padding:"8px 12px",background:"#f8f9fa",border:"1px solid #dee2e6",borderRadius:6}}>
       <div style={{fontSize:12,color:"#495057"}}>
-        {activeCalc ? <>📄 <b>{activeCalc.calc_name}</b> <span style={{color:"#868e96"}}>({activeCalc.project_name} / {activeCalc.part_name})</span></> : <span style={{color:"#868e96"}}>Not yet saved to a project</span>}
+        {activeCalc ? <>Ã°Å¸â€œâ€ž <b>{activeCalc.calc_name}</b> <span style={{color:"#868e96"}}>({activeCalc.project_name} / {activeCalc.part_name})</span></> : <span style={{color:"#868e96"}}>Not yet saved to a project</span>}
         {saveMsg && <span style={{marginLeft:10,color:"#1e7e34",fontWeight:700}}>{saveMsg}</span>}
       </div>
       <div style={{display:"flex",gap:6}}>
         {activeCalc && activeCalc.created_by_id===user?.id && (
-          <button onClick={doUpdate} style={{padding:"6px 12px",borderRadius:4,border:`1px solid ${theme.accent}`,background:theme.soft,color:theme.text,fontWeight:700,fontSize:11,cursor:"pointer"}}>↻ Update Saved File</button>
+          <button onClick={doUpdate} style={{padding:"6px 12px",borderRadius:4,border:`1px solid ${theme.accent}`,background:theme.soft,color:theme.text,fontWeight:700,fontSize:11,cursor:"pointer"}}>Ã¢â€ Â» Update Saved File</button>
         )}
-        <button onClick={()=>setSaveOpen(true)} style={{padding:"6px 12px",borderRadius:4,border:`2px solid ${theme.accentDark}`,background:theme.accentDark,color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer"}}>💾 Save As…</button>
+        <button onClick={()=>setSaveOpen(true)} style={{padding:"6px 12px",borderRadius:4,border:`2px solid ${theme.accentDark}`,background:theme.accentDark,color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer"}}>Ã°Å¸â€™Â¾ Save AsÃ¢â‚¬Â¦</button>
       </div>
     </div>
     <SaveCalcModal open={saveOpen} onClose={()=>setSaveOpen(false)} onSave={doSave} existingProjects={allCalcs}
       defaultProject={activeCalc?.project_name || workspace?.project} defaultPart={activeCalc?.part_name || workspace?.part}/>
-    <LiveStatusBanner ok={r.allOk} util={r.flexUtil} label="Flexural Utilization (Mu / ΦMn)"/>
+    <LiveStatusBanner ok={r.allOk} util={r.flexUtil} label="Flexural Utilization (Mu / ÃŽÂ¦Mn)"/>
 
 
     <InputsBlock><>
@@ -2372,12 +2372,12 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
       <R><OI label="Section" value={sec} onChange={handleSecChange} options={Object.keys(PCI_SLABS)} width={160}/></R>
       {(slabHOverride !== null || slabBOverride !== null) && (
         <div style={{display:"flex",alignItems:"center",gap:8,padding:"4px 8px",background:"#fff8ef",border:"1px solid #e8a838",borderRadius:4,marginTop:4,fontSize:11}}>
-          <span style={{color:"#b07020"}}>⚠ Custom dimensions active: h={slabHOverride??r.s.h}" b={slabBOverride??r.s.b}"</span>
+          <span style={{color:"#b07020"}}>Ã¢Å¡Â  Custom dimensions active: h={slabHOverride??r.s.h}" b={slabBOverride??r.s.b}"</span>
           <button onClick={()=>{setSlabHOverride(null);setSlabBOverride(null);}} style={{padding:"2px 8px",fontSize:10,border:"1px solid #e8a838",borderRadius:3,background:"#fff",cursor:"pointer",color:"#b07020"}}>Reset to section defaults</button>
         </div>
       )}
 
-      {/* ── Dimension inputs — always visible ── */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Dimension inputs Ã¢â‚¬â€ always visible Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div style={{display:"flex",flexWrap:"wrap",gap:10,padding:"10px 0 4px",borderBottom:"1px solid #f1f3f5",marginBottom:6}}>
         {[
           { label:"L (span)", value:Math.round(span*12), unit:"in", step:6, min:24, onChange:(v)=>setSpan(Math.max(1,v/12)) },
@@ -2397,27 +2397,27 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
         ))}
       </div>
       <Graphic><HollowcoreXSection h={r.s.h} b={r.s.b} cores={r.s.cores} coreD={r.s.coreD} nStrands={nH+nS} dp={r.dp} yb={r.s.yb} e={r.e} scale={7}/></Graphic>
-      <Eq tex="Sb = Ix / yb     St = Ix / (h − yb)" code="PCI 8th §4.2"/>
-      <R><CI label="h" value={r.s.h} unit="in"/><CI label="A" value={r.s.A} unit="in²"/><CI label={<Sym base="I" sub="x"/>} value={r.s.Ix} unit="in⁴"/><CI label="yb" value={fmt(r.s.yb,4)} unit="in"/><CI label="b" value={r.s.b} unit="in"/></R>
-      <R><CI label={<Sym base="S" sub="b"/>} value={fmt(r.Sb,2)} unit="in³"/><CI label={<Sym base="S" sub="t"/>} value={fmt(r.St,2)} unit="in³"/><CI label="SW" value={r.s.SW} unit="psf"/><CI label="bw" value={r.s.bw} unit="in"/></R>
+      <Eq tex="Sb = Ix / yb     St = Ix / (h Ã¢Ë†â€™ yb)" code="PCI 8th Ã‚Â§4.2"/>
+      <R><CI label="h" value={r.s.h} unit="in"/><CI label="A" value={r.s.A} unit="inÃ‚Â²"/><CI label={<Sym base="I" sub="x"/>} value={r.s.Ix} unit="inÃ¢ÂÂ´"/><CI label="yb" value={fmt(r.s.yb,4)} unit="in"/><CI label="b" value={r.s.b} unit="in"/></R>
+      <R><CI label={<Sym base="S" sub="b"/>} value={fmt(r.Sb,2)} unit="inÃ‚Â³"/><CI label={<Sym base="S" sub="t"/>} value={fmt(r.St,2)} unit="inÃ‚Â³"/><CI label="SW" value={r.s.SW} unit="psf"/><CI label="bw" value={r.s.bw} unit="in"/></R>
     </Card>
     <Card title="Concrete Properties">
-      <Eq tex="Ec = 57√(f′c × 1000)" code="ACI 318-19 §19.2.2.1"/>
-      <Eq tex="β₁ = 0.85 − 0.05(f′c − 4) ≥ 0.65" code="ACI 318-19 §22.2.2.4.3"/>
-      <Eq tex="V/S = A / [2(b + h)]" code="PCI 8th §4.7.3"/>
+      <Eq tex="Ec = 57Ã¢Ë†Å¡(fÃ¢â‚¬Â²c Ãƒâ€” 1000)" code="ACI 318-19 Ã‚Â§19.2.2.1"/>
+      <Eq tex="ÃŽÂ²Ã¢â€šÂ = 0.85 Ã¢Ë†â€™ 0.05(fÃ¢â‚¬Â²c Ã¢Ë†â€™ 4) Ã¢â€°Â¥ 0.65" code="ACI 318-19 Ã‚Â§22.2.2.4.3"/>
+      <Eq tex="V/S = A / [2(b + h)]" code="PCI 8th Ã‚Â§4.7.3"/>
       <R><OI label="Cover" value={cover} onChange={setCover} unit="in"/><OI label={<Sym base="f" sub="c" prime/>} value={fc} onChange={setFc} unit="ksi"/><OI label={<Sym base="f" sub="ci" prime/>} value={fci} onChange={setFci} unit="ksi"/><OI label="RH" value={RH} onChange={setRH} unit="%"/></R>
-      <R><CI label={<Sym base="E" sub="c"/>} value={fmt(r.Ec,1)} unit="ksi"/><CI label={<Sym base="E" sub="ci"/>} value={fmt(r.Eci,1)} unit="ksi"/><CI label="β₁" value={fmt(r.b1,4)}/><CI label="V/S" value={fmt(r.VS,3)}/></R>
+      <R><CI label={<Sym base="E" sub="c"/>} value={fmt(r.Ec,1)} unit="ksi"/><CI label={<Sym base="E" sub="ci"/>} value={fmt(r.Eci,1)} unit="ksi"/><CI label="ÃŽÂ²Ã¢â€šÂ" value={fmt(r.b1,4)}/><CI label="V/S" value={fmt(r.VS,3)}/></R>
     </Card>
     <Card title="Prestressing Steel">
-      <Eq tex="Aps = n₀.₅ × 0.153 + n₀.₆ × 0.217" code="PCI 8th Table 11.2.3"/>
-      <Eq tex="fpi = (fpi/fpu) × fpu" code="ACI 318-19 §25.5.10.4"/>
-      <Eq tex="dp = h − cover     e = yb − cover" code="PCI 8th §4.2.1"/>
-      <R><OI label="# ½″ Strands" value={nH} onChange={setNH} step={1}/><OI label="# ⅝″ Strands" value={nS} onChange={setNS} step={1}/><OI label="fpi/fpu" value={fpiR} onChange={setFpiR} step={0.01}/></R>
-      <R><CI label={<Sym base="A" sub="ps"/>} value={fmt(r.Aps,4)} unit="in²"/><CI label="fpi" value={fmt(r.fpi,1)} unit="ksi"/><CI label="dp" value={fmt(r.dp,2)} unit="in"/><CI label="e" value={fmt(r.e,3)} unit="in"/></R>
+      <Eq tex="Aps = nÃ¢â€šâ‚¬.Ã¢â€šâ€¦ Ãƒâ€” 0.153 + nÃ¢â€šâ‚¬.Ã¢â€šâ€  Ãƒâ€” 0.217" code="PCI 8th Table 11.2.3"/>
+      <Eq tex="fpi = (fpi/fpu) Ãƒâ€” fpu" code="ACI 318-19 Ã‚Â§25.5.10.4"/>
+      <Eq tex="dp = h Ã¢Ë†â€™ cover     e = yb Ã¢Ë†â€™ cover" code="PCI 8th Ã‚Â§4.2.1"/>
+      <R><OI label="# Ã‚Â½Ã¢â‚¬Â³ Strands" value={nH} onChange={setNH} step={1}/><OI label="# Ã¢â€¦ÂÃ¢â‚¬Â³ Strands" value={nS} onChange={setNS} step={1}/><OI label="fpi/fpu" value={fpiR} onChange={setFpiR} step={0.01}/></R>
+      <R><CI label={<Sym base="A" sub="ps"/>} value={fmt(r.Aps,4)} unit="inÃ‚Â²"/><CI label="fpi" value={fmt(r.fpi,1)} unit="ksi"/><CI label="dp" value={fmt(r.dp,2)} unit="in"/><CI label="e" value={fmt(r.e,3)} unit="in"/></R>
     </Card>
     <Card title="Reinforcing Steel">
-      <Eq tex="As = n × A_bar" code="ACI 318-19 §20.2.1"/>
-      <R><OI label="# Rebar" value={nRe} onChange={setNRe} step={1}/><OI label="Bar Size" value={reSz} onChange={setReSz} options={Object.keys(REBAR)}/><CI label={<Sym base="A" sub="s"/>} value={fmt(r.As,3)} unit="in²"/></R>
+      <Eq tex="As = n Ãƒâ€” A_bar" code="ACI 318-19 Ã‚Â§20.2.1"/>
+      <R><OI label="# Rebar" value={nRe} onChange={setNRe} step={1}/><OI label="Bar Size" value={reSz} onChange={setReSz} options={Object.keys(REBAR)}/><CI label={<Sym base="A" sub="s"/>} value={fmt(r.As,3)} unit="inÃ‚Â²"/></R>
     </Card>
     <Card title="Service Conditions">
       <R><OI label="Span" value={span} onChange={setSpan} unit="ft"/><OI label="lpc" value={lpc} onChange={setLpc} unit="ft"/><OI label="SDL" value={sdl} onChange={setSdl} unit="psf"/><OI label="LL" value={ll} onChange={setLl} unit="psf"/></R>
@@ -2432,17 +2432,17 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
         </label>
       </div>
       {useComposite && (<>
-        <Eq tex="n = Ec_top / Ec_pre    yb_comp = ΣA·y / ΣA    I_comp = ΣI + ΣA·d²" code="ACI 318-19 §26.5.6"/>
+        <Eq tex="n = Ec_top / Ec_pre    yb_comp = ÃŽÂ£AÃ‚Â·y / ÃŽÂ£A    I_comp = ÃŽÂ£I + ÃŽÂ£AÃ‚Â·dÃ‚Â²" code="ACI 318-19 Ã‚Â§26.5.6"/>
         <R>
           <OI label="Topping tc" value={tc} onChange={setTc} unit="in" step={0.5}/>
-          <OI label="f′c_top" value={fcTop} onChange={setFcTop} unit="ksi" step={0.5}/>
+          <OI label="fÃ¢â‚¬Â²c_top" value={fcTop} onChange={setFcTop} unit="ksi" step={0.5}/>
           <OI label="Interface" value={topSurface} onChange={setTopSurface} options={["roughened","smooth","keyed"]}/>
         </R>
         {r.phase4?.comp && (<>
           <R>
             <CI label="n (mod. ratio)" value={fmt(r.phase4.comp.n,4)}/>
-            <CI label="A_comp" value={fmt(r.phase4.comp.A_comp,1)} unit="in²"/>
-            <CI label="I_comp" value={fmt(r.phase4.comp.I_comp,0)} unit="in⁴"/>
+            <CI label="A_comp" value={fmt(r.phase4.comp.A_comp,1)} unit="inÃ‚Â²"/>
+            <CI label="I_comp" value={fmt(r.phase4.comp.I_comp,0)} unit="inÃ¢ÂÂ´"/>
           </R>
           <R>
             <CI label="yb_comp" value={fmt(r.phase4.comp.yb_comp,3)} unit="in"/>
@@ -2457,15 +2457,15 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
     <OutputsBlock><>
     <SH>Transfer Stresses</SH>
     <Card title="Prestress Force & Stresses at Release">
-      <Eq tex="Po = fpi × Aps × (1 − assumed_loss)" code="ACI 318-19 §24.5.3.1"/>
-      <Eq tex="f_top = Po/A − Po·e/St     f_bot = Po/A + Po·e/Sb" code="PCI 8th §4.2.2"/>
-      <Res label="P₀" value={fmt(r.Po,2)} unit="kip"/>
+      <Eq tex="Po = fpi Ãƒâ€” Aps Ãƒâ€” (1 Ã¢Ë†â€™ assumed_loss)" code="ACI 318-19 Ã‚Â§24.5.3.1"/>
+      <Eq tex="f_top = Po/A Ã¢Ë†â€™ PoÃ‚Â·e/St     f_bot = Po/A + PoÃ‚Â·e/Sb" code="PCI 8th Ã‚Â§4.2.2"/>
+      <Res label="PÃ¢â€šâ‚¬" value={fmt(r.Po,2)} unit="kip"/>
       <Res label="Top Fiber" value={fmt(r.tTop,4)} unit="ksi"/>
       <Res label="Bot Fiber" value={fmt(r.tBot,4)} unit="ksi"/>
     </Card>
     <Card title="Self-Weight at Transfer Point">
-      <Eq tex="lt = 50 × d_strand" code="ACI 318-19 §25.4.8.1"/>
-      <Eq tex="Md = (lpc/2 × lt_ft − lt_ft²/2) × w_sw" code="PCI 8th §4.5"/>
+      <Eq tex="lt = 50 Ãƒâ€” d_strand" code="ACI 318-19 Ã‚Â§25.4.8.1"/>
+      <Eq tex="Md = (lpc/2 Ãƒâ€” lt_ft Ã¢Ë†â€™ lt_ftÃ‚Â²/2) Ãƒâ€” w_sw" code="PCI 8th Ã‚Â§4.5"/>
       <Res label="lt" value={fmt(r.lt,1)} unit="in"/><Res label={<Sym base="M" sub="d"/>} value={fmt(r.MdT,4)} unit="kip-ft"/>
     </Card>
     <Card title="Net Stresses & Permissible Checks">
@@ -2473,10 +2473,10 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
         <Graphic><StressDiagram h={r.s.h} topStress={r.nTtop} botStress={r.nTbot} label="@ Transfer" sc={16}/></Graphic>
         <Graphic><StressDiagram h={r.s.h} topStress={r.nMtop} botStress={r.nMbot} label="@ Midspan" sc={16}/></Graphic>
       </div>
-      <Eq tex="Tension allow (end)    = −6√(f′ci × 1000)" code="ACI 318-19 §24.5.3.2(a)"/>
-      <Eq tex="Tension allow (mid)    = −3√(f′ci × 1000)" code="ACI 318-19 §24.5.3.2(a)"/>
-      <Eq tex="Compression allow (end)   = 0.70 f′ci" code="ACI 318-19 §24.5.3.1"/>
-      <Eq tex="Compression allow (mid)   = 0.60 f′ci" code="ACI 318-19 §24.5.3.2(b)"/>
+      <Eq tex="Tension allow (end)    = Ã¢Ë†â€™6Ã¢Ë†Å¡(fÃ¢â‚¬Â²ci Ãƒâ€” 1000)" code="ACI 318-19 Ã‚Â§24.5.3.2(a)"/>
+      <Eq tex="Tension allow (mid)    = Ã¢Ë†â€™3Ã¢Ë†Å¡(fÃ¢â‚¬Â²ci Ãƒâ€” 1000)" code="ACI 318-19 Ã‚Â§24.5.3.2(a)"/>
+      <Eq tex="Compression allow (end)   = 0.70 fÃ¢â‚¬Â²ci" code="ACI 318-19 Ã‚Â§24.5.3.1"/>
+      <Eq tex="Compression allow (mid)   = 0.60 fÃ¢â‚¬Â²ci" code="ACI 318-19 Ã‚Â§24.5.3.2(b)"/>
       <Check label="Tension @ ends" actual={fmt(r.nTtop*1000,1)} limit={fmt(r.aTE,1)} unit="psi" ok={r.aTE<r.nTtop*1000}/>
       <Check label="Tension @ midspan" actual={fmt(r.nMtop*1000,1)} limit={fmt(r.aTM,1)} unit="psi" ok={r.nMtop*1000>r.aTM}/>
       <Check label="Comp @ ends" actual={fmt(Math.abs(r.nTbot)*1000,1)} limit={fmt(r.aCE,1)} unit="psi" ok={r.aCE>Math.abs(r.nTbot)*1000}/>
@@ -2485,87 +2485,87 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
 
     <SH>Loss of Prestress</SH>
     <Card title="Elastic Shortening (ES)">
-      <Eq tex="fcir = Kcir(Pi/A + Pi·e²/Ix) − Mg·e/Ix" code="PCI 8th §4.7.2.1"/>
-      <Eq tex="ES = Kes × (Eps/Eci) × fcir" code="PCI 8th Eq. 4-19"/>
+      <Eq tex="fcir = Kcir(Pi/A + PiÃ‚Â·eÃ‚Â²/Ix) Ã¢Ë†â€™ MgÃ‚Â·e/Ix" code="PCI 8th Ã‚Â§4.7.2.1"/>
+      <Eq tex="ES = Kes Ãƒâ€” (Eps/Eci) Ãƒâ€” fcir" code="PCI 8th Eq. 4-19"/>
       <Res label="fcir" value={fmt(r.fcir,4)} unit="ksi"/><Res label="ES" value={fmt(r.ES,3)} unit="ksi"/>
     </Card>
     <Card title="Creep (CR)">
-      <Eq tex="fcds = Msd × e / Ix" code="PCI 8th §4.7.2.2"/>
-      <Eq tex="CR = Kcr × (Eps/Ec) × (fcir − fcds)" code="PCI 8th Eq. 4-22"/>
+      <Eq tex="fcds = Msd Ãƒâ€” e / Ix" code="PCI 8th Ã‚Â§4.7.2.2"/>
+      <Eq tex="CR = Kcr Ãƒâ€” (Eps/Ec) Ãƒâ€” (fcir Ã¢Ë†â€™ fcds)" code="PCI 8th Eq. 4-22"/>
       <Res label="fcds" value={fmt(r.fcds,4)} unit="ksi"/><Res label="CR" value={fmt(r.CR,3)} unit="ksi"/>
     </Card>
     <Card title="Shrinkage & Relaxation">
-      <Eq tex="SH = 8.2×10⁻⁶ × Ksh × Eps × (1−0.06·V/S) × (100−RH)" code="PCI 8th Eq. 4-24"/>
-      <Eq tex="RE = [Kre/1000 − J(ES+CR+SH)] × C" code="PCI 8th Eq. 4-27"/>
+      <Eq tex="SH = 8.2Ãƒâ€”10Ã¢ÂÂ»Ã¢ÂÂ¶ Ãƒâ€” Ksh Ãƒâ€” Eps Ãƒâ€” (1Ã¢Ë†â€™0.06Ã‚Â·V/S) Ãƒâ€” (100Ã¢Ë†â€™RH)" code="PCI 8th Eq. 4-24"/>
+      <Eq tex="RE = [Kre/1000 Ã¢Ë†â€™ J(ES+CR+SH)] Ãƒâ€” C" code="PCI 8th Eq. 4-27"/>
       <Res label="SH" value={fmt(r.SHv,3)} unit="ksi"/><Res label="RE" value={fmt(r.RE,3)} unit="ksi"/>
     </Card>
     <Card title="Total Losses">
-      <Eq tex="Total (%) = (ES + CR + SH + RE) / fpi × 100" code="PCI 8th §4.7"/>
+      <Eq tex="Total (%) = (ES + CR + SH + RE) / fpi Ãƒâ€” 100" code="PCI 8th Ã‚Â§4.7"/>
       <div style={{textAlign:"center",padding:6}}><span style={{fontSize:22,fontWeight:800,fontFamily:"'JetBrains Mono','Fira Code','Consolas',monospace"}}>{fmt(r.totalLoss,2)}%</span></div>
     </Card>
 
     <SH>Service Load Stresses</SH>
     <Card title="Service Stresses">
-      <Eq tex="Pe = Aps × fpi × (1 − loss/100)" code="ACI 318-19 §24.5.2"/>
-      <Eq tex="f_bot = Pe/A + Pe·e/Sb − Mserv/Sb" code="PCI 8th §4.3.1"/>
-      <Eq tex="f_top = Pe/A − Pe·e/St + M/St" code="PCI 8th §4.3.1"/>
-      <Eq tex="Tension allow = 7.5√(f′c×1000) / 1000" code="ACI 318-19 §24.5.2.1"/>
-      <Res label="Pₑ" value={fmt(r.Pe,2)} unit="kip"/><Res label={<Sym base="M" sub="sus"/>} value={fmt(r.Msus,2)} unit="kip-in"/><Res label={<Sym base="M" sub="service"/>} value={fmt(r.Mserv,2)} unit="kip-in"/>
+      <Eq tex="Pe = Aps Ãƒâ€” fpi Ãƒâ€” (1 Ã¢Ë†â€™ loss/100)" code="ACI 318-19 Ã‚Â§24.5.2"/>
+      <Eq tex="f_bot = Pe/A + PeÃ‚Â·e/Sb Ã¢Ë†â€™ Mserv/Sb" code="PCI 8th Ã‚Â§4.3.1"/>
+      <Eq tex="f_top = Pe/A Ã¢Ë†â€™ PeÃ‚Â·e/St + M/St" code="PCI 8th Ã‚Â§4.3.1"/>
+      <Eq tex="Tension allow = 7.5Ã¢Ë†Å¡(fÃ¢â‚¬Â²cÃƒâ€”1000) / 1000" code="ACI 318-19 Ã‚Â§24.5.2.1"/>
+      <Res label="PÃ¢â€šâ€˜" value={fmt(r.Pe,2)} unit="kip"/><Res label={<Sym base="M" sub="sus"/>} value={fmt(r.Msus,2)} unit="kip-in"/><Res label={<Sym base="M" sub="service"/>} value={fmt(r.Mserv,2)} unit="kip-in"/>
       <Check label="Tension (Class U)" actual={fmt(r.fbot,4)} limit={fmt(r.aTens,4)} unit="ksi" ok={r.classU} tag={r.classU?"CLASS U":"FAIL"}/>
-      <Check label="Comp (sustained, 0.45f′c)" actual={fmt(r.ftSus,4)} limit={fmt(0.45*fc,3)} unit="ksi" ok={0.45*fc>r.ftSus}/>
-      <Check label="Comp (total, 0.6f′c)" actual={fmt(r.ftTot,4)} limit={fmt(0.6*fc,3)} unit="ksi" ok={0.6*fc>r.ftTot}/>
+      <Check label="Comp (sustained, 0.45fÃ¢â‚¬Â²c)" actual={fmt(r.ftSus,4)} limit={fmt(0.45*fc,3)} unit="ksi" ok={0.45*fc>r.ftSus}/>
+      <Check label="Comp (total, 0.6fÃ¢â‚¬Â²c)" actual={fmt(r.ftTot,4)} limit={fmt(0.6*fc,3)} unit="ksi" ok={0.6*fc>r.ftTot}/>
     </Card>
 
     <SH>Design Flexural Strength</SH>
-    <Card title="Method #1 — ACI Eq. 18-1">
-      <Eq tex="ρp = Aps / (b × dp)" code="ACI 318-19 §20.3.2.3"/>
-      <Eq tex="fps = fpu[1 − (γp/β₁)(ρp·fpu/f′c)]" code="ACI 318-19 Eq. 20.3.2.3.1"/>
-      <Eq tex="a = Aps·fps / (0.85·f′c·b)" code="ACI 318-19 §22.2.2.4.1"/>
-      <Eq tex="c = a / β₁     εt = [(dp−c)/c]×0.003" code="ACI 318-19 §21.2.2"/>
-      <Eq tex="ΦMn = Φ·Aps·fps·(dp − a/2) / 12" code="ACI 318-19 §22.3.2"/>
-      <Eq tex="Mu = wu·(b/12)·l²/8     wu = (1.2DL+1.6LL)/1000" code="ACI 318-19 §5.3.1"/>
-      <Res label="ρp" value={fmt(r.rhoP,6)}/><Res label="fps" value={fmt(r.fps1,2)} unit="ksi"/>
+    <Card title="Method #1 Ã¢â‚¬â€ ACI Eq. 18-1">
+      <Eq tex="ÃÂp = Aps / (b Ãƒâ€” dp)" code="ACI 318-19 Ã‚Â§20.3.2.3"/>
+      <Eq tex="fps = fpu[1 Ã¢Ë†â€™ (ÃŽÂ³p/ÃŽÂ²Ã¢â€šÂ)(ÃÂpÃ‚Â·fpu/fÃ¢â‚¬Â²c)]" code="ACI 318-19 Eq. 20.3.2.3.1"/>
+      <Eq tex="a = ApsÃ‚Â·fps / (0.85Ã‚Â·fÃ¢â‚¬Â²cÃ‚Â·b)" code="ACI 318-19 Ã‚Â§22.2.2.4.1"/>
+      <Eq tex="c = a / ÃŽÂ²Ã¢â€šÂ     ÃŽÂµt = [(dpÃ¢Ë†â€™c)/c]Ãƒâ€”0.003" code="ACI 318-19 Ã‚Â§21.2.2"/>
+      <Eq tex="ÃŽÂ¦Mn = ÃŽÂ¦Ã‚Â·ApsÃ‚Â·fpsÃ‚Â·(dp Ã¢Ë†â€™ a/2) / 12" code="ACI 318-19 Ã‚Â§22.3.2"/>
+      <Eq tex="Mu = wuÃ‚Â·(b/12)Ã‚Â·lÃ‚Â²/8     wu = (1.2DL+1.6LL)/1000" code="ACI 318-19 Ã‚Â§5.3.1"/>
+      <Res label="ÃÂp" value={fmt(r.rhoP,6)}/><Res label="fps" value={fmt(r.fps1,2)} unit="ksi"/>
       <Res label="a" value={fmt(r.a1,4)} unit="in"/><Res label="c" value={fmt(r.c1,4)} unit="in"/>
-      <Res label="εt" value={fmt(r.eT1,6)}/>
-      <Res label="" value={<Badge ok={r.eT1>0.005} label={r.eT1>0.005?"Tension Controlled (Φ=0.9)":"Comp/Trans"}/>}/>
-      <Check label="ΦMn > Mu" actual={fmt(r.phiMn1,2)} limit={fmt(r.Mu,2)} unit="kip-ft" ok={r.phiMn1>r.Mu}/>
-      <Eq tex="Mcr = (Ix/yb)·[f_bot,rel + 7.5√(f′c×1000)/1000] / 12" code="ACI 318-19 §24.2.3.5"/>
-      <Check label="ΦMn > 1.2 Mcr" actual={fmt(r.phiMn1,2)} limit={fmt(r.Mcr*1.2,2)} unit="kip-ft" ok={r.phiMn1>r.Mcr*1.2}/>
+      <Res label="ÃŽÂµt" value={fmt(r.eT1,6)}/>
+      <Res label="" value={<Badge ok={r.eT1>0.005} label={r.eT1>0.005?"Tension Controlled (ÃŽÂ¦=0.9)":"Comp/Trans"}/>}/>
+      <Check label="ÃŽÂ¦Mn > Mu" actual={fmt(r.phiMn1,2)} limit={fmt(r.Mu,2)} unit="kip-ft" ok={r.phiMn1>r.Mu}/>
+      <Eq tex="Mcr = (Ix/yb)Ã‚Â·[f_bot,rel + 7.5Ã¢Ë†Å¡(fÃ¢â‚¬Â²cÃƒâ€”1000)/1000] / 12" code="ACI 318-19 Ã‚Â§24.2.3.5"/>
+      <Check label="ÃŽÂ¦Mn > 1.2 Mcr" actual={fmt(r.phiMn1,2)} limit={fmt(r.Mcr*1.2,2)} unit="kip-ft" ok={r.phiMn1>r.Mcr*1.2}/>
     </Card>
-    <Card title="Method #3 — Strain Compatibility">
-      <Eq tex="fse = fpi(1−loss/100)     εse = fse/Eps" code="PCI 8th §4.2.3"/>
-      <Eq tex="εps = εse + [(dp−c)/c]×0.003" code="PCI 8th §4.2.3.3"/>
-      <Eq tex="fps = 270 − 0.04/(εps−0.007)  [if εps>0.0085]" code="PCI Strand Eq."/>
-      <Eq tex="T = Aps·fps + As·fy     C = 0.85·f′c·a·b" code="ACI 318-19 §22.2"/>
-      <Eq tex="Iterate c until T ≈ C" code="PCI 8th §4.2.3.3"/>
+    <Card title="Method #3 Ã¢â‚¬â€ Strain Compatibility">
+      <Eq tex="fse = fpi(1Ã¢Ë†â€™loss/100)     ÃŽÂµse = fse/Eps" code="PCI 8th Ã‚Â§4.2.3"/>
+      <Eq tex="ÃŽÂµps = ÃŽÂµse + [(dpÃ¢Ë†â€™c)/c]Ãƒâ€”0.003" code="PCI 8th Ã‚Â§4.2.3.3"/>
+      <Eq tex="fps = 270 Ã¢Ë†â€™ 0.04/(ÃŽÂµpsÃ¢Ë†â€™0.007)  [if ÃŽÂµps>0.0085]" code="PCI Strand Eq."/>
+      <Eq tex="T = ApsÃ‚Â·fps + AsÃ‚Â·fy     C = 0.85Ã‚Â·fÃ¢â‚¬Â²cÃ‚Â·aÃ‚Â·b" code="ACI 318-19 Ã‚Â§22.2"/>
+      <Eq tex="Iterate c until T Ã¢â€°Ë† C" code="PCI 8th Ã‚Â§4.2.3.3"/>
       <R><OI label='Trial c' value={cT} onChange={setCT} unit="in" width={140}/></R>
-      <Res label="εps" value={fmt(r.ePS,6)}/><Res label="fps" value={fmt(r.fps3,2)} unit="ksi"/>
+      <Res label="ÃŽÂµps" value={fmt(r.ePS,6)}/><Res label="fps" value={fmt(r.fps3,2)} unit="ksi"/>
       <div style={{display:"flex",gap:16,justifyContent:"center",padding:"6px 0",background:"#f8f9fa",borderRadius:4,margin:"6px 0"}}>
         <div style={{textAlign:"center"}}><div style={{fontSize:10,color:"#999"}}>T (kip)</div><div style={{fontSize:17,fontWeight:800}}>{fmt(r.T3,2)}</div></div>
         <div style={{fontSize:18,color:"#ccc",alignSelf:"center"}}>=</div>
         <div style={{textAlign:"center"}}><div style={{fontSize:10,color:"#999"}}>C (kip)</div><div style={{fontSize:17,fontWeight:800}}>{fmt(r.C3,2)}</div></div>
-        <Badge ok={Math.abs(r.T3-r.C3)<5} label={`Δ=${fmt(Math.abs(r.T3-r.C3),2)}`}/>
+        <Badge ok={Math.abs(r.T3-r.C3)<5} label={`ÃŽâ€=${fmt(Math.abs(r.T3-r.C3),2)}`}/>
       </div>
-      <Res label="ΦMn" value={fmt(r.phiMn3,2)} unit="kip-ft"/>
-      <Check label="ΦMn > Mu" actual={fmt(r.phiMn3,2)} limit={fmt(r.Mu,2)} unit="kip-ft" ok={r.phiMn3>r.Mu}/>
+      <Res label="ÃŽÂ¦Mn" value={fmt(r.phiMn3,2)} unit="kip-ft"/>
+      <Check label="ÃŽÂ¦Mn > Mu" actual={fmt(r.phiMn3,2)} limit={fmt(r.Mu,2)} unit="kip-ft" ok={r.phiMn3>r.Mu}/>
     </Card>
 
     <SH>Shear Strength</SH>
     <Card title="Factored Shear">
-      <Eq tex="wu = 1.2·DL_line + 1.6·LL_line     Ay = wu·l/2" code="ACI 318-19 §5.3.1"/>
-      <Eq tex="Vc = 0.75[0.6λ√f′c + 700(Vu·dp/Mu)]·bw·dp" code="ACI 318-19 Eq. 22.5.8.3.1"/>
-      <Eq tex="Vcw = 0.75[3.5λ√f′c + 0.3fpc]·bw·dp" code="ACI 318-19 §22.5.8.3.2"/>
+      <Eq tex="wu = 1.2Ã‚Â·DL_line + 1.6Ã‚Â·LL_line     Ay = wuÃ‚Â·l/2" code="ACI 318-19 Ã‚Â§5.3.1"/>
+      <Eq tex="Vc = 0.75[0.6ÃŽÂ»Ã¢Ë†Å¡fÃ¢â‚¬Â²c + 700(VuÃ‚Â·dp/Mu)]Ã‚Â·bwÃ‚Â·dp" code="ACI 318-19 Eq. 22.5.8.3.1"/>
+      <Eq tex="Vcw = 0.75[3.5ÃŽÂ»Ã¢Ë†Å¡fÃ¢â‚¬Â²c + 0.3fpc]Ã‚Â·bwÃ‚Â·dp" code="ACI 318-19 Ã‚Â§22.5.8.3.2"/>
       <Res label="wu" value={fmt(r.wuL,4)} unit="kip/ft"/><Res label="A_y = B_y" value={fmt(r.Ay,3)} unit="kips"/>
       <Res label="Vc (simplified, x=6.25ft)" value={fmt(r.VcS,3)} unit="kips"/>
-      <Res label="ΦVcw (x=0.75ft)" value={fmt(r.Vcw,3)} unit="kips"/>
+      <Res label="ÃŽÂ¦Vcw (x=0.75ft)" value={fmt(r.Vcw,3)} unit="kips"/>
     </Card>
 
-    {/* ── Phase 4: Composite, Interface Shear, Crack Width ── */}
+    {/* Ã¢â€â‚¬Ã¢â€â‚¬ Phase 4: Composite, Interface Shear, Crack Width Ã¢â€â‚¬Ã¢â€â‚¬ */}
     {useComposite && r.phase4?.composite && (<>
       <SH>Composite Section Stresses</SH>
-      <Card title="Service Stresses — Composite Section">
-        <Eq tex="f_bot = Pe/A + Pe·e/Sb_pre − M_DL/Sb_pre − (M_SDL+M_LL)/Sb_comp" code="PCI 8th §4.4"/>
-        <Eq tex="f_top = Pe/A − Pe·e/St_pre + M_DL/St_pre + (M_SDL+M_LL)/St_comp" code="PCI 8th §4.4"/>
+      <Card title="Service Stresses Ã¢â‚¬â€ Composite Section">
+        <Eq tex="f_bot = Pe/A + PeÃ‚Â·e/Sb_pre Ã¢Ë†â€™ M_DL/Sb_pre Ã¢Ë†â€™ (M_SDL+M_LL)/Sb_comp" code="PCI 8th Ã‚Â§4.4"/>
+        <Eq tex="f_top = Pe/A Ã¢Ë†â€™ PeÃ‚Â·e/St_pre + M_DL/St_pre + (M_SDL+M_LL)/St_comp" code="PCI 8th Ã‚Â§4.4"/>
         {r.phase4.stresses && (<>
           <R>
             <CI label="f_bot (comp)" value={fmt(r.phase4.stresses.f_bot,4)} unit="ksi"/>
@@ -2582,13 +2582,13 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
 
       <SH>Interface Shear</SH>
       <Card title="Horizontal Shear at Precast / Topping Interface">
-        <Eq tex="Vh = Vu / d_v" code="ACI 318-19 §26.5.6.1"/>
-        <Eq tex="Vnh = Φ(c·b_v + μ·Avf·fy)" code="ACI 318-19 Eq. 22.9.4.2"/>
+        <Eq tex="Vh = Vu / d_v" code="ACI 318-19 Ã‚Â§26.5.6.1"/>
+        <Eq tex="Vnh = ÃŽÂ¦(cÃ‚Â·b_v + ÃŽÂ¼Ã‚Â·AvfÃ‚Â·fy)" code="ACI 318-19 Eq. 22.9.4.2"/>
         {r.phase4.interfaceShear && (<>
           <R>
             <CI label="Vh" value={fmt(r.phase4.interfaceShear.Vh,3)} unit="kip/in"/>
             <CI label="Vnh" value={fmt(r.phase4.interfaceShear.Vnh,3)} unit="kip/in"/>
-            <CI label="μ" value={fmt(r.phase4.interfaceShear.mu,2)}/>
+            <CI label="ÃŽÂ¼" value={fmt(r.phase4.interfaceShear.mu,2)}/>
             <CI label="c" value={fmt(r.phase4.interfaceShear.c_cohesion,4)} unit="ksi"/>
           </R>
           <Check label="Interface Shear" ok={r.phase4.interfaceShear.ok}
@@ -2599,8 +2599,8 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
 
     {r.phase4?.crackWidth && nRe > 0 && (<>
       <SH>Crack Width Estimate</SH>
-      <Card title="Maximum Flexural Crack Width (ACI 318-19 §24.3)">
-        <Eq tex="w = 0.076·β·fs·(dc·A)^(1/3)" code="ACI 224 / ACI 318-19 §24.3.2"/>
+      <Card title="Maximum Flexural Crack Width (ACI 318-19 Ã‚Â§24.3)">
+        <Eq tex="w = 0.076Ã‚Â·ÃŽÂ²Ã‚Â·fsÃ‚Â·(dcÃ‚Â·A)^(1/3)" code="ACI 224 / ACI 318-19 Ã‚Â§24.3.2"/>
         <R>
           <CI label="fs (service)" value={fmt(r.phase4.fs_service,2)} unit="ksi"/>
           <CI label="dc" value={fmt(cover+0.5,2)} unit="in"/>
@@ -2614,10 +2614,10 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
 
     <SH>Camber & Deflection</SH>
     <Card title="Camber & Deflection">
-      <Eq tex="Δ_ps = Po·e·L² / (8·Eci·Ix)" code="PCI 8th Table 4.8.4"/>
-      <Eq tex="Δ_sw = 5·w·L⁴ / (384·Eci·Ix)" code="PCI 8th Table 4.8.4"/>
-      <Eq tex="Δ_erec = 1.80·Δ_ps − 1.85·Δ_sw" code="PCI 8th Table 4.8.4"/>
-      <Eq tex="Δ_final = 2.45·Δ_ps − 2.70·Δ_sw" code="PCI 8th Table 4.8.4"/>
+      <Eq tex="ÃŽâ€_ps = PoÃ‚Â·eÃ‚Â·LÃ‚Â² / (8Ã‚Â·EciÃ‚Â·Ix)" code="PCI 8th Table 4.8.4"/>
+      <Eq tex="ÃŽâ€_sw = 5Ã‚Â·wÃ‚Â·LÃ¢ÂÂ´ / (384Ã‚Â·EciÃ‚Â·Ix)" code="PCI 8th Table 4.8.4"/>
+      <Eq tex="ÃŽâ€_erec = 1.80Ã‚Â·ÃŽâ€_ps Ã¢Ë†â€™ 1.85Ã‚Â·ÃŽâ€_sw" code="PCI 8th Table 4.8.4"/>
+      <Eq tex="ÃŽâ€_final = 2.45Ã‚Â·ÃŽâ€_ps Ã¢Ë†â€™ 2.70Ã‚Â·ÃŽâ€_sw" code="PCI 8th Table 4.8.4"/>
       <Res label="Initial" value={fmt(r.cI,4)} unit="in"/><Res label="Erection" value={fmt(r.cE,4)} unit="in"/>
       <Res label="Final Camber" value={fmt(r.cF,4)} unit="in"/><Res label="Net Camber" value={fmt(r.netC,4)} unit="in"/>
       <Res label="Final Position" value={fmt(r.finalP,4)} unit="in"/>
@@ -2626,9 +2626,9 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
   </div>);
 }
 
-// ═════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 // COLUMN TAB
-// ═════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 function ColTab({loadedCalc, onConsumedLoad, workspace}){
   const [b,setB]=useState(12),[h,setH]=useState(20);
   const [colHeight,setColHeight]=useState(120); // column height in inches (default 10 ft)
@@ -2682,7 +2682,7 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
     if(res.ok){
       setActiveCalc(res.row);
       fetchCalcsForUser(user).then(setAllCalcs);
-      setSaveMsg("Saved ✓");
+      setSaveMsg("Saved Ã¢Å“â€œ");
       setTimeout(()=>setSaveMsg(""),2500);
       return true;
     }
@@ -2693,7 +2693,7 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
     if(!activeCalc) return;
     const res = await updateCalc(activeCalc.id, {inputs: currentInputs, reportText: null});
     if(res.ok){
-      setSaveMsg("Updated ✓");
+      setSaveMsg("Updated Ã¢Å“â€œ");
       setTimeout(()=>setSaveMsg(""),2500);
       fetchCalcsForUser(user).then(setAllCalcs);
     }
@@ -2715,7 +2715,7 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
     for(let i=1;i<=40;i++){const c=h-(h-0.5)*i/40;if(c<=0.1)continue;const a=Math.min(c*b1,h);const esB=0.003*(d-c)/c,fsB=Math.min(fy,Math.max(-fy,Es*esB));const esT2=0.003*(c-dp)/c,fsT2=Math.min(fy,Math.max(-fy,Es*esT2));const P=0.85*fc*a*b+tQ*tA*fsT2+bQ*bA*fsB;const M=0.85*fc*a*b*(h/2-a/2)+tQ*tA*fsT2*(h/2-dp)+bQ*bA*fsB*(d-h/2);pts.push({P,M:M/12});}
     pts.push({P:-(bQ*bA+tQ*tA)*fy,M:0});
 
-    // φ factor: tied compression member, transitions per ACI but simplified to 0.65 here
+    // Ãâ€  factor: tied compression member, transitions per ACI but simplified to 0.65 here
     const phi=0.65;
     // Find capacity moment at the demand axial load by interpolating along the curve (right side, M>=0)
     const rightPts=pts.filter(p=>p.M>=0).sort((a,b2)=>b2.P-a.P);
@@ -2750,9 +2750,9 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
         <TeddsHeading>Member details</TeddsHeading>
         <TeddsLine label="Section breadth" sym="b" val={b} unit="in" label2="Section depth" sym2="h" val2={h} unit2="in"/>
         <TeddsLine label="Column height" sym="L" val={colHeight} unit="in" label2="Height" sym2="L" val2={fmt(colHeight/12,2)} unit2="ft"/>
-        <TeddsLine label="Concrete strength" sym="f′c" val={fc} unit="ksi" label2="Clear cover" sym2="cc" val2={cov} unit2="in"/>
+        <TeddsLine label="Concrete strength" sym="fÃ¢â‚¬Â²c" val={fc} unit="ksi" label2="Clear cover" sym2="cc" val2={cov} unit2="in"/>
         <TeddsLine label="Reinforcement yield strength" sym="fy" val={fy} unit="ksi" label2="Steel modulus" sym2="Es" val2={Es} unit2="ksi"/>
-        <TeddsLine label="Bottom bars" sym="As,bot" val={`${bQ} × ${bBar}`} label2="Top bars" sym2="As,top" val2={`${tQ} × ${tBar}`}/>
+        <TeddsLine label="Bottom bars" sym="As,bot" val={`${bQ} Ãƒâ€” ${bBar}`} label2="Top bars" sym2="As,top" val2={`${tQ} Ãƒâ€” ${tBar}`}/>
 
         <Graphic><ColumnXSection b={b} h={h} nBot={bQ} nTop={tQ} cover={cov} dTie={r.xD} dBot={r.bD} dTop={r.tD}/></Graphic>
 
@@ -2760,13 +2760,13 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
         <TeddsLine label="Factored axial load" sym="Pu" val={Pu} unit="kips" label2="Factored moment" sym2="Mu" val2={Mu} unit2="kip-ft"/>
 
         <TeddsHeading>Section analysis</TeddsHeading>
-        <TeddsCalc sym="d" formula="h − cover − dtie − dbar/2" result={fmt(r.d,3)} unit="in"/>
-        <TeddsCalc sym="β1" formula={`0.85 − 0.05(${fc}−4)`} result={fmt(r.b1,3)}/>
-        <TeddsCalc sym="Pn,A" formula="(b·h − ΣAs)·0.85f′c + ΣAs·fy" result={fmt(r.PnA,1)} unit="kips"/>
-        <TeddsCalc sym="cb" formula="d × 0.003 / (0.003 + εy)" result={fmt(r.cb,3)} unit="in"/>
-        <TeddsCalc sym="Pn,B" formula="0.85f′c·ab·b + As'·f's − As·fy" result={fmt(r.PnB,1)} unit="kips"/>
-        <TeddsCalc sym="Mn,B" formula="ΣF·(arm about centroid)" result={fmt(r.MnB,1)} unit="kip-ft"/>
-        <TeddsCalc sym="ΦMn @ Pu" formula="interpolated along P–M envelope" result={fmt(r.phiMnAtPu,1)} unit="kip-ft"/>
+        <TeddsCalc sym="d" formula="h Ã¢Ë†â€™ cover Ã¢Ë†â€™ dtie Ã¢Ë†â€™ dbar/2" result={fmt(r.d,3)} unit="in"/>
+        <TeddsCalc sym="ÃŽÂ²1" formula={`0.85 Ã¢Ë†â€™ 0.05(${fc}Ã¢Ë†â€™4)`} result={fmt(r.b1,3)}/>
+        <TeddsCalc sym="Pn,A" formula="(bÃ‚Â·h Ã¢Ë†â€™ ÃŽÂ£As)Ã‚Â·0.85fÃ¢â‚¬Â²c + ÃŽÂ£AsÃ‚Â·fy" result={fmt(r.PnA,1)} unit="kips"/>
+        <TeddsCalc sym="cb" formula="d Ãƒâ€” 0.003 / (0.003 + ÃŽÂµy)" result={fmt(r.cb,3)} unit="in"/>
+        <TeddsCalc sym="Pn,B" formula="0.85fÃ¢â‚¬Â²cÃ‚Â·abÃ‚Â·b + As'Ã‚Â·f's Ã¢Ë†â€™ AsÃ‚Â·fy" result={fmt(r.PnB,1)} unit="kips"/>
+        <TeddsCalc sym="Mn,B" formula="ÃŽÂ£FÃ‚Â·(arm about centroid)" result={fmt(r.MnB,1)} unit="kip-ft"/>
+        <TeddsCalc sym="ÃŽÂ¦Mn @ Pu" formula="interpolated along PÃ¢â‚¬â€œM envelope" result={fmt(r.phiMnAtPu,1)} unit="kip-ft"/>
 
         <TeddsHeading>Results summary</TeddsHeading>
         <TeddsTable
@@ -2783,23 +2783,23 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
   return(<div>
     <div className="no-print" style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:12,padding:"8px 12px",background:"#f8f9fa",border:"1px solid #dee2e6",borderRadius:6}}>
       <div style={{fontSize:12,color:"#495057"}}>
-        {activeCalc ? <>📄 <b>{activeCalc.calc_name}</b> <span style={{color:"#868e96"}}>({activeCalc.project_name} / {activeCalc.part_name})</span></> : <span style={{color:"#868e96"}}>Not yet saved to a project</span>}
+        {activeCalc ? <>Ã°Å¸â€œâ€ž <b>{activeCalc.calc_name}</b> <span style={{color:"#868e96"}}>({activeCalc.project_name} / {activeCalc.part_name})</span></> : <span style={{color:"#868e96"}}>Not yet saved to a project</span>}
         {saveMsg && <span style={{marginLeft:10,color:"#1e7e34",fontWeight:700}}>{saveMsg}</span>}
       </div>
       <div style={{display:"flex",gap:6}}>
         {activeCalc && activeCalc.created_by_id===user?.id && (
-          <button onClick={doUpdate} style={{padding:"6px 12px",borderRadius:4,border:`1px solid ${theme.accent}`,background:theme.soft,color:theme.text,fontWeight:700,fontSize:11,cursor:"pointer"}}>↻ Update Saved File</button>
+          <button onClick={doUpdate} style={{padding:"6px 12px",borderRadius:4,border:`1px solid ${theme.accent}`,background:theme.soft,color:theme.text,fontWeight:700,fontSize:11,cursor:"pointer"}}>Ã¢â€ Â» Update Saved File</button>
         )}
-        <button onClick={()=>setSaveOpen(true)} style={{padding:"6px 12px",borderRadius:4,border:`2px solid ${theme.accentDark}`,background:theme.accentDark,color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer"}}>💾 Save As…</button>
+        <button onClick={()=>setSaveOpen(true)} style={{padding:"6px 12px",borderRadius:4,border:`2px solid ${theme.accentDark}`,background:theme.accentDark,color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer"}}>Ã°Å¸â€™Â¾ Save AsÃ¢â‚¬Â¦</button>
       </div>
     </div>
     <SaveCalcModal open={saveOpen} onClose={()=>setSaveOpen(false)} onSave={doSave} existingProjects={allCalcs}
       defaultProject={activeCalc?.project_name || workspace?.project} defaultPart={activeCalc?.part_name || workspace?.part}/>
-    <LiveStatusBanner ok={r.demandOk} util={r.util} label="Demand vs. Capacity (Mu / ΦMn at Pu)"/>
+    <LiveStatusBanner ok={r.demandOk} util={r.util} label="Demand vs. Capacity (Mu / ÃŽÂ¦Mn at Pu)"/>
     <InputsBlock><>
     <Card title="Factored Design Loads (Demand)">
-      <Eq tex="Check: Pu ≤ ΦPn  and  Mu ≤ ΦMn @ Pu" code="ACI 318-19 §22.4"/>
-      <R><OI label="Pᵤ" value={Pu} onChange={setPu} unit="kips"/><OI label="Mᵤ" value={Mu} onChange={setMu} unit="kip-ft"/></R>
+      <Eq tex="Check: Pu Ã¢â€°Â¤ ÃŽÂ¦Pn  and  Mu Ã¢â€°Â¤ ÃŽÂ¦Mn @ Pu" code="ACI 318-19 Ã‚Â§22.4"/>
+      <R><OI label="PÃ¡ÂµÂ¤" value={Pu} onChange={setPu} unit="kips"/><OI label="MÃ¡ÂµÂ¤" value={Mu} onChange={setMu} unit="kip-ft"/></R>
     </Card>
     <Card title="Column Geometry & Reinforcement">
       <R><OI label="b" value={b} onChange={setB} unit="in"/><OI label="h" value={h} onChange={setH} unit="in"/><OI label="L (height)" value={colHeight} onChange={(v)=>setColHeight(Math.max(12,v))} unit="in"/><OI label={<Sym base="f" sub="c" prime/>} value={fc} onChange={setFc} unit="ksi"/><OI label="Cover" value={cov} onChange={setCov} unit="in"/></R>
@@ -2810,30 +2810,30 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
     <OutputsBlock><>
     <SH>Outputs</SH>
     <Card title="Effective Depths">
-      <Eq tex="d  = h − cover − d_tie − d_bar/2" code="ACI 318-19 §22.2.2.1"/>
-      <Eq tex="d' = cover + d_tie + d_bar/2" code="ACI 318-19 §22.2.2.1"/>
-      <Eq tex="β₁ = 0.85 − 0.05(f′c − 4) ≥ 0.65" code="ACI 318-19 §22.2.2.4.3"/>
-      <Res label="d" value={fmt(r.d,3)} unit="in"/><Res label="d'" value={fmt(r.dp,3)} unit="in"/><Res label="β₁" value={fmt(r.b1,4)}/>
+      <Eq tex="d  = h Ã¢Ë†â€™ cover Ã¢Ë†â€™ d_tie Ã¢Ë†â€™ d_bar/2" code="ACI 318-19 Ã‚Â§22.2.2.1"/>
+      <Eq tex="d' = cover + d_tie + d_bar/2" code="ACI 318-19 Ã‚Â§22.2.2.1"/>
+      <Eq tex="ÃŽÂ²Ã¢â€šÂ = 0.85 Ã¢Ë†â€™ 0.05(fÃ¢â‚¬Â²c Ã¢Ë†â€™ 4) Ã¢â€°Â¥ 0.65" code="ACI 318-19 Ã‚Â§22.2.2.4.3"/>
+      <Res label="d" value={fmt(r.d,3)} unit="in"/><Res label="d'" value={fmt(r.dp,3)} unit="in"/><Res label="ÃŽÂ²Ã¢â€šÂ" value={fmt(r.b1,4)}/>
     </Card>
-    <Card title="Point A — Pure Compression">
-      <Eq tex="Pn = (b·h − ΣAs)·0.85f′c + ΣAs·fy" code="ACI 318-19 §22.4.2.2"/>
-      <Res label="Pₙ" value={fmt(r.PnA,1)} unit="kips"/>
+    <Card title="Point A Ã¢â‚¬â€ Pure Compression">
+      <Eq tex="Pn = (bÃ‚Â·h Ã¢Ë†â€™ ÃŽÂ£As)Ã‚Â·0.85fÃ¢â‚¬Â²c + ÃŽÂ£AsÃ‚Â·fy" code="ACI 318-19 Ã‚Â§22.4.2.2"/>
+      <Res label="PÃ¢â€šâ„¢" value={fmt(r.PnA,1)} unit="kips"/>
     </Card>
-    <Card title="Point B — Balanced Condition">
-      <Eq tex="cb = d × 0.003 / (0.003 + εy)" code="ACI 318-19 §22.2.2.1"/>
-      <Eq tex="ε's = 0.003(cb − d')/cb     f's = min(fy, Es·|ε's|)" code="ACI 318-19 §22.2.1.1"/>
-      <Eq tex="Pn = 0.85f′c·ab·b + As'·f's − As·fy" code="ACI 318-19 §22.4.2"/>
-      <Eq tex="Mn = ΣF·arm about centroid" code="ACI 318-19 §22.4.2"/>
+    <Card title="Point B Ã¢â‚¬â€ Balanced Condition">
+      <Eq tex="cb = d Ãƒâ€” 0.003 / (0.003 + ÃŽÂµy)" code="ACI 318-19 Ã‚Â§22.2.2.1"/>
+      <Eq tex="ÃŽÂµ's = 0.003(cb Ã¢Ë†â€™ d')/cb     f's = min(fy, EsÃ‚Â·|ÃŽÂµ's|)" code="ACI 318-19 Ã‚Â§22.2.1.1"/>
+      <Eq tex="Pn = 0.85fÃ¢â‚¬Â²cÃ‚Â·abÃ‚Â·b + As'Ã‚Â·f's Ã¢Ë†â€™ AsÃ‚Â·fy" code="ACI 318-19 Ã‚Â§22.4.2"/>
+      <Eq tex="Mn = ÃŽÂ£FÃ‚Â·arm about centroid" code="ACI 318-19 Ã‚Â§22.4.2"/>
       <Res label="cb" value={fmt(r.cb,3)} unit="in"/><Res label="ab" value={fmt(r.ab,3)} unit="in"/>
-      <Res label="ε's" value={fmt(r.esT,6)}/><Res label="f's" value={fmt(r.fsT,2)} unit="ksi"/>
-      <Res label="Pₙ" value={fmt(r.PnB,1)} unit="kips"/><Res label="Mₙ" value={fmt(r.MnB,1)} unit="kip-ft"/>
+      <Res label="ÃŽÂµ's" value={fmt(r.esT,6)}/><Res label="f's" value={fmt(r.fsT,2)} unit="ksi"/>
+      <Res label="PÃ¢â€šâ„¢" value={fmt(r.PnB,1)} unit="kips"/><Res label="MÃ¢â€šâ„¢" value={fmt(r.MnB,1)} unit="kip-ft"/>
     </Card>
     <Card title="Scientific Charts & 3D Model">
       <ChartPicker value={chartType} onChange={setChartType} options={[
-        {id:"pm",label:"P–M Interaction"},
+        {id:"pm",label:"PÃ¢â‚¬â€œM Interaction"},
         {id:"capacity",label:"Capacity Breakdown"},
-        {id:"3d",label:"🧊 3D Model"},
-        {id:"stress3d",label:"🌡 Stress Contour"},
+        {id:"3d",label:"Ã°Å¸Â§Å  3D Model"},
+        {id:"stress3d",label:"Ã°Å¸Å’Â¡ Stress Contour"},
       ]}/>
       {chartType==="3d" && (
         <Graphic>
@@ -2856,7 +2856,7 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
       {chartType==="stress3d" && (
         <Graphic>
         <div style={{marginBottom:8,padding:"8px 12px",background:"#f8f9fa",borderRadius:6,fontSize:11,color:"#495057"}}>
-          Color contour from <i>σ = P<sub>u</sub>/A ± M<sub>u</sub>·c/I</i> across the gross section — a simplified linear-elastic estimate
+          Color contour from <i>ÃÆ’ = P<sub>u</sub>/A Ã‚Â± M<sub>u</sub>Ã‚Â·c/I</i> across the gross section Ã¢â‚¬â€ a simplified linear-elastic estimate
           driven by your factored demand loads, <b>not</b> a finite-element solution.
         </div>
         <Viewer3D
@@ -2873,12 +2873,12 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
             h: { value:h, unit:"in", step:1, min:8, onChange:setH },
             height: { value:colHeight, unit:"in", step:6, min:24, onChange:(v)=>setColHeight(Math.max(12,v)) },
           }}
-          caption="Drag to rotate · Scroll to zoom · Red = compression, Blue = tension, White = neutral axis"
+          caption="Drag to rotate Ã‚Â· Scroll to zoom Ã‚Â· Red = compression, Blue = tension, White = neutral axis"
         />
         </Graphic>
       )}
       {chartType==="pm" && (<>
-      <Eq tex="Sweep c from h → 0, compute εs → fs for each layer, sum P & M" code="ACI 318-19 §22.4"/>
+      <Eq tex="Sweep c from h Ã¢â€ â€™ 0, compute ÃŽÂµs Ã¢â€ â€™ fs for each layer, sum P & M" code="ACI 318-19 Ã‚Â§22.4"/>
       <Graphic>
       <svg className="live-svg" viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:540,display:"block",margin:"0 auto"}}>
         <rect x={0} y={0} width={W} height={H} fill="#ffffff"/>
@@ -2888,7 +2888,7 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
         <line x1={sx(0)} y1={pad} x2={sx(0)} y2={H-pad} stroke="#adb5bd" strokeWidth={1} strokeDasharray="4"/>
         <path d={pathD} fill="none" stroke="#343a40" strokeWidth={2}/>
         <circle cx={sx(0)} cy={sy(r.PnA)} r={5} fill="#c0392b"/><text x={sx(0)+10} y={sy(r.PnA)+4} fill="#c0392b" fontSize={10} fontWeight={700} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">A ({fmt(r.PnA,0)}k)</text>
-        <circle cx={sx(r.MnB)} cy={sy(r.PnB)} r={5} fill="#27ae60"/><text x={sx(r.MnB)+10} y={sy(r.PnB)+4} fill="#27ae60" fontSize={10} fontWeight={700} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">B ({fmt(r.PnB,0)}k, {fmt(r.MnB,0)}k·ft)</text>
+        <circle cx={sx(r.MnB)} cy={sy(r.PnB)} r={5} fill="#27ae60"/><text x={sx(r.MnB)+10} y={sy(r.PnB)+4} fill="#27ae60" fontSize={10} fontWeight={700} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">B ({fmt(r.PnB,0)}k, {fmt(r.MnB,0)}kÃ‚Â·ft)</text>
 
         {/* Live demand point */}
         <circle cx={sx(Mu)} cy={sy(Pu)} r={9} fill="none" stroke={r.demandOk?"#2563eb":"#c0392b"} strokeWidth={2} opacity={0.35}>
@@ -2897,7 +2897,7 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
         </circle>
         <circle cx={sx(Mu)} cy={sy(Pu)} r={6} fill={r.demandOk?"#2563eb":"#c0392b"} stroke="#fff" strokeWidth={2}/>
         <text x={sx(Mu)+12} y={sy(Pu)-8} fill={r.demandOk?"#1d4ed8":"#a52a1f"} fontSize={11} fontWeight={800} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">
-          Demand ({fmt(Pu,0)}k, {fmt(Mu,0)}k·ft)
+          Demand ({fmt(Pu,0)}k, {fmt(Mu,0)}kÃ‚Â·ft)
         </text>
 
         <text x={W/2} y={H-8} textAnchor="middle" fill="#6c757d" fontSize={10} fontFamily="'JetBrains Mono','Fira Code','Consolas',monospace">Moment (kip-ft)</text>
@@ -2912,9 +2912,9 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
         <Graphic>
         <BarChart title="Capacity Breakdown" unit="kips" bars={[
           {label:"Pn @ Point A (pure comp.)", value:r.PnA, color:"#c0392b"},
-          {label:"ΦPn @ Point A", value:r.phi*r.PnA, color:"#e8a838"},
+          {label:"ÃŽÂ¦Pn @ Point A", value:r.phi*r.PnA, color:"#e8a838"},
           {label:"Pn @ Point B (balanced)", value:r.PnB, color:"#27ae60"},
-          {label:"ΦMn @ Pu (kip-ft)", value:r.phiMnAtPu, color:"#2563eb"},
+          {label:"ÃŽÂ¦Mn @ Pu (kip-ft)", value:r.phiMnAtPu, color:"#2563eb"},
           {label:"Demand Pu", value:Pu, color:r.demandOk?"#27ae60":"#c0392b"},
           {label:"Demand Mu (kip-ft)", value:Mu, color:r.demandOk?"#27ae60":"#c0392b"},
         ]}/>
@@ -2925,9 +2925,9 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
   </div>);
 }
 
-// ═════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 // CPCI TAB
-// ═════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 function CPCITab({loadedCalc, onConsumedLoad, workspace}){
   const [sec,setSec]=useState("08H");
   const [cover,setCover]=useState(38),[stH,setStH]=useState(45);
@@ -2977,7 +2977,7 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
     if(res.ok){
       setActiveCalc(res.row);
       fetchCalcsForUser(user).then(setAllCalcs);
-      setSaveMsg("Saved ✓");
+      setSaveMsg("Saved Ã¢Å“â€œ");
       setTimeout(()=>setSaveMsg(""),2500);
       return true;
     }
@@ -2988,7 +2988,7 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
     if(!activeCalc) return;
     const res = await updateCalc(activeCalc.id, {inputs: currentInputs, reportText: null});
     if(res.ok){
-      setSaveMsg("Updated ✓");
+      setSaveMsg("Updated Ã¢Å“â€œ");
       setTimeout(()=>setSaveMsg(""),2500);
       fetchCalcsForUser(user).then(setAllCalcs);
     }
@@ -3028,22 +3028,22 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
   if(reportStyle==="tedds"){
     return(
       <TeddsDoc>
-        <TeddsTitle calcId={`CPCI Non-Composite Hollowcore Slab Design — ${sec}`} codeBasis="In accordance with CSA A23.3-19 and the CPCI Design Manual, 5th Edition" version="Calc version 1.0"/>
+        <TeddsTitle calcId={`CPCI Non-Composite Hollowcore Slab Design Ã¢â‚¬â€ ${sec}`} codeBasis="In accordance with CSA A23.3-19 and the CPCI Design Manual, 5th Edition" version="Calc version 1.0"/>
         <TeddsSection number={1} note="Flexure, shear, torsion, and transfer stress design for simple-span hollowcore slab"/>
 
         <TeddsHeading>Section properties</TeddsHeading>
         <TeddsLine label="Slab depth" sym="h" val={r.s.h} unit="mm" label2="Slab width" sym2="b" val2={r.s.b} unit2="mm"/>
-        <TeddsLine label="Cross sectional area" sym="A" val={r.s.A} unit="mm²" label2="Web width" sym2="bw" val2={r.s.bw} unit2="mm"/>
-        <TeddsLine label="Section modulus (bottom)" sym="Sb" val={fmt(r.Sb,0)} unit="mm³" label2="Section modulus (top)" sym2="St" val2={fmt(r.St,0)} unit2="mm³"/>
+        <TeddsLine label="Cross sectional area" sym="A" val={r.s.A} unit="mmÃ‚Â²" label2="Web width" sym2="bw" val2={r.s.bw} unit2="mm"/>
+        <TeddsLine label="Section modulus (bottom)" sym="Sb" val={fmt(r.Sb,0)} unit="mmÃ‚Â³" label2="Section modulus (top)" sym2="St" val2={fmt(r.St,0)} unit2="mmÃ‚Â³"/>
 
         <TeddsHeading>Material properties</TeddsHeading>
-        <TeddsLine label="Concrete strength at 28 days" sym="f′c" val={fc} unit="MPa" label2="Concrete strength at release" sym2="f′ci" val2={fci} unit2="MPa"/>
-        <TeddsCalc sym="Ec" formula={`4500√${fc}`} result={r.Ec} unit="MPa"/>
-        <TeddsCalc sym="Eci" formula={`4500√${fci}`} result={r.Eci} unit="MPa"/>
+        <TeddsLine label="Concrete strength at 28 days" sym="fÃ¢â‚¬Â²c" val={fc} unit="MPa" label2="Concrete strength at release" sym2="fÃ¢â‚¬Â²ci" val2={fci} unit2="MPa"/>
+        <TeddsCalc sym="Ec" formula={`4500Ã¢Ë†Å¡${fc}`} result={r.Ec} unit="MPa"/>
+        <TeddsCalc sym="Eci" formula={`4500Ã¢Ë†Å¡${fci}`} result={r.Eci} unit="MPa"/>
 
         <TeddsHeading>Prestressing steel</TeddsHeading>
         <TeddsLine label="Number of 13mm strands" sym="n13" val={nH} label2="Number of 15mm strands" sym2="n15" val2={nS}/>
-        <TeddsCalc sym="Aps" formula={`${nH}×99 + ${nS}×143`} result={r.Aps} unit="mm²"/>
+        <TeddsCalc sym="Aps" formula={`${nH}Ãƒâ€”99 + ${nS}Ãƒâ€”143`} result={r.Aps} unit="mmÃ‚Â²"/>
         <TeddsLine label="Strand eccentricity" sym="e" val={fmt(r.e,1)} unit="mm" label2="Strand depth" sym2="dp" val2={fmt(r.dp,1)} unit2="mm"/>
 
         <TeddsHeading>Span and loading</TeddsHeading>
@@ -3051,19 +3051,19 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
         <TeddsLine label="Live load" sym="LL" val={ll} unit="kPa" label2="Snow load" sym2="SL" val2={sl} unit2="kPa"/>
 
         <TeddsHeading>Transfer stress analysis</TeddsHeading>
-        <TeddsCalc sym="Po" formula={`${fmt(r.fpi,0)} × ${r.Aps} / 1000`} result={fmt(r.Po,2)} unit="kN"/>
+        <TeddsCalc sym="Po" formula={`${fmt(r.fpi,0)} Ãƒâ€” ${r.Aps} / 1000`} result={fmt(r.Po,2)} unit="kN"/>
         <TeddsLine label="Top stress at transfer" sym="ftop" val={fmt(r.topT,3)} unit="MPa" label2="Bottom stress at transfer" sym2="fbot" val2={fmt(r.botT,3)} unit2="MPa"/>
 
         <TeddsHeading>Loss of prestress</TeddsHeading>
-        <TeddsCalc sym="Total loss" formula="(ES+CR+SH)/fpi × 100" result={fmt(r.totalLoss,2)} unit="%"/>
+        <TeddsCalc sym="Total loss" formula="(ES+CR+SH)/fpi Ãƒâ€” 100" result={fmt(r.totalLoss,2)} unit="%"/>
 
         <TeddsHeading>Design flexural strength</TeddsHeading>
-        <TeddsCalc sym="fpr" formula="fpu(1 − kp·c/dp)" result={fmt(r.fpr,1)} unit="MPa"/>
-        <TeddsCalc sym="Mr" formula="Φ·Aps·fpr·(dp − a/2)" result={fmt(r.Mr,2)} unit="kNm"/>
-        <TeddsCalc sym="Mf" formula="1.25Md + 1.5(SDL+LL+SL)·(b/1000)·L²/8" result={fmt(r.Mf,2)} unit="kNm"/>
+        <TeddsCalc sym="fpr" formula="fpu(1 Ã¢Ë†â€™ kpÃ‚Â·c/dp)" result={fmt(r.fpr,1)} unit="MPa"/>
+        <TeddsCalc sym="Mr" formula="ÃŽÂ¦Ã‚Â·ApsÃ‚Â·fprÃ‚Â·(dp Ã¢Ë†â€™ a/2)" result={fmt(r.Mr,2)} unit="kNm"/>
+        <TeddsCalc sym="Mf" formula="1.25Md + 1.5(SDL+LL+SL)Ã‚Â·(b/1000)Ã‚Â·LÃ‚Â²/8" result={fmt(r.Mf,2)} unit="kNm"/>
 
         <TeddsHeading>Shear strength</TeddsHeading>
-        <TeddsCalc sym="Vc" formula="Φc·β·√f′c·bw·dv" result={fmt(r.Vc,2)} unit="kN"/>
+        <TeddsCalc sym="Vc" formula="ÃŽÂ¦cÃ‚Â·ÃŽÂ²Ã‚Â·Ã¢Ë†Å¡fÃ¢â‚¬Â²cÃ‚Â·bwÃ‚Â·dv" result={fmt(r.Vc,2)} unit="kN"/>
         <TeddsLine label="Factored shear" sym="Vf" val={fmt(r.Vf,2)} unit="kN"/>
 
         <TeddsHeading>Results summary</TeddsHeading>
@@ -3083,14 +3083,14 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
   return(<div>
     <div className="no-print" style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:12,padding:"8px 12px",background:"#f8f9fa",border:"1px solid #dee2e6",borderRadius:6}}>
       <div style={{fontSize:12,color:"#495057"}}>
-        {activeCalc ? <>📄 <b>{activeCalc.calc_name}</b> <span style={{color:"#868e96"}}>({activeCalc.project_name} / {activeCalc.part_name})</span></> : <span style={{color:"#868e96"}}>Not yet saved to a project</span>}
+        {activeCalc ? <>Ã°Å¸â€œâ€ž <b>{activeCalc.calc_name}</b> <span style={{color:"#868e96"}}>({activeCalc.project_name} / {activeCalc.part_name})</span></> : <span style={{color:"#868e96"}}>Not yet saved to a project</span>}
         {saveMsg && <span style={{marginLeft:10,color:"#1e7e34",fontWeight:700}}>{saveMsg}</span>}
       </div>
       <div style={{display:"flex",gap:6}}>
         {activeCalc && activeCalc.created_by_id===user?.id && (
-          <button onClick={doUpdate} style={{padding:"6px 12px",borderRadius:4,border:`1px solid ${theme.accent}`,background:theme.soft,color:theme.text,fontWeight:700,fontSize:11,cursor:"pointer"}}>↻ Update Saved File</button>
+          <button onClick={doUpdate} style={{padding:"6px 12px",borderRadius:4,border:`1px solid ${theme.accent}`,background:theme.soft,color:theme.text,fontWeight:700,fontSize:11,cursor:"pointer"}}>Ã¢â€ Â» Update Saved File</button>
         )}
-        <button onClick={()=>setSaveOpen(true)} style={{padding:"6px 12px",borderRadius:4,border:`2px solid ${theme.accentDark}`,background:theme.accentDark,color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer"}}>💾 Save As…</button>
+        <button onClick={()=>setSaveOpen(true)} style={{padding:"6px 12px",borderRadius:4,border:`2px solid ${theme.accentDark}`,background:theme.accentDark,color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer"}}>Ã°Å¸â€™Â¾ Save AsÃ¢â‚¬Â¦</button>
       </div>
     </div>
     <SaveCalcModal open={saveOpen} onClose={()=>setSaveOpen(false)} onSave={doSave} existingProjects={allCalcs}
@@ -3103,7 +3103,7 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
         {id:"beam",label:"Moment & Shear"},
         {id:"losses",label:"Prestress Losses"},
         {id:"util",label:"Utilization Summary"},
-        {id:"3d",label:"🧊 3D Model"},
+        {id:"3d",label:"Ã°Å¸Â§Å  3D Model"},
       ]}/>
       {chartType==="3d" && (
         <Viewer3D
@@ -3136,7 +3136,7 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
         ]}/>
       )}
       {chartType==="util" && (
-        <BarChart title="Utilization — Capacity vs Maximum" unit="" bars={[
+        <BarChart title="Utilization Ã¢â‚¬â€ Capacity vs Maximum" unit="" bars={[
           {label:"Flexural strength", value:r.Mf/r.Mr, color:r.Mr>r.Mf?"#27ae60":"#c0392b"},
           {label:"Shear strength", value:r.Vf/r.Vc, color:r.Vc>r.Vf?"#27ae60":"#c0392b"},
         ]}/>
@@ -3147,19 +3147,19 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
     <InputsBlock><>
     <Card title="Slab Properties (Metric)">
       <R><OI label="Section" value={sec} onChange={setSec} options={Object.keys(CPCI_SLABS)} width={160}/></R>
-      <R><CI label="h" value={r.s.h} unit="mm"/><CI label="A" value={r.s.A} unit="mm²"/><CI label="b" value={r.s.b} unit="mm"/><CI label="bw" value={r.s.bw} unit="mm"/></R>
+      <R><CI label="h" value={r.s.h} unit="mm"/><CI label="A" value={r.s.A} unit="mmÃ‚Â²"/><CI label="b" value={r.s.b} unit="mm"/><CI label="bw" value={r.s.bw} unit="mm"/></R>
     </Card>
     <Card title="Concrete">
-      <Eq tex="Ec = 4500√f′c" code="CSA A23.3-19 §8.6.2.2"/>
-      <Eq tex="α₁ = 0.85 − 0.0015f′c ≥ 0.67" code="CSA A23.3-19 §10.1.7"/>
-      <Eq tex="β₁ = 0.97 − 0.0025f′c ≥ 0.67" code="CSA A23.3-19 §10.1.7"/>
+      <Eq tex="Ec = 4500Ã¢Ë†Å¡fÃ¢â‚¬Â²c" code="CSA A23.3-19 Ã‚Â§8.6.2.2"/>
+      <Eq tex="ÃŽÂ±Ã¢â€šÂ = 0.85 Ã¢Ë†â€™ 0.0015fÃ¢â‚¬Â²c Ã¢â€°Â¥ 0.67" code="CSA A23.3-19 Ã‚Â§10.1.7"/>
+      <Eq tex="ÃŽÂ²Ã¢â€šÂ = 0.97 Ã¢Ë†â€™ 0.0025fÃ¢â‚¬Â²c Ã¢â€°Â¥ 0.67" code="CSA A23.3-19 Ã‚Â§10.1.7"/>
       <R><OI label="Cover" value={cover} onChange={setCover} unit="mm"/><OI label="Strand ht" value={stH} onChange={setStH} unit="mm"/><OI label={<Sym base="f" sub="c" prime/>} value={fc} onChange={setFc} unit="MPa"/><OI label={<Sym base="f" sub="ci" prime/>} value={fci} onChange={setFci} unit="MPa"/><OI label="ag" value={ag} onChange={setAg} unit="mm"/></R>
-      <R><CI label={<Sym base="E" sub="c"/>} value={r.Ec} unit="MPa"/><CI label={<Sym base="E" sub="ci"/>} value={r.Eci} unit="MPa"/><CI label="α₁" value={fmt(r.a1,3)}/><CI label="β₁" value={fmt(r.b1,3)}/></R>
+      <R><CI label={<Sym base="E" sub="c"/>} value={r.Ec} unit="MPa"/><CI label={<Sym base="E" sub="ci"/>} value={r.Eci} unit="MPa"/><CI label="ÃŽÂ±Ã¢â€šÂ" value={fmt(r.a1,3)}/><CI label="ÃŽÂ²Ã¢â€šÂ" value={fmt(r.b1,3)}/></R>
     </Card>
     <Card title="Strands">
-      <Eq tex="Aps = n₁₃ × 99 + n₁₅ × 143 (mm²)" code="CPCI Handbook §3.2"/>
+      <Eq tex="Aps = nÃ¢â€šÂÃ¢â€šÆ’ Ãƒâ€” 99 + nÃ¢â€šÂÃ¢â€šâ€¦ Ãƒâ€” 143 (mmÃ‚Â²)" code="CPCI Handbook Ã‚Â§3.2"/>
       <R><OI label="# 13mm" value={nH} onChange={setNH} step={1}/><OI label="# 15mm" value={nS} onChange={setNS} step={1}/></R>
-      <R><CI label={<Sym base="A" sub="ps"/>} value={r.Aps} unit="mm²"/><CI label="fpi" value={fmt(r.fpi,0)} unit="MPa"/><CI label="e" value={fmt(r.e,1)} unit="mm"/><CI label="dp" value={fmt(r.dp,1)} unit="mm"/></R>
+      <R><CI label={<Sym base="A" sub="ps"/>} value={r.Aps} unit="mmÃ‚Â²"/><CI label="fpi" value={fmt(r.fpi,0)} unit="MPa"/><CI label="e" value={fmt(r.e,1)} unit="mm"/><CI label="dp" value={fmt(r.dp,1)} unit="mm"/></R>
     </Card>
     <Card title="Loading">
       <R><OI label="Span" value={spanM} onChange={setSpanM} unit="m"/><OI label="SDL" value={sdl} onChange={setSdl} unit="kPa"/><OI label="LL" value={ll} onChange={setLl} unit="kPa"/><OI label="SL" value={sl} onChange={setSl} unit="kPa"/></R>
@@ -3168,39 +3168,39 @@ function CPCITab({loadedCalc, onConsumedLoad, workspace}){
     <OutputsBlock><>
     <SH>Outputs</SH>
     <Card title="Transfer Stresses">
-      <Eq tex="f = ±Po/A ± Po·e/S" code="CSA A23.3-19 §18.3.1"/>
-      <Eq tex="Tension allow = −0.5√f′ci     Comp allow = 0.67f′ci" code="CSA A23.3-19 §18.3.1"/>
-      <Res label="P₀" value={fmt(r.Po,2)} unit="kN"/>
+      <Eq tex="f = Ã‚Â±Po/A Ã‚Â± PoÃ‚Â·e/S" code="CSA A23.3-19 Ã‚Â§18.3.1"/>
+      <Eq tex="Tension allow = Ã¢Ë†â€™0.5Ã¢Ë†Å¡fÃ¢â‚¬Â²ci     Comp allow = 0.67fÃ¢â‚¬Â²ci" code="CSA A23.3-19 Ã‚Â§18.3.1"/>
+      <Res label="PÃ¢â€šâ‚¬" value={fmt(r.Po,2)} unit="kN"/>
       <Check label="Tension End" actual={fmt(r.topT,2)} limit={fmt(r.aTe,2)} unit="MPa" ok={r.topT>r.aTe}/>
       <Check label="Comp End" actual={fmt(r.botT,1)} limit={fmt(r.aCe,1)} unit="MPa" ok={r.botT<r.aCe}/>
       <Check label="Tension Mid" actual={fmt(r.nTopM,2)} limit={fmt(r.aTm,2)} unit="MPa" ok={r.nTopM>r.aTm}/>
       <Check label="Comp Mid" actual={fmt(r.nBotM,1)} limit={fmt(r.aCm,1)} unit="MPa" ok={r.nBotM<r.aCm}/>
     </Card>
-    <Card title="Losses"><Eq tex="Total = (ES+CR+SH)/fpi × 100" code="CSA A23.3-19 §18.6"/><Res label="Total Loss" value={<span style={{fontSize:18,fontWeight:800}}>{fmt(r.totalLoss,2)}%</span>}/></Card>
+    <Card title="Losses"><Eq tex="Total = (ES+CR+SH)/fpi Ãƒâ€” 100" code="CSA A23.3-19 Ã‚Â§18.6"/><Res label="Total Loss" value={<span style={{fontSize:18,fontWeight:800}}>{fmt(r.totalLoss,2)}%</span>}/></Card>
     <Card title="Flexural Strength">
-      <Eq tex="c = Aps·fpu / (α₁f′c·b + kp·Aps·fpu/dp)" code="CSA A23.3-19 §18.6.2"/>
-      <Eq tex="fpr = fpu(1 − kp·c/dp)" code="CSA A23.3-19 §18.6.2"/>
-      <Eq tex="Mr = Φ·Aps·fpr·(dp − a/2)" code="CSA A23.3-19 §18.6.2"/>
-      <Eq tex="Mf = 1.25Md + 1.5(SDL+LL+SL)·(b/1000)·L²/8" code="CSA A23.3-19 §8.3.2"/>
+      <Eq tex="c = ApsÃ‚Â·fpu / (ÃŽÂ±Ã¢â€šÂfÃ¢â‚¬Â²cÃ‚Â·b + kpÃ‚Â·ApsÃ‚Â·fpu/dp)" code="CSA A23.3-19 Ã‚Â§18.6.2"/>
+      <Eq tex="fpr = fpu(1 Ã¢Ë†â€™ kpÃ‚Â·c/dp)" code="CSA A23.3-19 Ã‚Â§18.6.2"/>
+      <Eq tex="Mr = ÃŽÂ¦Ã‚Â·ApsÃ‚Â·fprÃ‚Â·(dp Ã¢Ë†â€™ a/2)" code="CSA A23.3-19 Ã‚Â§18.6.2"/>
+      <Eq tex="Mf = 1.25Md + 1.5(SDL+LL+SL)Ã‚Â·(b/1000)Ã‚Â·LÃ‚Â²/8" code="CSA A23.3-19 Ã‚Â§8.3.2"/>
       <Res label="c" value={fmt(r.cpp,2)} unit="mm"/><Res label="fpr" value={fmt(r.fpr,1)} unit="MPa"/>
       <Check label="Mr > Mf" actual={fmt(r.Mr,2)} limit={fmt(r.Mf,2)} unit="kNm" ok={r.Mr>r.Mf}/>
     </Card>
     <Card title="Shear">
-      <Eq tex="Vc = Φc·β·√f′c·bw·dv" code="CSA A23.3-19 §11.3.4"/>
+      <Eq tex="Vc = ÃŽÂ¦cÃ‚Â·ÃŽÂ²Ã‚Â·Ã¢Ë†Å¡fÃ¢â‚¬Â²cÃ‚Â·bwÃ‚Â·dv" code="CSA A23.3-19 Ã‚Â§11.3.4"/>
       <Res label="Vf" value={fmt(r.Vf,2)} unit="kN"/><Res label="Vc" value={fmt(r.Vc,2)} unit="kN"/>
       <Check label="Vc > Vf" actual={fmt(r.Vc,2)} limit={fmt(r.Vf,2)} unit="kN" ok={r.Vc>r.Vf}/>
     </Card>
     <Card title="Torsion">
-      <Eq tex="Tcr = 0.38√f′c·(A²/Pc)·√(1 + fcp/0.38√f′c)" code="CSA A23.3-19 §11.2.9.1"/>
+      <Eq tex="Tcr = 0.38Ã¢Ë†Å¡fÃ¢â‚¬Â²cÃ‚Â·(AÃ‚Â²/Pc)Ã‚Â·Ã¢Ë†Å¡(1 + fcp/0.38Ã¢Ë†Å¡fÃ¢â‚¬Â²c)" code="CSA A23.3-19 Ã‚Â§11.2.9.1"/>
       <Res label={<Sym base="T" sub="cr"/>} value={fmt(r.Tcr,2)} unit="kNm"/><Res label="0.25 Tcr" value={fmt(r.Tcr*.25,2)} unit="kNm"/>
     </Card>
     </></OutputsBlock>
   </div>);
 }
 
-// ═════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 // HC CRUSH TAB
-// ═════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 function CrushTab({loadedCalc, onConsumedLoad, workspace}){
   const [sec,setSec]=useState("HC10");
   const [w,setW]=useState(50);
@@ -3243,7 +3243,7 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
     if(res.ok){
       setActiveCalc(res.row);
       fetchCalcsForUser(user).then(setAllCalcs);
-      setSaveMsg("Saved ✓");
+      setSaveMsg("Saved Ã¢Å“â€œ");
       setTimeout(()=>setSaveMsg(""),2500);
       return true;
     }
@@ -3254,7 +3254,7 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
     if(!activeCalc) return;
     const res = await updateCalc(activeCalc.id, {inputs: currentInputs, reportText: null});
     if(res.ok){
-      setSaveMsg("Updated ✓");
+      setSaveMsg("Updated Ã¢Å“â€œ");
       setTimeout(()=>setSaveMsg(""),2500);
       fetchCalcsForUser(user).then(setAllCalcs);
     }
@@ -3271,7 +3271,7 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
   if(reportStyle==="tedds"){
     return(
       <TeddsDoc>
-        <TeddsTitle calcId={`Hollowcore End Crushing Capacity — ${sec}`} codeBasis="In accordance with CSA A23.3-19 and the CPCI Design Manual, 5th Edition" version="Calc version 1.0"/>
+        <TeddsTitle calcId={`Hollowcore End Crushing Capacity Ã¢â‚¬â€ ${sec}`} codeBasis="In accordance with CSA A23.3-19 and the CPCI Design Manual, 5th Edition" version="Calc version 1.0"/>
         <TeddsSection number={1} note="Bearing-induced core crushing capacity check at slab end support"/>
 
         <TeddsHeading>Section properties</TeddsHeading>
@@ -3281,24 +3281,24 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
         <Graphic><BearingDiagram h={r.s.h} w={w} bw={r.s.bw} b={r.s.b}/></Graphic>
 
         <TeddsHeading>Bearing conditions</TeddsHeading>
-        <TeddsLine label="Bearing width" sym="w" val={w} unit="mm" label2="Concrete strength" sym2="f′c" val2={fc} unit2="MPa"/>
+        <TeddsLine label="Bearing width" sym="w" val={w} unit="mm" label2="Concrete strength" sym2="fÃ¢â‚¬Â²c" val2={fc} unit2="MPa"/>
         <TeddsLine label="Eccentricity of bearing reaction" sym="e" val={ecc} unit="mm" label2="Bearing height" sym2="hb" val2={hB} unit2="mm"/>
 
         <TeddsHeading>Effective bearing area</TeddsHeading>
-        <TeddsCalc sym="Ae,horiz" formula={`2 × ${w} × ${r.s.bw} / (${r.s.b}/1000)`} result={fmt(r.AeH,1)} unit="mm²/m"/>
-        <TeddsCalc sym="Ae,single" formula={`1 × ${w} × ${r.s.bw} / (${r.s.b}/1000)`} result={fmt(r.AeS,1)} unit="mm²"/>
+        <TeddsCalc sym="Ae,horiz" formula={`2 Ãƒâ€” ${w} Ãƒâ€” ${r.s.bw} / (${r.s.b}/1000)`} result={fmt(r.AeH,1)} unit="mmÃ‚Â²/m"/>
+        <TeddsCalc sym="Ae,single" formula={`1 Ãƒâ€” ${w} Ãƒâ€” ${r.s.bw} / (${r.s.b}/1000)`} result={fmt(r.AeS,1)} unit="mmÃ‚Â²"/>
 
         <TeddsHeading>Core crushing capacity</TeddsHeading>
-        <TeddsCalc sym="Re" formula={`1 − 2(${ecc})/${hB}`} result={fmt(r.eF,4)}/>
-        <TeddsCalc sym="ΦPn,horiz" formula={`0.65 × 0.85 × Ae × ${fc} × Re / 1000`} result={fmt(r.PnH,2)} unit="kN/m"/>
-        <TeddsCalc sym="ΦPn,single" formula={`0.65 × 0.85 × Ae × ${fc} × Re / 1000`} result={fmt(r.PnS,2)} unit="kN"/>
+        <TeddsCalc sym="Re" formula={`1 Ã¢Ë†â€™ 2(${ecc})/${hB}`} result={fmt(r.eF,4)}/>
+        <TeddsCalc sym="ÃŽÂ¦Pn,horiz" formula={`0.65 Ãƒâ€” 0.85 Ãƒâ€” Ae Ãƒâ€” ${fc} Ãƒâ€” Re / 1000`} result={fmt(r.PnH,2)} unit="kN/m"/>
+        <TeddsCalc sym="ÃŽÂ¦Pn,single" formula={`0.65 Ãƒâ€” 0.85 Ãƒâ€” Ae Ãƒâ€” ${fc} Ãƒâ€” Re / 1000`} result={fmt(r.PnS,2)} unit="kN"/>
 
         <TeddsHeading>Results summary</TeddsHeading>
         <TeddsTable
           headers={["Check","Unit","Capacity","Maximum","Utilization","Result"]}
           rows={[
-            [ "Horizontal abutting joints","kN/m", fmt(r.PnH,2), "—", "—", "PASS" ],
-            [ "Single end joint","kN", fmt(r.PnS,2), "—", "—", "PASS" ],
+            [ "Horizontal abutting joints","kN/m", fmt(r.PnH,2), "Ã¢â‚¬â€", "Ã¢â‚¬â€", "PASS" ],
+            [ "Single end joint","kN", fmt(r.PnS,2), "Ã¢â‚¬â€", "Ã¢â‚¬â€", "PASS" ],
           ]}
         />
       </TeddsDoc>
@@ -3308,14 +3308,14 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
   return(<div>
     <div className="no-print" style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:12,padding:"8px 12px",background:"#f8f9fa",border:"1px solid #dee2e6",borderRadius:6}}>
       <div style={{fontSize:12,color:"#495057"}}>
-        {activeCalc ? <>📄 <b>{activeCalc.calc_name}</b> <span style={{color:"#868e96"}}>({activeCalc.project_name} / {activeCalc.part_name})</span></> : <span style={{color:"#868e96"}}>Not yet saved to a project</span>}
+        {activeCalc ? <>Ã°Å¸â€œâ€ž <b>{activeCalc.calc_name}</b> <span style={{color:"#868e96"}}>({activeCalc.project_name} / {activeCalc.part_name})</span></> : <span style={{color:"#868e96"}}>Not yet saved to a project</span>}
         {saveMsg && <span style={{marginLeft:10,color:"#1e7e34",fontWeight:700}}>{saveMsg}</span>}
       </div>
       <div style={{display:"flex",gap:6}}>
         {activeCalc && activeCalc.created_by_id===user?.id && (
-          <button onClick={doUpdate} style={{padding:"6px 12px",borderRadius:4,border:`1px solid ${theme.accent}`,background:theme.soft,color:theme.text,fontWeight:700,fontSize:11,cursor:"pointer"}}>↻ Update Saved File</button>
+          <button onClick={doUpdate} style={{padding:"6px 12px",borderRadius:4,border:`1px solid ${theme.accent}`,background:theme.soft,color:theme.text,fontWeight:700,fontSize:11,cursor:"pointer"}}>Ã¢â€ Â» Update Saved File</button>
         )}
-        <button onClick={()=>setSaveOpen(true)} style={{padding:"6px 12px",borderRadius:4,border:`2px solid ${theme.accentDark}`,background:theme.accentDark,color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer"}}>💾 Save As…</button>
+        <button onClick={()=>setSaveOpen(true)} style={{padding:"6px 12px",borderRadius:4,border:`2px solid ${theme.accentDark}`,background:theme.accentDark,color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer"}}>Ã°Å¸â€™Â¾ Save AsÃ¢â‚¬Â¦</button>
       </div>
     </div>
     <SaveCalcModal open={saveOpen} onClose={()=>setSaveOpen(false)} onSave={doSave} existingProjects={allCalcs}
@@ -3331,24 +3331,24 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
     <OutputsBlock><>
     <SH>Outputs</SH>
     <Card title="Effective Bearing Area">
-      <Eq tex="Ae(horiz) = 2·w·bw / (b/1000)" code="CPCI Handbook §4.5.1"/>
-      <Eq tex="Ae(single) = 1·w·bw / (b/1000)" code="CPCI Handbook §4.5.1"/>
-      <Res label="Ae (horiz)" value={fmt(r.AeH,1)} unit="mm²/m"/><Res label="Ae (single)" value={fmt(r.AeS,1)} unit="mm²"/>
+      <Eq tex="Ae(horiz) = 2Ã‚Â·wÃ‚Â·bw / (b/1000)" code="CPCI Handbook Ã‚Â§4.5.1"/>
+      <Eq tex="Ae(single) = 1Ã‚Â·wÃ‚Â·bw / (b/1000)" code="CPCI Handbook Ã‚Â§4.5.1"/>
+      <Res label="Ae (horiz)" value={fmt(r.AeH,1)} unit="mmÃ‚Â²/m"/><Res label="Ae (single)" value={fmt(r.AeS,1)} unit="mmÃ‚Â²"/>
     </Card>
     <Card title="Core Crushing Capacity">
-      <Eq tex="Re = 1 − 2e/h" code="CPCI Handbook §4.5.2"/>
-      <Eq tex="ΦPn = Φ × 0.85 × Ae × f′c × Re / 1000" code="CSA A23.3-19 §10.8.1"/>
-      <Res label="Rₑ" value={fmt(r.eF,4)}/><Res label="Φ" value={r.phi}/>
+      <Eq tex="Re = 1 Ã¢Ë†â€™ 2e/h" code="CPCI Handbook Ã‚Â§4.5.2"/>
+      <Eq tex="ÃŽÂ¦Pn = ÃŽÂ¦ Ãƒâ€” 0.85 Ãƒâ€” Ae Ãƒâ€” fÃ¢â‚¬Â²c Ãƒâ€” Re / 1000" code="CSA A23.3-19 Ã‚Â§10.8.1"/>
+      <Res label="RÃ¢â€šâ€˜" value={fmt(r.eF,4)}/><Res label="ÃŽÂ¦" value={r.phi}/>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginTop:10}}>
         <div style={{padding:14,background:"#f8f9fa",borderRadius:4,textAlign:"center",border:"1px solid #dee2e6"}}>
           <div style={{fontSize:11,fontWeight:700,color:"#6c757d",textTransform:"uppercase",letterSpacing:0.5,marginBottom:4}}>Horiz. Abutting Joints</div>
           <div style={{fontSize:24,fontWeight:800,fontFamily:"'JetBrains Mono','Fira Code','Consolas',monospace"}}>{fmt(r.PnH,2)}</div>
-          <div style={{fontSize:11,color:"#999"}}>ΦPn (kN/m)</div>
+          <div style={{fontSize:11,color:"#999"}}>ÃŽÂ¦Pn (kN/m)</div>
         </div>
         <div style={{padding:14,background:"#f8f9fa",borderRadius:4,textAlign:"center",border:"1px solid #dee2e6"}}>
           <div style={{fontSize:11,fontWeight:700,color:"#6c757d",textTransform:"uppercase",letterSpacing:0.5,marginBottom:4}}>Single End Joint</div>
           <div style={{fontSize:24,fontWeight:800,fontFamily:"'JetBrains Mono','Fira Code','Consolas',monospace"}}>{fmt(r.PnS,2)}</div>
-          <div style={{fontSize:11,color:"#999"}}>ΦPn (kN/m)</div>
+          <div style={{fontSize:11,color:"#999"}}>ÃŽÂ¦Pn (kN/m)</div>
         </div>
       </div>
     </Card>
@@ -3368,7 +3368,7 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
       )}
       {chartType==="ecc" && (
         <Graphic>
-        <LineChart title="Capacity vs. Bearing Eccentricity" xLabel="Eccentricity, e (mm)" yLabel="ΦPn,horiz (kN/m)"
+        <LineChart title="Capacity vs. Bearing Eccentricity" xLabel="Eccentricity, e (mm)" yLabel="ÃŽÂ¦Pn,horiz (kN/m)"
           series={[{
             points: Array.from({length:21}).map((_,i)=>{
               const eTest = (hB/2)*(i/20);
@@ -3376,512 +3376,16 @@ function CrushTab({loadedCalc, onConsumedLoad, workspace}){
               const PnTest = r.phi*0.85*r.AeH*fc*ReTest/1000;
               return {x:eTest, y:Math.max(PnTest,0)};
             }),
-            color:"#2563eb", label:"ΦPn"
+            color:"#2563eb", label:"ÃŽÂ¦Pn"
           }]}/>
         </Graphic>
       )}
     </Card>
     </></OutputsBlock>
-      </div>{/* end left scrollable column */}
-
-      {/* RIGHT: sticky 3D viewer */}
-      <div className="no-print" style={{width:340,flexShrink:0,position:"sticky",top:80,alignSelf:"flex-start",maxHeight:"calc(100vh - 100px)",overflowY:"auto"}}>
-        <div style={{fontWeight:700,fontSize:11,fontFamily:"'JetBrains Mono',monospace",textTransform:"uppercase",letterSpacing:0.8,color:"#2563eb",marginBottom:8,padding:"6px 10px",background:"#eff6ff",borderRadius:6,border:"1px solid #bfdbfe"}}>📐 3D Model &amp; Charts</div>
-        <Card title="Scientific Charts & 3D Model">
-          <ChartPicker value={chartType} onChange={setChartType} options={[
-            {id:"stages",   label:"🏗 Construction Stages"},
-            {id:"vibration",label:"🔊 Vibration"},
-            {id:"lateral",  label:"↔ Lateral Stability"},
-            {id:"moving",   label:"🚛 Moving Loads"},
-            {id:"transformed",label:"⊕ Transformed Section"},
-            {id:"torsion",  label:"🌀 Torsion"},
-            {id:"stations", label:"📋 Station Results"},
-            {id:"stress",label:"Stress vs. Depth"},
-            {id:"beam",label:"Moment & Shear"},
-            {id:"losses",label:"Prestress Losses"},
-            {id:"camber",label:"Camber / Deflection"},
-            {id:"util",label:"Utilization Summary"},
-            {id:"3d",label:"🧊 3D Model"},
-          ]}/>
-    
-          {chartType==="stages" && r.constructionStages && (
-            <ConstructionStagesView stages={r.constructionStages}/>
-          )}
-    
-          {chartType==="vibration" && (
-            <VibrationPanel
-              phase6={phase6}
-              occupancy={occupancy} setOccupancy={setOccupancy}
-              activity={activity} setActivity={setActivity}
-              slabWidth={slabWidth} setSlabWidth={setSlabWidth}
-              fillCores={fillCores} setFillCores={setFillCores}
-              fillLen={fillLen} setFillLen={setFillLen}
-              stations={r.stations}
-            />
-          )}
-    
-          {chartType==="lateral" && (
-            <LateralStabilityPanel
-              phase7={phase7}
-              liftPt={liftPt} setLiftPt={setLiftPt}
-              yLift={yLift} setYLift={setYLift}
-              sweepIn={sweepIn} setSweepIn={setSweepIn}
-              span={span} sectionLabel={sec}
-            />
-          )}
-    
-          {chartType==="moving" && (
-            <MovingLoadPanel
-              phase9={phase9}
-              vehicle={mlVehicle} setVehicle={setMlVehicle}
-              IM={mlIM} setIM={setMlIM}
-              gammaLL={mlGammaLL} setGammaLL={setMlGammaLL}
-              customAxles={mlCustomAxles} setCustomAxles={setMlCustomAxles}
-              span={span}
-              staticMmax={r?.Mu} staticVmax={r?.Ay}
-            />
-          )}
-    
-          {chartType==="transformed" && phase10a && (
-            <TransformedSectionPanel data={phase10a} g1Flag={calcFlags?.G1}/>
-          )}
-    
-          {chartType==="torsion" && (
-            <TorsionPanel
-              phase10b={phase10b}
-              Tu_kft={Tu_kft} setTu_kft={setTu_kft}
-              torsionAt={torsionAt} setTorsionAt={setTorsionAt}
-              torsionLegs={torsionLegs} setTorsionLegs={setTorsionLegs}
-              torsionSpacing={torsionSpacing} setTorsionSpacing={setTorsionSpacing}
-            />
-          )}
-    
-          {chartType==="stations" && r.stations && (
-            <StationTable stations={r.stations} span={span}/>
-          )}
-    
-          {chartType==="3d" && (
-            <Viewer3D
-              height={380}
-              initialDistance={Math.max(r.s.b, span*2)*0.18+8}
-              deps={[r.s.h, r.s.b, r.s.cores, r.s.coreD, nH, nS, r.dp, span, slabHOverride, slabBOverride]}
-              buildScene={(group,THREE,helpers)=>buildHollowcoreScene(group,THREE,{
-                h:r.s.h, b:r.s.b, length:Math.min(span*12, 240), cores:r.s.cores, coreD:r.s.coreD,
-                nStrands:nH+nS, dp:r.dp,
-              }, helpers)}
-              editableDims={{
-                length: { value:Math.round(Math.min(span*12,240)*10)/10, unit:"in", step:6, min:24, onChange:(v)=>setSpan(Math.max(1, v/12)) },
-                h: { value:r.s.h, unit:"in", step:1, min:4, onChange:(v)=>setSlabHOverride(Math.max(4,Math.round(v))) },
-                b: { value:r.s.b, unit:"in", step:2, min:12, onChange:(v)=>setSlabBOverride(Math.max(12,Math.round(v))) },
-              }}
-            />
-          )}
-          {chartType==="stress" && (
-            <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:10}}>
-              <StressDepthChart h={r.s.h} topStress={r.nTtop} botStress={r.nTbot} depthLabel="@ Transfer" allowTens={r.aTE/1000} allowComp={r.aCE/1000}/>
-              <StressDepthChart h={r.s.h} topStress={r.nMtop} botStress={r.nMbot} depthLabel="@ Midspan" allowTens={r.aTM/1000} allowComp={r.aCM/1000}/>
-            </div>
-          )}
-          {chartType==="beam" && r.stations && (
-            <div>
-              <LineChart title="Factored Bending Moment Diagram — Mᵤ (kip-ft)"
-                xLabel="Position along span (ft)" yLabel="Mᵤ (kip-ft)" yZeroLine
-                series={[{points:r.stations.map(st=>({x:st.x,y:st.Mu})),color:"#2563eb",label:"Mᵤ"},
-                         {points:r.stations.map(st=>({x:st.x,y:st.phiMn})),color:"#22c55e",label:"ΦMn"}]}/>
-              <LineChart title="Factored Shear Force Diagram — Vᵤ (kips)"
-                xLabel="Position along span (ft)" yLabel="Vᵤ (kips)" yZeroLine
-                series={[{points:r.stations.map(st=>({x:st.x,y:st.Vu})),color:"#c0392b",label:"Vᵤ"},
-                         {points:r.stations.map(st=>({x:st.x,y:st.Vn})),color:"#22c55e",label:"ΦVn"}]}/>
-            </div>
-          )}
-          {chartType==="losses" && (
-            <BarChart unit="ksi" title="Loss of Prestress Breakdown" bars={[
-              {label:"Elastic Shortening (ES)", value:r.ES, color:"#2563eb"},
-              {label:"Creep (CR)", value:r.CR, color:"#7c3aed"},
-              {label:"Shrinkage (SH)", value:r.SHv, color:"#0891b2"},
-              {label:"Relaxation (RE)", value:r.RE, color:"#ea580c"},
-            ]}/>
-          )}
-          {chartType==="camber" && r.stations && (
-            <LineChart title="Net Deflection Profile at All Stages" xLabel="Position along span (ft)" yLabel="Deflection (in)" yZeroLine
-              series={[
-                {points:r.stations.map(st=>({x:st.x,y:st.netI})),  color:"#7c3aed",label:"@ Release"},
-                {points:r.stations.map(st=>({x:st.x,y:st.netE})),  color:"#2563eb",label:"@ Erection"},
-                {points:r.stations.map(st=>({x:st.x,y:st.netF})),  color:"#c0392b",label:"@ Final"},
-              ]}/>
-          )}
-          {chartType==="util" && (
-            <BarChart title="Utilization — Capacity vs Maximum" unit="" bars={[
-              {label:"Tension @ ends", value:r.tensEndOk?(r.nTtop*1000)/Math.abs(r.aTE):1.3, color:r.tensEndOk?"#27ae60":"#c0392b"},
-              {label:"Comp @ ends", value:Math.abs(r.nTbot)*1000/r.aCE, color:r.compEndOk?"#27ae60":"#c0392b"},
-              {label:"Comp @ midspan", value:Math.abs(r.nMbot)*1000/r.aCM, color:r.compMidOk?"#27ae60":"#c0392b"},
-              {label:"Flexural strength", value:r.flexUtil, color:r.flexOk?"#27ae60":"#c0392b"},
-              {label:"Service tension", value:r.fbot/r.aTens, color:r.classU?"#27ae60":"#c0392b"},
-            ]}/>
-          )}
-        </Card>
-        </Graphic></OutputsBlock>
-      </div>{/* end right sticky column */}
-
-    </div>{/* end two-column layout */}
   </div>);
 }
 
-// ═══════════════════════════════════════════════════
-// CONTEXTS
-// ═══════════════════════════════════════════════════
-const CurrentUserContext = createContext(null);
-const useCurrentUser = () => useContext(CurrentUserContext);
-const ViewSettingsContext = createContext({showSteps:true,showGraphics:true,showInputs:true,showOutputs:true,reportStyle:"interactive"});
-const useViewSettings = () => useContext(ViewSettingsContext);
-const ModuleThemeContext = createContext({accent:"#2563eb",soft:"#eff6ff",text:"#1e3a8a",accentDark:"#1d4ed8"});
-const useModuleTheme = () => useContext(ModuleThemeContext);
-
-const MODULE_THEMES = {
-  pci:  {accent:"#2563eb",soft:"#eff6ff",text:"#1e3a8a",accentDark:"#1d4ed8"},
-  cpci: {accent:"#7c3aed",soft:"#f5f3ff",text:"#4c1d95",accentDark:"#6d28d9"},
-  col:  {accent:"#16a34a",soft:"#f0fdf4",text:"#14532d",accentDark:"#15803d"},
-  crush:{accent:"#ea580c",soft:"#fff7ed",text:"#7c2d12",accentDark:"#c2410c"},
-  beam: {accent:"#0ea5e9",soft:"#f0f9ff",text:"#0c4a6e",accentDark:"#0284c7"},
-};
-
-const MODULE_LABELS = {pci:"PCI Hollowcore",cpci:"CPCI Hollowcore",col:"Column Design",crush:"HC End Crushing",beam:"Beam Design"};
-const TABS=[{id:"pci",label:"PCI Hollowcore",mod:"pci"},{id:"cpci",label:"CPCI Hollowcore",mod:"cpci"},{id:"col",label:"Column Design",mod:"col"},{id:"crush",label:"HC End Crushing",mod:"crush"},{id:"beam",label:"Beam Design",mod:"beam"}];
-const ALL_TABS=[{id:"dashboard",label:"🏠 Dashboard",mod:null},...TABS];
-
-// ═══════════════════════════════════════════════════
-// LIVE STATUS BANNER
-// ═══════════════════════════════════════════════════
-function LiveStatusBanner({ok, util, label}) {
-  const theme = useModuleTheme();
-  const pct = Math.min(100, Math.round((util||0)*100));
-  return (
-    <div className="no-print" style={{marginBottom:12,padding:"8px 14px",borderRadius:6,background:ok?"#f0fdf4":"#fef2f2",border:`1px solid ${ok?"#bbf7d0":"#fecaca"}`,display:"flex",alignItems:"center",gap:12}}>
-      <span style={{fontSize:11,fontWeight:700,color:ok?"#16a34a":"#dc2626"}}>{ok?"✓ PASS":"✗ FAIL"}</span>
-      <span style={{fontSize:11,color:"#374151"}}>{label}</span>
-      <div style={{flex:1,height:6,background:"#e5e7eb",borderRadius:3,overflow:"hidden"}}>
-        <div style={{height:"100%",width:`${pct}%`,background:ok?"#22c55e":"#ef4444",borderRadius:3,transition:"width 0.4s ease"}}/>
-      </div>
-      <span style={{fontSize:11,fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:ok?"#15803d":"#b91c1c"}}>{(util||0).toFixed(3)}</span>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════
-// DISPLAY WRAPPERS
-// ═══════════════════════════════════════════════════
-function InputsBlock({children}){const{showInputs}=useViewSettings();if(!showInputs)return null;return children;}
-function OutputsBlock({children}){const{showOutputs}=useViewSettings();if(!showOutputs)return null;return children;}
-function Graphic({children}){const{showGraphics}=useViewSettings();if(!showGraphics)return null;return children;}
-
-// ═══════════════════════════════════════════════════
-// DASHBOARD
-// ═══════════════════════════════════════════════════
-function Dashboard({ onOpenCalc, onNavigate }) {
-  const user = useCurrentUser();
-  const [calcs, setCalcs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const MONO = "'JetBrains Mono','Fira Code','Consolas',monospace";
-
-  useEffect(() => {
-    fetchCalcsForUser(user).then(data => { setCalcs(data); setLoading(false); });
-  }, [user?.id]);
-
-  if (loading) return <div style={{padding:40,textAlign:"center",color:"#868e96",fontFamily:MONO}}>Loading dashboard…</div>;
-
-  const totalFiles = calcs.length;
-  const totalProjects = [...new Set(calcs.map(c=>c.project_name))].length;
-  const recentFiles = [...calcs].sort((a,b)=>new Date(b.updated_at||b.created_at)-new Date(a.updated_at||a.created_at)).slice(0,8);
-  const moduleCounts = calcs.reduce((acc,c)=>{acc[c.module]=(acc[c.module]||0)+1;return acc;},{});
-  const timeAgo=(d)=>{if(!d)return"—";const diff=Date.now()-new Date(d);const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);if(m<2)return"just now";if(m<60)return`${m}m ago`;if(h<24)return`${h}h ago`;if(dy<7)return`${dy}d ago`;return new Date(d).toLocaleDateString();};
-  const MI={pci:{label:"PCI Hollowcore",color:"#2563eb",icon:"🔷"},cpci:{label:"CPCI Hollowcore",color:"#7c3aed",icon:"🔶"},col:{label:"Column Design",color:"#16a34a",icon:"🟩"},crush:{label:"HC End Crushing",color:"#ea580c",icon:"🟠"},beam:{label:"Beam Design",color:"#0ea5e9",icon:"🔹"}};
-
-  return (
-    <div>
-      <div style={{marginBottom:20,padding:"18px 22px",background:"linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%)",borderRadius:10,color:"#fff"}}>
-        <div style={{fontSize:18,fontWeight:800,fontFamily:MONO,marginBottom:4}}>{isAdmin(user)?"👑":"👋"} Welcome back, {user?.name?.split(" ")[0]}</div>
-        <div style={{fontSize:11,opacity:0.8}}>{new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"})} · BT Structural Calculator</div>
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))",gap:10,marginBottom:20}}>
-        {[{icon:"📁",value:totalProjects,label:"Projects",color:"#2563eb"},{icon:"📄",value:totalFiles,label:"Files",color:"#16a34a"},{icon:"📅",value:timeAgo(recentFiles[0]?.updated_at||recentFiles[0]?.created_at),label:"Last Activity",color:"#0891b2"}].map((s,i)=>(
-          <div key={i} style={{background:"#fff",border:"1px solid #dee2e6",borderRadius:8,padding:"14px 16px",borderTop:`3px solid ${s.color}`}}>
-            <div style={{fontSize:22,marginBottom:4}}>{s.icon}</div>
-            <div style={{fontSize:22,fontWeight:800,fontFamily:MONO,color:s.color}}>{s.value}</div>
-            <div style={{fontSize:10,color:"#868e96",marginTop:2}}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
-        <div style={{background:"#fff",border:"1px solid #dee2e6",borderRadius:8,overflow:"hidden"}}>
-          <div style={{padding:"10px 14px",borderBottom:"1px solid #dee2e6",background:"#f8f9fa",fontWeight:700,fontSize:12,fontFamily:MONO}}>🕐 Recent Files</div>
-          {recentFiles.length===0?<div style={{padding:20,textAlign:"center",color:"#868e96",fontSize:12}}>No files yet</div>:recentFiles.map((f,i)=>{
-            const mi=MI[f.module]||{label:f.module,color:"#868e96",icon:"📄"};
-            return(<div key={i} onClick={()=>onOpenCalc(f)} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 14px",borderBottom:"1px solid #f1f3f5",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.background="#f8f9fa"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-              <span style={{fontSize:14}}>{mi.icon}</span>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontWeight:600,fontSize:11,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{f.calc_name}</div>
-                <div style={{fontSize:10,color:"#868e96"}}><span style={{color:mi.color,fontWeight:600}}>{mi.label}</span> · {f.project_name}{isAdmin(user)?` · ${f.created_by_name}`:""}</div>
-              </div>
-              <div style={{fontSize:10,color:"#adb5bd",fontFamily:MONO,whiteSpace:"nowrap"}}>{timeAgo(f.updated_at||f.created_at)}</div>
-            </div>);
-          })}
-        </div>
-        <div style={{background:"#fff",border:"1px solid #dee2e6",borderRadius:8,overflow:"hidden"}}>
-          <div style={{padding:"10px 14px",borderBottom:"1px solid #dee2e6",background:"#f8f9fa",fontWeight:700,fontSize:12,fontFamily:MONO}}>📊 Module Usage</div>
-          <div style={{padding:"12px 14px"}}>
-            {Object.entries(MI).map(([key,mi])=>{const c=moduleCounts[key]||0,pct=totalFiles>0?(c/totalFiles)*100:0;return(
-              <div key={key} style={{marginBottom:8}}>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}><span style={{fontSize:11,fontFamily:MONO}}>{mi.icon} {mi.label}</span><span style={{fontSize:11,fontWeight:700,color:mi.color,fontFamily:MONO}}>{c}</span></div>
-                <div style={{height:5,background:"#f1f3f5",borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",width:`${pct}%`,background:mi.color,borderRadius:3}}/></div>
-              </div>
-            );})}
-          </div>
-          <div style={{padding:"10px 14px",borderTop:"1px solid #dee2e6",background:"#f8f9fa"}}>
-            <div style={{fontSize:11,fontWeight:700,fontFamily:MONO,marginBottom:6,color:"#374151"}}>⚡ Quick Start</div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-              {Object.entries(MI).map(([key,mi])=>(<button key={key} onClick={()=>onNavigate(key)} style={{padding:"3px 8px",borderRadius:10,border:`1px solid ${mi.color}30`,background:`${mi.color}10`,color:mi.color,fontSize:10,fontFamily:MONO,cursor:"pointer",fontWeight:600}}>{mi.icon} {key.toUpperCase()}</button>))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════
-// PROJECTS BROWSER
-// ═══════════════════════════════════════════════════
-function ProjectsBrowser({onOpenCalc}){
-  const user=useCurrentUser();
-  const[calcs,setCalcs]=useState([]);
-  const[loading,setLoading]=useState(true);
-  const[stage,setStage]=useState(isAdmin(user)?"employees":"projects");
-  const[selEmployee,setSelEmployee]=useState(null);
-  const[selProject,setSelProject]=useState(null);
-  const[selPart,setSelPart]=useState(null);
-  const[newProjectOpen,setNewProjectOpen]=useState(false);
-  const[newPartOpen,setNewPartOpen]=useState(false);
-  const[newName,setNewName]=useState("");
-  const[confirmDelete,setConfirmDelete]=useState(null);
-  const[showAdmin,setShowAdmin]=useState(false);
-  const[userRoles,setUserRoles]=useState([]);
-  const[roleMsg,setRoleMsg]=useState("");
-  const MONO="'JetBrains Mono','Fira Code','Consolas',monospace";
-
-  const reload=async()=>{setLoading(true);const data=await fetchCalcsForUser(user);setCalcs(data);setLoading(false);};
-  useEffect(()=>{reload();},[user?.id,user?.role]);
-  useEffect(()=>{if(showAdmin&&isAdmin(user))fetchAllUserRoles().then(setUserRoles);},[showAdmin]);
-
-  const handleRoleToggle=async(targetId,currentRole)=>{const newRole=currentRole==="admin"?"user":"admin";const ok=await setUserRole(targetId,newRole,user?.id);if(ok){setRoleMsg(`✓ ${targetId} is now ${newRole}`);fetchAllUserRoles().then(setUserRoles);setTimeout(()=>setRoleMsg(""),3000);}};
-  const filteredCalcs=isAdmin(user)&&selEmployee?calcs.filter(c=>c.created_by_id===selEmployee):calcs;
-  const projects=[...new Set(filteredCalcs.map(c=>c.project_name))].sort();
-  const parts=selProject?[...new Set(filteredCalcs.filter(c=>c.project_name===selProject).map(c=>c.part_name))].sort():[];
-  const files=(selProject&&selPart)?filteredCalcs.filter(c=>c.project_name===selProject&&c.part_name===selPart).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)):[];
-  const cardS={cursor:"pointer",padding:16,border:"1px solid #dee2e6",borderRadius:8,background:"#fff",transition:"box-shadow 0.15s"};
-  const crumbS={cursor:"pointer",color:"#2563eb",fontWeight:600};
-
-  return(
-    <div>
-      {isAdmin(user)&&(
-        <div style={{marginBottom:14}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:showAdmin?10:0}}>
-            <div style={{display:"flex",alignItems:"center",gap:8}}>
-              <span style={{fontSize:11,fontWeight:700,background:"#1d4ed8",color:"#fff",padding:"2px 10px",borderRadius:10,fontFamily:MONO}}>👑 ADMIN</span>
-              <span style={{fontSize:11,color:"#6c757d"}}>Viewing all employees' projects</span>
-            </div>
-            <button onClick={()=>setShowAdmin(v=>!v)} style={{padding:"4px 12px",border:"1px solid #ced4da",borderRadius:4,background:"#fff",fontSize:11,cursor:"pointer",fontFamily:MONO}}>{showAdmin?"▲ Hide":"⚙ Admin Panel"}</button>
-          </div>
-          {showAdmin&&(
-            <div style={{background:"#f8f9fa",border:"1px solid #dee2e6",borderRadius:8,padding:14}}>
-              <div style={{fontSize:13,fontWeight:700,marginBottom:10}}>🔐 Access Management</div>
-              {roleMsg&&<div style={{padding:"6px 10px",background:"#dcfce7",border:"1px solid #bbf7d0",borderRadius:4,fontSize:11,fontFamily:MONO,color:"#15803d",marginBottom:8}}>{roleMsg}</div>}
-              <div style={{overflowX:"auto"}}>
-                <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-                  <thead><tr style={{background:"#e9ecef"}}>{["Employee ID","Name","Role","Files","Action"].map(h=>(<th key={h} style={{padding:"5px 8px",border:"1px solid #dee2e6",fontWeight:700,fontFamily:MONO,fontSize:10,textAlign:"left"}}>{h}</th>))}</tr></thead>
-                  <tbody>
-                    {Object.entries(EMPLOYEES).map(([id,emp])=>{
-                      const rt=userRoles.find(r=>r.user_id===id);
-                      const er=rt?.role||emp.role||"user";
-                      const isSelf=user?.id===id;
-                      const fc2=calcs.filter(c=>c.created_by_id===id).length;
-                      return(<tr key={id} style={{background:isSelf?"#eff6ff":"#fff"}}>
-                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6",fontFamily:MONO,fontWeight:700}}>{id}{isSelf&&<span style={{fontSize:9,color:"#2563eb"}}> (you)</span>}</td>
-                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6"}}>{emp.name}</td>
-                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6"}}><span style={{padding:"1px 7px",borderRadius:8,fontSize:9,fontWeight:700,background:er==="admin"?"#eff6ff":"#f3f4f6",color:er==="admin"?"#1d4ed8":"#6b7280"}}>{er==="admin"?"👑 Admin":"👤 User"}</span></td>
-                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6",textAlign:"center"}}>{fc2}</td>
-                        <td style={{padding:"5px 8px",border:"1px solid #dee2e6"}}>{emp.role==="admin"||isSelf?<span style={{fontSize:10,color:"#9ca3af"}}>—</span>:<button onClick={()=>handleRoleToggle(id,er)} style={{padding:"2px 8px",borderRadius:3,fontSize:10,cursor:"pointer",border:`1px solid ${er==="admin"?"#fecaca":"#bbf7d0"}`,background:er==="admin"?"#fef2f2":"#f0fdf4",color:er==="admin"?"#dc2626":"#16a34a",fontWeight:700}}>{er==="admin"?"Revoke":"Grant Admin"}</button>}</td>
-                      </tr>);
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-      {!isAdmin(user)&&<div style={{marginBottom:10,padding:"6px 12px",background:"#f8f9fa",border:"1px solid #dee2e6",borderRadius:4,fontSize:11,color:"#6c757d",fontFamily:MONO}}>👤 Viewing your own projects.</div>}
-      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:14,fontSize:13,flexWrap:"wrap"}}>
-        {isAdmin(user)&&<span style={stage!=="employees"?crumbS:{fontWeight:700}} onClick={()=>{if(stage!=="employees"){setStage("employees");setSelEmployee(null);setSelProject(null);setSelPart(null);}}}>👥 All Employees</span>}
-        {!isAdmin(user)&&<span style={stage==="projects"?{fontWeight:700}:crumbS} onClick={()=>{setStage("projects");setSelProject(null);setSelPart(null);}}>📁 All Projects</span>}
-        {selEmployee&&<><span style={{color:"#adb5bd"}}>/</span><span style={stage==="projects"?{fontWeight:700}:crumbS} onClick={()=>{setStage("projects");setSelProject(null);setSelPart(null);}}>{EMPLOYEES[selEmployee]?.name}</span></>}
-        {selProject&&<><span style={{color:"#adb5bd"}}>/</span><span style={stage==="parts"?{fontWeight:700}:crumbS} onClick={()=>{setStage("parts");setSelPart(null);}}>📁 {selProject}</span></>}
-        {selPart&&<><span style={{color:"#adb5bd"}}>/</span><span style={{fontWeight:700}}>🗂️ {selPart}</span></>}
-      </div>
-      {loading&&<div style={{color:"#868e96",fontSize:13,padding:20,textAlign:"center"}}>Loading…</div>}
-      {!loading&&stage==="employees"&&isAdmin(user)&&(
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10}}>
-          {Object.entries(EMPLOYEES).map(([id,emp])=>{const cnt=calcs.filter(c=>c.created_by_id===id).length;const pCnt=[...new Set(calcs.filter(c=>c.created_by_id===id).map(c=>c.project_name))].length;return(<div key={id} onClick={()=>{setSelEmployee(id);setSelProject(null);setSelPart(null);setStage("projects");}} style={{...cardS,borderLeft:`4px solid ${emp.role==="admin"?"#1d4ed8":"#16a34a"}`}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 3px 12px rgba(0,0,0,0.1)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:26,marginBottom:4}}>{emp.role==="admin"?"👑":"👤"}</div><div style={{fontWeight:800,fontSize:13}}>{emp.name}</div><div style={{fontSize:10,fontFamily:MONO,color:"#868e96"}}>{id}{user?.id===id?" (you)":""}</div><div style={{marginTop:6,fontSize:11,color:"#374151"}}><b>{pCnt}</b> projects · <b>{cnt}</b> files</div></div>);})}</div>
-      )}
-      {!loading&&stage==="projects"&&(
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:10}}>
-          {projects.map(p=>{const cnt=filteredCalcs.filter(c=>c.project_name===p).length;const pCnt=[...new Set(filteredCalcs.filter(c=>c.project_name===p).map(c=>c.part_name))].length;return(<div key={p} onClick={()=>{setSelProject(p);setSelPart(null);setStage("parts");}} style={cardS} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:24,marginBottom:4}}>📁</div><div style={{fontWeight:700,fontSize:13}}>{p}</div><div style={{fontSize:11,color:"#868e96",marginTop:3}}>{pCnt} part{pCnt!==1?"s":""} · {cnt} file{cnt!==1?"s":""}</div></div>);})}
-          {(!isAdmin(user)||selEmployee===user?.id)&&<div onClick={()=>setNewProjectOpen(true)} style={{...cardS,border:"2px dashed #ced4da",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#868e96"}}><div style={{fontSize:24,marginBottom:4}}>＋</div><div style={{fontWeight:700,fontSize:12}}>New Project</div></div>}
-        </div>
-      )}
-      {!loading&&stage==="parts"&&(
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:10}}>
-          {parts.map(pt=>{const cnt=filteredCalcs.filter(c=>c.project_name===selProject&&c.part_name===pt).length;return(<div key={pt} onClick={()=>{setSelPart(pt);setStage("files");}} style={cardS} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:22,marginBottom:4}}>🗂️</div><div style={{fontWeight:700,fontSize:13}}>{pt}</div><div style={{fontSize:11,color:"#868e96",marginTop:3}}>{cnt} file{cnt!==1?"s":""}</div></div>);})}
-          {(!isAdmin(user)||selEmployee===user?.id)&&<div onClick={()=>setNewPartOpen(true)} style={{...cardS,border:"2px dashed #ced4da",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#868e96"}}><div style={{fontSize:22,marginBottom:4}}>＋</div><div style={{fontWeight:700,fontSize:12}}>New Part</div></div>}
-        </div>
-      )}
-      {!loading&&stage==="files"&&(
-        <div>
-          {(!isAdmin(user)||selEmployee===user?.id)&&<button onClick={()=>onOpenCalc&&onOpenCalc({action:"new",project:selProject,part:selPart})} style={{width:"100%",padding:12,borderRadius:8,border:"none",background:"#212529",color:"#fff",fontWeight:800,fontSize:12,cursor:"pointer",marginBottom:12,fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5}}>＋ Start New Calculation</button>}
-          {files.map(f=>{const isOwner=user&&(f.created_by_id===user.id||isAdmin(user));return(<div key={f.id} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",border:"1px solid #dee2e6",borderRadius:6,marginBottom:6,background:"#fff"}}>
-            <span style={{fontSize:18}}>📄</span>
-            <div style={{flex:1,minWidth:0}}>
-              <div style={{fontWeight:700,fontSize:12}}>{f.calc_name}</div>
-              <div style={{fontSize:10,color:"#868e96"}}>{MODULE_LABELS[f.module]||f.module} · {f.created_by_name} · {new Date(f.created_at).toLocaleDateString()}</div>
-            </div>
-            <button onClick={()=>onOpenCalc(f)} style={{padding:"5px 10px",borderRadius:4,border:"2px solid #2563eb",background:"#eff6ff",color:"#1d4ed8",fontWeight:700,fontSize:11,cursor:"pointer"}}>Open</button>
-            {isOwner&&(<button onClick={async()=>{if(window.confirm("Delete this file?"))await deleteCalc(f.id).then(()=>reload());}} style={{padding:"5px 8px",borderRadius:4,border:"1px solid #fecaca",background:"#fef2f2",color:"#991b1b",fontSize:11,cursor:"pointer"}}>🗑</button>)}
-          </div>);})}
-        </div>
-      )}
-      {newProjectOpen&&(<div onClick={()=>{setNewProjectOpen(false);setNewName("");}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:20,width:"100%",maxWidth:340,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}><div style={{fontSize:14,fontWeight:800,marginBottom:12}}>📁 New Project</div><input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&(setSelProject(newName.trim()),setStage("parts"),setNewProjectOpen(false),setNewName(""))} placeholder="e.g. 123 Main St" style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box",marginBottom:12}}/><div style={{display:"flex",gap:8}}><button onClick={()=>{setNewProjectOpen(false);setNewName("");}} style={{flex:1,padding:8,borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12}}>Cancel</button><button onClick={()=>{if(newName.trim()){setSelProject(newName.trim());setStage("parts");setNewProjectOpen(false);setNewName("");}}} style={{flex:1,padding:8,borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>Create</button></div></div></div>)}
-      {newPartOpen&&(<div onClick={()=>{setNewPartOpen(false);setNewName("");}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:20,width:"100%",maxWidth:340,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}><div style={{fontSize:14,fontWeight:800,marginBottom:12}}>🗂️ New Part</div><input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&(setSelPart(newName.trim()),setStage("files"),setNewPartOpen(false),setNewName(""))} placeholder="e.g. Roof Slab" style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box",marginBottom:12}}/><div style={{display:"flex",gap:8}}><button onClick={()=>{setNewPartOpen(false);setNewName("");}} style={{flex:1,padding:8,borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12}}>Cancel</button><button onClick={()=>{if(newName.trim()){setSelPart(newName.trim());setStage("files");setNewPartOpen(false);setNewName("");}}} style={{flex:1,padding:8,borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>Create</button></div></div></div>)}
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════
-// WORKSPACE PICKER (pre-login project selection)
-// ═══════════════════════════════════════════════════
-function WorkspacePicker({userName,onSignOut,onEnter,onOpenCalc}){
-  const user=useCurrentUser();
-  const[calcs,setCalcs]=useState([]);
-  const[loading,setLoading]=useState(true);
-  const[stage,setStage]=useState(isAdmin(user)?"employees":"projects");
-  const[selEmployee,setSelEmployee]=useState(null);
-  const[selProject,setSelProject]=useState(null);
-  const[selPart,setSelPart]=useState(null);
-  const[newProjectOpen,setNewProjectOpen]=useState(false);
-  const[newPartOpen,setNewPartOpen]=useState(false);
-  const[newName,setNewName]=useState("");
-  const MONO="'JetBrains Mono','Fira Code','Consolas',monospace";
-
-  const reload=async()=>{setLoading(true);const data=await fetchCalcsForUser(user);setCalcs(data);setLoading(false);};
-  useEffect(()=>{reload();},[]);
-
-  const filteredCalcs=isAdmin(user)&&selEmployee?calcs.filter(c=>c.created_by_id===selEmployee):calcs;
-  const projects=[...new Set(filteredCalcs.map(c=>c.project_name))].sort();
-  const parts=selProject?[...new Set(filteredCalcs.filter(c=>c.project_name===selProject).map(c=>c.part_name))].sort():[];
-  const files=(selProject&&selPart)?filteredCalcs.filter(c=>c.project_name===selProject&&c.part_name===selPart).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)):[];
-  const cardS={cursor:"pointer",padding:16,border:"1px solid #dee2e6",borderRadius:8,background:"#fff",transition:"box-shadow 0.15s"};
-
-  return(
-    <div style={{fontFamily:"'Inter','Segoe UI',system-ui,sans-serif",maxWidth:860,margin:"0 auto",padding:"16px 12px",color:"#212529",background:"#fff",minHeight:"100vh"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"2px solid #212529",paddingBottom:10,marginBottom:16}}>
-        <div>
-          <h1 style={{fontSize:16,fontWeight:800,margin:0,fontFamily:MONO,textTransform:"uppercase",letterSpacing:-0.5}}>BT Structural Calculator</h1>
-          <p style={{fontSize:11,color:"#868e96",margin:"2px 0 0"}}>{isAdmin(user)?"Admin view — all employees' projects":"Select a project and part to begin"}</p>
-        </div>
-        <div style={{textAlign:"right"}}>
-          {isAdmin(user)&&<span style={{fontSize:10,fontWeight:800,background:"#1d4ed8",color:"#fff",padding:"2px 8px",borderRadius:10,fontFamily:MONO,display:"block",marginBottom:4}}>👑 ADMIN</span>}
-          <div style={{fontSize:12,fontWeight:600}}>{userName}</div>
-          <button onClick={onSignOut} style={{fontSize:10,color:"#868e96",background:"none",border:"none",cursor:"pointer",textDecoration:"underline",padding:0}}>Sign out</button>
-        </div>
-      </div>
-      {loading&&<div style={{textAlign:"center",padding:40,color:"#868e96"}}>Loading…</div>}
-      {!loading&&stage==="employees"&&isAdmin(user)&&(
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:12}}>
-          {Object.entries(EMPLOYEES).map(([id,emp])=>{const cnt=calcs.filter(c=>c.created_by_id===id).length;return(<div key={id} onClick={()=>{setSelEmployee(id);setStage("projects");}} style={{...cardS,borderLeft:`4px solid ${emp.role==="admin"?"#1d4ed8":"#16a34a"}`}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 3px 12px rgba(0,0,0,0.1)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:26,marginBottom:4}}>{emp.role==="admin"?"👑":"👤"}</div><div style={{fontWeight:800,fontSize:13}}>{emp.name}</div><div style={{fontSize:10,fontFamily:MONO,color:"#868e96",marginTop:2}}>{id}{user?.id===id?" (you)":""}</div><div style={{marginTop:6,fontSize:11,color:"#374151"}}><b>{cnt}</b> file{cnt!==1?"s":""}</div></div>);})}</div>
-      )}
-      {!loading&&stage==="projects"&&(
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:10}}>
-          {projects.map(p=>{const cnt=filteredCalcs.filter(c=>c.project_name===p).length;return(<div key={p} onClick={()=>{setSelProject(p);setStage("parts");}} style={cardS} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:24,marginBottom:4}}>📁</div><div style={{fontWeight:700,fontSize:13}}>{p}</div><div style={{fontSize:11,color:"#868e96",marginTop:3}}>{cnt} file{cnt!==1?"s":""}</div></div>);})}
-          <div onClick={()=>setNewProjectOpen(true)} style={{...cardS,border:"2px dashed #ced4da",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#868e96"}}><div style={{fontSize:24,marginBottom:4}}>＋</div><div style={{fontWeight:700,fontSize:12}}>New Project</div></div>
-        </div>
-      )}
-      {!loading&&stage==="parts"&&(
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:10}}>
-          {parts.map(pt=>{const cnt=filteredCalcs.filter(c=>c.project_name===selProject&&c.part_name===pt).length;return(<div key={pt} onClick={()=>{setSelPart(pt);setStage("files");}} style={cardS} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}><div style={{fontSize:22,marginBottom:4}}>🗂️</div><div style={{fontWeight:700,fontSize:13}}>{pt}</div><div style={{fontSize:11,color:"#868e96",marginTop:3}}>{cnt} file{cnt!==1?"s":""}</div></div>);})}
-          <div onClick={()=>setNewPartOpen(true)} style={{...cardS,border:"2px dashed #ced4da",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"#868e96"}}><div style={{fontSize:22,marginBottom:4}}>＋</div><div style={{fontWeight:700,fontSize:12}}>New Part</div></div>
-        </div>
-      )}
-      {!loading&&stage==="files"&&(
-        <div>
-          <button onClick={()=>onEnter(selProject,selPart)} style={{width:"100%",padding:12,borderRadius:8,border:"none",background:"#212529",color:"#fff",fontWeight:800,fontSize:12,cursor:"pointer",marginBottom:12,fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5}}>＋ Start New Calculation</button>
-          {files.map(f=>(<div key={f.id} style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px",border:"1px solid #dee2e6",borderRadius:6,marginBottom:6,background:"#fff"}}>
-            <span style={{fontSize:18}}>📄</span>
-            <div style={{flex:1,minWidth:0}}><div style={{fontWeight:700,fontSize:12}}>{f.calc_name}</div><div style={{fontSize:10,color:"#868e96"}}>{MODULE_LABELS[f.module]||f.module} · {new Date(f.created_at).toLocaleDateString()}</div></div>
-            <button onClick={()=>onOpenCalc(f)} style={{padding:"5px 10px",borderRadius:4,border:"2px solid #2563eb",background:"#eff6ff",color:"#1d4ed8",fontWeight:700,fontSize:11,cursor:"pointer"}}>Open</button>
-          </div>))}
-        </div>
-      )}
-      {newProjectOpen&&(<div onClick={()=>{setNewProjectOpen(false);setNewName("");}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:20,width:"100%",maxWidth:340,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}><div style={{fontSize:14,fontWeight:800,marginBottom:12}}>📁 New Project</div><input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&newName.trim()){setSelProject(newName.trim());setStage("parts");setNewProjectOpen(false);setNewName("");}}} placeholder="e.g. 123 Main St" style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box",marginBottom:12}}/><div style={{display:"flex",gap:8}}><button onClick={()=>{setNewProjectOpen(false);setNewName("");}} style={{flex:1,padding:8,borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12}}>Cancel</button><button onClick={()=>{if(newName.trim()){setSelProject(newName.trim());setStage("parts");setNewProjectOpen(false);setNewName("");}}} style={{flex:1,padding:8,borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>Create</button></div></div></div>)}
-      {newPartOpen&&(<div onClick={()=>{setNewPartOpen(false);setNewName("");}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}><div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:8,padding:20,width:"100%",maxWidth:340,boxShadow:"0 12px 36px rgba(0,0,0,0.25)"}}><div style={{fontSize:14,fontWeight:800,marginBottom:12}}>🗂️ New Part</div><input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&newName.trim()){setSelPart(newName.trim());setStage("files");setNewPartOpen(false);setNewName("");}}} placeholder="e.g. Roof Slab" style={{width:"100%",padding:"8px 10px",borderRadius:4,border:"2px solid #e8a838",background:"#fff8ef",fontSize:13,boxSizing:"border-box",marginBottom:12}}/><div style={{display:"flex",gap:8}}><button onClick={()=>{setNewPartOpen(false);setNewName("");}} style={{flex:1,padding:8,borderRadius:4,border:"1px solid #ced4da",background:"#fff",cursor:"pointer",fontSize:12}}>Cancel</button><button onClick={()=>{if(newName.trim()){setSelPart(newName.trim());setStage("files");setNewPartOpen(false);setNewName("");}}} style={{flex:1,padding:8,borderRadius:4,border:"none",background:"#212529",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700}}>Create</button></div></div></div>)}
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════
-// LOGIN SCREEN
-// ═══════════════════════════════════════════════════
-function LoginScreen({onLogin}){
-  const[uid,setUid]=useState("");
-  const[pwd,setPwd]=useState("");
-  const[err,setErr]=useState("");
-  const MONO="'JetBrains Mono','Fira Code','Consolas',monospace";
-
-  const submit=async()=>{
-    const key=uid.trim().toLowerCase();
-    const u=EMPLOYEES[key];
-    if(u&&u.pass===pwd){
-      setErr("");
-      const runtimeRole=await fetchUserRole(key);
-      const effectiveRole=runtimeRole||u.role||"user";
-      onLogin({id:key,name:u.name,role:effectiveRole,runtimeAdmin:effectiveRole==="admin"});
-    }else{setErr("Invalid employee ID or password.");}
-  };
-
-  return(
-    <div style={{fontFamily:"'Inter','Segoe UI',system-ui,sans-serif",minHeight:"100vh",background:"#212529",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
-      <div style={{background:"#fff",borderRadius:8,padding:"32px 28px",width:"100%",maxWidth:340,boxShadow:"0 10px 40px rgba(0,0,0,0.3)"}}>
-        <div style={{textAlign:"center",marginBottom:20}}>
-          <div style={{fontSize:28,marginBottom:8}}>🏗️</div>
-          <div style={{fontSize:15,fontWeight:800,fontFamily:MONO,textTransform:"uppercase",letterSpacing:1}}>BT Structural</div>
-          <div style={{fontSize:11,color:"#868e96",marginTop:4}}>Employee Access Only</div>
-        </div>
-        <div style={{marginBottom:12}}>
-          <label style={{fontSize:11,fontWeight:700,color:"#374151",display:"block",marginBottom:4,fontFamily:MONO}}>EMPLOYEE ID</label>
-          <input value={uid} onChange={e=>setUid(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} placeholder="e.g. bhavjeet" style={{width:"100%",padding:"9px 12px",border:"1.5px solid #dee2e6",borderRadius:4,fontSize:13,boxSizing:"border-box"}}/>
-        </div>
-        <div style={{marginBottom:16}}>
-          <label style={{fontSize:11,fontWeight:700,color:"#374151",display:"block",marginBottom:4,fontFamily:MONO}}>PASSWORD</label>
-          <input type="password" value={pwd} onChange={e=>setPwd(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} style={{width:"100%",padding:"9px 12px",border:"1.5px solid #dee2e6",borderRadius:4,fontSize:13,boxSizing:"border-box"}}/>
-        </div>
-        {err&&<div style={{color:"#c0392b",fontSize:11,marginBottom:10,padding:"6px 10px",background:"#fdecea",borderRadius:4}}>{err}</div>}
-        <button onClick={submit} style={{width:"100%",padding:"10px",borderRadius:4,border:"none",background:"#212529",color:"#fff",fontWeight:800,fontSize:13,cursor:"pointer",fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5}}>SIGN IN</button>
-        <div style={{textAlign:"center",marginTop:12,fontSize:10,color:"#adb5bd"}}>Building Theory · Miami, FL</div>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════
-// MAIN APP — with sticky 3D viewer on the right
-// ═══════════════════════════════════════════════════
+// Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 export default function App(){
   const[user,setUser]=useState(null);
   const[workspace,setWorkspace]=useState(null);
@@ -3955,7 +3459,7 @@ export default function App(){
     {/* Full-screen sticky layout */}
     <div style={{fontFamily:"'Inter','Segoe UI',system-ui,sans-serif",display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden",color:"#212529",background:"#fff"}}>
 
-      {/* Menu bar — full width at top */}
+      {/* Menu bar Ã¢â‚¬â€ full width at top */}
       <div className="no-print" style={{flexShrink:0,zIndex:100}}>
         <OptionsMenuBar state={calcOptionsState}/>
         <DefineDialogsController openModal={defineModal} setOpenModal={setDefineModal} defineState={defineState}/>
@@ -3981,9 +3485,9 @@ export default function App(){
             <div style={{display:"flex",gap:8,alignItems:"center"}}>
               <span style={{fontSize:11,color:"#868e96"}}>{user.name}</span>
               {isAdmin(user)&&<span style={{fontSize:10,fontWeight:700,background:"#1d4ed8",color:"#fff",padding:"1px 7px",borderRadius:8,fontFamily:MONO}}>ADMIN</span>}
-              <button onClick={()=>setWorkspace(null)} style={{fontSize:10,color:"#868e96",background:"none",border:"1px solid #dee2e6",cursor:"pointer",padding:"3px 8px",borderRadius:4}}>← Projects</button>
+              <button onClick={()=>setWorkspace(null)} style={{fontSize:10,color:"#868e96",background:"none",border:"1px solid #dee2e6",cursor:"pointer",padding:"3px 8px",borderRadius:4}}>Ã¢â€ Â Projects</button>
               <button onClick={()=>setUser(null)} style={{fontSize:10,color:"#868e96",background:"none",border:"none",cursor:"pointer",textDecoration:"underline",padding:0}}>Sign out</button>
-              <button onClick={()=>handlePrint(false)} className="no-print" style={{fontSize:10,padding:"4px 10px",borderRadius:4,border:"1px solid #dee2e6",background:"#fff",cursor:"pointer",fontFamily:MONO}}>🖨 Print</button>
+              <button onClick={()=>handlePrint(false)} className="no-print" style={{fontSize:10,padding:"4px 10px",borderRadius:4,border:"1px solid #dee2e6",background:"#fff",cursor:"pointer",fontFamily:MONO}}>Ã°Å¸â€“Â¨ Print</button>
             </div>
           </div>
 
@@ -3994,7 +3498,7 @@ export default function App(){
               const active=tab===t.id;
               return(<button key={t.id} onClick={()=>setTab(t.id)} style={{padding:"6px 12px",border:"none",borderBottom:active?`3px solid ${th.accent}`:"3px solid transparent",cursor:"pointer",fontSize:11,fontWeight:active?700:500,background:active?th.soft:"transparent",color:active?th.text:"#868e96",fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5,marginBottom:-1,borderRadius:"4px 4px 0 0",transition:"all 0.15s",whiteSpace:"nowrap"}}>{t.label}</button>);
             })}
-            <button onClick={()=>setTab("projects")} style={{padding:"6px 12px",border:"none",borderBottom:tab==="projects"?"3px solid #495057":"3px solid transparent",cursor:"pointer",fontSize:11,fontWeight:tab==="projects"?700:500,background:tab==="projects"?"#f1f3f5":"transparent",color:tab==="projects"?"#212529":"#868e96",fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5,marginBottom:-1,borderRadius:"4px 4px 0 0",whiteSpace:"nowrap"}}>📁 Projects</button>
+            <button onClick={()=>setTab("projects")} style={{padding:"6px 12px",border:"none",borderBottom:tab==="projects"?"3px solid #495057":"3px solid transparent",cursor:"pointer",fontSize:11,fontWeight:tab==="projects"?700:500,background:tab==="projects"?"#f1f3f5":"transparent",color:tab==="projects"?"#212529":"#868e96",fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.5,marginBottom:-1,borderRadius:"4px 4px 0 0",whiteSpace:"nowrap"}}>Ã°Å¸â€œÂ Projects</button>
           </div>
 
           {/* Display options bar */}
@@ -4021,15 +3525,15 @@ export default function App(){
 
           {/* Footer */}
           <div style={{textAlign:"center",marginTop:24,fontSize:10,color:"#adb5bd",padding:"10px 0",borderTop:"1px solid #dee2e6",fontFamily:MONO}}>
-            PCI 8th Ed. · ACI 318-19 · CSA A23.3-19 · CPCI 5th Ed.
+            PCI 8th Ed. Ã‚Â· ACI 318-19 Ã‚Â· CSA A23.3-19 Ã‚Â· CPCI 5th Ed.
           </div>
         </div>
 
-        {/* RIGHT: sticky 3D viewer — always visible */}
+        {/* RIGHT: sticky 3D viewer Ã¢â‚¬â€ always visible */}
         {tab!=="dashboard"&&tab!=="projects"&&(
         <div className="no-print" style={{width:320,flexShrink:0,borderLeft:"2px solid #dee2e6",background:"#f8f9fa",display:"flex",flexDirection:"column",overflow:"hidden"}}>
           <div style={{padding:"8px 10px",borderBottom:"1px solid #dee2e6",background:"#fff",fontWeight:700,fontSize:11,fontFamily:MONO,textTransform:"uppercase",letterSpacing:0.8,color:"#374151"}}>
-            📐 3D Model
+            Ã°Å¸â€œÂ 3D Model
           </div>
           <div style={{flex:1,overflowY:"auto",padding:8}}>
             {tab==="pci"&&<PCIViewer3D/>}
@@ -4051,9 +3555,9 @@ export default function App(){
   );
 }
 
-// Stub viewers for right panel — these render the appropriate 3D
+// Stub viewers for right panel Ã¢â‚¬â€ these render the appropriate 3D
 // model using the shared state from each tab via a small context bridge
-function PCIViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the slab</div>; }
-function CPCIViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the slab</div>; }
-function ColViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the column</div>; }
-function CrushViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to 🧊 3D Model in the chart picker to see the section</div>; }
+function PCIViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to Ã°Å¸Â§Å  3D Model in the chart picker to see the slab</div>; }
+function CPCIViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to Ã°Å¸Â§Å  3D Model in the chart picker to see the slab</div>; }
+function ColViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to Ã°Å¸Â§Å  3D Model in the chart picker to see the column</div>; }
+function CrushViewer3D(){ return <div style={{padding:12,textAlign:"center",color:"#868e96",fontSize:11,fontFamily:"'JetBrains Mono',monospace"}}>Switch to Ã°Å¸Â§Å  3D Model in the chart picker to see the section</div>; }
