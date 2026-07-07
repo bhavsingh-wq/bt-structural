@@ -2381,6 +2381,26 @@ function PCITab({loadedCalc, onConsumedLoad, workspace}){
           <button onClick={()=>{setSlabHOverride(null);setSlabBOverride(null);}} style={{padding:"2px 8px",fontSize:10,border:"1px solid #e8a838",borderRadius:3,background:"#fff",cursor:"pointer",color:"#b07020"}}>Reset to section defaults</button>
         </div>
       )}
+
+      {/* ── Dimension inputs — always visible ── */}
+      <div style={{display:"flex",flexWrap:"wrap",gap:10,padding:"10px 0 4px",borderBottom:"1px solid #f1f3f5",marginBottom:6}}>
+        {[
+          { label:"L (span)", value:Math.round(span*12), unit:"in", step:6, min:24, onChange:(v)=>setSpan(Math.max(1,v/12)) },
+          { label:"h (depth)", value:r.s.h, unit:"in", step:1, min:4, onChange:(v)=>setSlabHOverride(Math.max(4,Math.round(v))) },
+          { label:"b (width)", value:r.s.b, unit:"in", step:2, min:12, onChange:(v)=>setSlabBOverride(Math.max(12,Math.round(v))) },
+        ].map(dim=>(
+          <div key={dim.label} style={{display:"flex",flexDirection:"column",minWidth:90}}>
+            <span style={{fontSize:10,color:"#2563eb",fontWeight:700,marginBottom:3,fontFamily:"'JetBrains Mono',monospace"}}>{dim.label}</span>
+            <div style={{display:"flex",alignItems:"center",gap:4}}>
+              <input type="number" value={dim.value} step={dim.step} min={dim.min}
+                onChange={e=>{const v=Number(e.target.value);if(!isNaN(v)&&v>0)dim.onChange(v);}}
+                style={{width:68,padding:"5px 7px",border:"1.5px solid #2563eb",borderRadius:4,
+                  background:"#eff6ff",fontSize:13,fontFamily:"'JetBrains Mono',monospace",fontWeight:700,boxSizing:"border-box"}}/>
+              <span style={{fontSize:10,color:"#868e96"}}>{dim.unit}</span>
+            </div>
+          </div>
+        ))}
+      </div>
       <Graphic><HollowcoreXSection h={r.s.h} b={r.s.b} cores={r.s.cores} coreD={r.s.coreD} nStrands={nH+nS} dp={r.dp} yb={r.s.yb} e={r.e} scale={7}/></Graphic>
       <Eq tex="Sb = Ix / yb     St = Ix / (h − yb)" code="PCI 8th §4.2"/>
       <R><CI label="h" value={r.s.h} unit="in"/><CI label="A" value={r.s.A} unit="in²"/><CI label={<Sym base="I" sub="x"/>} value={r.s.Ix} unit="in⁴"/><CI label="yb" value={fmt(r.s.yb,4)} unit="in"/><CI label="b" value={r.s.b} unit="in"/></R>
