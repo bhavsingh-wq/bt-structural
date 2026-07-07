@@ -2638,10 +2638,13 @@ function ColTab({loadedCalc, onConsumedLoad, workspace}){
   const [b,setB]=useState(12);
   const [h,setH]=useState(20);
   const [colHeight,setColHeight]=useState(120); // column height in inches (default 10 ft)
-  const [fc,setFc]=useState(4),[cov,setCov]=useState(1.5);
+  const [fc,setFc]=useState(4);
+  const [cov,setCov]=useState(1.5);
   const fy=60,Es=29000;
-  const [bBar,setBBar]=useState("#9"),[bQ,setBQ]=useState(2);
-  const [tBar,setTBar]=useState("#9"),[tQ,setTQ]=useState(2);
+  const [bBar,setBBar]=useState("#9");
+  const [bQ,setBQ]=useState(2);
+  const [tBar,setTBar]=useState("#9");
+  const [tQ,setTQ]=useState(2);
   const [xBar,setXBar]=useState("#4");
   const [Pu,setPu]=useState(400);
   const [Mu,setMu]=useState(80);
