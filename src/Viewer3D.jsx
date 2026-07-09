@@ -150,12 +150,14 @@ export function Viewer3D({ buildScene, height, initialDistance, deps = [], capti
   const [editingKey, setEditingKey] = useState(null);
   const [editValue, setEditValue] = useState("");
 
+  const fill = height === "fill";  // fill the parent flex container instead of fixed px
+
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
     const width = mount.clientWidth || 400;
-    const h = height || 360;
+    const h = fill ? (mount.clientHeight || 400) : (height || 360);
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf8f9fa);
@@ -172,9 +174,9 @@ export function Viewer3D({ buildScene, height, initialDistance, deps = [], capti
     const key = new THREE.DirectionalLight(0xffffff, 0.9);
     key.position.set(8, 12, 8);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xffffff, 0.35);
-    fill.position.set(-8, 4, -6);
-    scene.add(fill);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.35);
+    fillLight.position.set(-8, 4, -6);
+    scene.add(fillLight);
 
     const target = new THREE.Vector3(0, 0, 0);
     const dist = initialDistance || 14;
@@ -227,19 +229,31 @@ export function Viewer3D({ buildScene, height, initialDistance, deps = [], capti
     };
     animate();
 
+    // For fill mode use ResizeObserver so the renderer tracks the flex
+    // container size after layout settles. For fixed-height fall back to
+    // window resize (width only).
+    let resizeObserver = null;
     const onResize = () => {
       const w = mount.clientWidth || 400;
-      camera.aspect = w / h;
+      const newH = fill ? (mount.clientHeight || h) : h;
+      camera.aspect = w / newH;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(w, newH);
     };
-    window.addEventListener("resize", onResize);
+    if (fill && typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => onResize());
+      resizeObserver.observe(mount);
+    } else {
+      window.addEventListener("resize", onResize);
+    }
+    setTimeout(onResize, 0); // fire after flex layout settles
 
     sceneRef.current = { renderer, scene, controls };
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", onResize);
+      if (resizeObserver) resizeObserver.disconnect();
+      else window.removeEventListener("resize", onResize);
       controls.dispose();
       scene.traverse((obj) => {
         if (obj.geometry) obj.geometry.dispose();
@@ -268,8 +282,8 @@ export function Viewer3D({ buildScene, height, initialDistance, deps = [], capti
   }, [editingKey, editValue, editableDims]);
 
   return (
-    <div>
-      <div style={{ position: "relative", width: "100%", height: height || 360, borderRadius: 6, overflow: "hidden", border: "1px solid #dee2e6" }}>
+    <div style={{display:"flex",flexDirection:"column",height:fill?"100%":undefined}}>
+      <div style={{ position: "relative", width: "100%", height: fill ? "100%" : (height || 360), flex: fill ? 1 : undefined, borderRadius: fill?0:6, overflow: "hidden", border: fill?"none":"1px solid #dee2e6" }}>
         <div ref={mountRef} style={{ width: "100%", height: "100%" }} />
         <div ref={overlayRef} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
           {dimPoints.map((pt) => {
